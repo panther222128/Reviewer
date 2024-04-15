@@ -23,16 +23,16 @@ final class DefaultReviewListRepository: ReviewListRepository {
         storage.fetchRestaurants(completion: completion)
     }
     
-    func delete(restaurant: Restaurant) {
-        storage.delete(restaurant: restaurant)
+    func delete(with id: String) {
+        storage.delete(with: id)
     }
     
-    func update(restaurant: Restaurant, dish: Dish) {
-        storage.update(restaurant: restaurant, dish: dish)
+    func update(with id: String, dish: Dish) {
+        storage.update(with: id, dish: dish)
     }
     
-    func fetchDishes(of restaurant: Restaurant, completion: @escaping ([Dish]?, Error?) -> Void) {
-        storage.fetchDishes(of: restaurant, completion: completion)
+    func fetchDishes(with id: String, completion: @escaping ([Dish]?, Error?) -> Void) {
+        storage.fetchDishes(with: id, completion: completion)
     }
     
 }

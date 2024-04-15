@@ -11,9 +11,9 @@ import SwiftData
 protocol ReviewListStorage {
     func saveRestaurant(with name: String)
     func fetchRestaurants(completion: @escaping ([Restaurant]?, Error?) -> Void)
-    func delete(restaurant: Restaurant)
-    func update(restaurant: Restaurant, dish: Dish)
-    func fetchDishes(of restaurant: Restaurant, completion: @escaping ([Dish]?, Error?) -> Void)
+    func delete(with id: String)
+    func update(with id: String, dish: Dish)
+    func fetchDishes(with id: String, completion: @escaping ([Dish]?, Error?) -> Void)
 }
 
 final class DefaultReviewListStorage: ReviewListStorage {
@@ -52,38 +52,39 @@ final class DefaultReviewListStorage: ReviewListStorage {
         }
     }
     
-    func delete(restaurant: Restaurant) {
-        if let context, let restaurant = fetch(restaurant: restaurant) {
+    func delete(with id: String) {
+        if let context, let restaurant = fetchRestaurant(with: id) {
             context.delete(restaurant)
         } else {
             
         }
     }
     
-    func update(restaurant: Restaurant, dish: Dish) {
-        if let restaurant = fetch(restaurant: restaurant) {
+    func update(with id: String, dish: Dish) {
+        if let restaurant = fetchRestaurant(with: id) {
             restaurant.dishes.append(.init(id: dish.id, name: dish.name, tastes: dish.tastes))
         } else {
             
         }
     }
     
-    func fetchDishes(of restaurant: Restaurant, completion: @escaping ([Dish]?, Error?) -> Void) {
-        if let restaurant = fetch(restaurant: restaurant) {
+    func fetchDishes(with id: String, completion: @escaping ([Dish]?, Error?) -> Void) {
+        if let restaurant = fetchRestaurant(with: id) {
             let dishes = restaurant.dishes
-            let domain = restaurant.dishes.map { $0.toDomain() }
+            let domain = dishes.map { $0.toDomain() }
             completion(domain, nil)
         } else {
-            
+            print("Cannot find restaurant.")
+            completion(nil, nil)
         }
     }
     
-    private func fetch(restaurant: Restaurant) -> RestaurantEntity? {
+    private func fetchRestaurant(with id: String) -> RestaurantEntity? {
         let descriptor = FetchDescriptor<RestaurantEntity>(sortBy: [SortDescriptor<RestaurantEntity>(\.date)])
         if let context {
             do {
                 let data = try context.fetch(descriptor)
-                if let target = data.filter({ $0.id == restaurant.id }).first {
+                if let target = data.filter({ $0.id == id }).first {
                     return target
                 } else {
                     print("Cannot find data.")

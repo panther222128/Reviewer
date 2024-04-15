@@ -6,21 +6,47 @@
 //
 
 import Foundation
+import Combine
 
 protocol ReviewDetailViewModel: ReviewDetailListDataSource {
+    var listItemsPublisher: AnyPublisher<[ReviewDetailDishItemViewModel], Never> { get }
     
+    func loadDishes()
 }
 
 final class DefaultReviewDetailViewModel: ReviewDetailViewModel {
     
     private let id: String
-    private let dishes: [Dish]
-    private let listItems: [ReviewDetailDishItemViewModel]
+    private var dishes: [Dish]
+    private var listItems: [ReviewDetailDishItemViewModel]
+    private let listItemsSubject: CurrentValueSubject<[ReviewDetailDishItemViewModel], Never>
+    private let repository: ReviewListRepository
     
-    init(id: String) {
+    var listItemsPublisher: AnyPublisher<[ReviewDetailDishItemViewModel], Never> {
+        return listItemsSubject.eraseToAnyPublisher()
+    }
+    
+    init(id: String, repository: ReviewListRepository) {
         self.id = id
         self.dishes = []
         self.listItems = []
+        self.listItemsSubject = .init([])
+        self.repository = repository
+    }
+    
+    func loadDishes() {
+        repository.fetchDishes(with: id) { [weak self] dishes, error in
+            if let dishes {
+                if let self = self {
+                    self.dishes = dishes
+                    self.listItems = self.dishes.map { .init(name: $0.name) }
+                } else {
+                    print("View model is empty.")
+                }
+            } else {
+                print("Cannot find dishes.")
+            }
+        }
     }
     
 }

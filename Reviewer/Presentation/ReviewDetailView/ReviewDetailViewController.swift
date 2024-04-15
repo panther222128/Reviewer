@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Combine
 
 final class ReviewDetailViewController: UIViewController {
     
@@ -21,17 +22,30 @@ final class ReviewDetailViewController: UIViewController {
     
     private var reviewDetailListAdapter: ReviewDetailListAdapter?
     
+    private var cancellables: Set<AnyCancellable> = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         
         reviewDetailListAdapter = .init(tableView: dishListTableView, dataSource: viewModel, delegate: self)
+        
+        viewModel.loadDishes()
     }
     
     static func create(with viewModel: ReviewDetailViewModel) -> ReviewDetailViewController {
         let viewController = ReviewDetailViewController()
         viewController.viewModel = viewModel
         return viewController
+    }
+    
+    private func subscribe(reviewDetailListPublisher: AnyPublisher<[ReviewDetailDishItemViewModel], Never>) {
+        reviewDetailListPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.dishListTableView.reloadData()
+            }
+            .store(in: &cancellables)
     }
     
 }
