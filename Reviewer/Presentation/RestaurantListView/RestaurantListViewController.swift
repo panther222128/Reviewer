@@ -13,6 +13,7 @@ final class RestaurantListViewController: UIViewController {
     private let restaurantListTableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.register(RestaurantListItemCell.self, forCellReuseIdentifier: "RestaurantListItemCellID")
         tableView.separatorInset = .init(top: 0, left: 0, bottom: 0, right: 0)
         return tableView
     }()
@@ -76,6 +77,8 @@ extension RestaurantListViewController {
                 if let textField = textFields.first {
                     if let text = textField.text, !text.isEmpty {
                         self.viewModel.didPressedAlertConfirmButton(with: text)
+                        self.viewModel.didAddRestaurant(with: text)
+                        self.viewModel.loadListItem()
                     } else {
                         print("Text must not be empty.")
                     }
@@ -100,6 +103,20 @@ extension RestaurantListViewController: RestaurantListDelegate {
     
     func didSelectItem(at indexPath: IndexPath) {
         viewModel.didSelectItem(at: indexPath)
+    }
+    
+    func didTrailingSwipeForRow(at indexPath: IndexPath, tableView: UITableView) -> UISwipeActionsConfiguration {
+        let deleteAction = UIContextualAction(style: .destructive, title: "삭제") { action, view, completion in
+            
+            self.viewModel.didDeleteRestaurant(at: indexPath)
+            self.viewModel.loadListItem()
+            completion(true)
+        }
+        
+        deleteAction.backgroundColor = .red
+        
+        let swipeActions = UISwipeActionsConfiguration(actions: [deleteAction])
+        return swipeActions
     }
 }
 

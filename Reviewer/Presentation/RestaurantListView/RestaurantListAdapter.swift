@@ -15,6 +15,7 @@ protocol RestaurantListDataSource: AnyObject {
 protocol RestaurantListDelegate: AnyObject {
     func heightForRowAt() -> CGFloat
     func didSelectItem(at indexPath: IndexPath)
+    func didTrailingSwipeForRow(at indexPath: IndexPath, tableView: UITableView) -> UISwipeActionsConfiguration
 }
 
 final class RestaurantListAdapter: NSObject {
@@ -38,7 +39,7 @@ final class RestaurantListAdapter: NSObject {
 
 extension RestaurantListAdapter: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "RestaurantListItemCell", for: indexPath) as? RestaurantListItemCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "RestaurantListItemCellID", for: indexPath) as? RestaurantListItemCell else {
             print("Datasource must be initialized.")
             return .init()
         }
@@ -76,6 +77,15 @@ extension RestaurantListAdapter: UITableViewDelegate {
             delegate.didSelectItem(at: indexPath)
         } else {
             print("Cannot find delegate.")
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        if let delegate {
+            return delegate.didTrailingSwipeForRow(at: indexPath, tableView: tableView)
+        } else {
+            print("Cannot find delegate.")
+            return nil
         }
     }
 }
