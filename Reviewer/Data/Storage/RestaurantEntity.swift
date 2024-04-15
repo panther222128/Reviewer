@@ -25,6 +25,6 @@ final class RestaurantEntity {
 
 extension RestaurantEntity {
     func toDomain() -> Restaurant {
-        return .init(name: name, date: date, dishes: dishes.map { $0.toDomain() })
+        return .init(id: id, name: name, date: date, dishes: dishes.map { $0.toDomain() })
     }
 }

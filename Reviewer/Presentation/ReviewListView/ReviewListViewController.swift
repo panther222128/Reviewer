@@ -97,6 +97,10 @@ extension ReviewListViewController: ReviewListDelegate {
     func heightForRowAt() -> CGFloat {
         return 80
     }
+    
+    func didSelectItem(at indexPath: IndexPath) {
+        viewModel.didSelectItem(at: indexPath)
+    }
 }
 
 extension ReviewListViewController {

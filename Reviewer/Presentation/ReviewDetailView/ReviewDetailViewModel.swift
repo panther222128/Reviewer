@@ -13,9 +13,13 @@ protocol ReviewDetailViewModel: ReviewDetailListDataSource {
 
 final class DefaultReviewDetailViewModel: ReviewDetailViewModel {
     
+    private let id: String
+    private let dishes: [Dish]
     private let listItems: [ReviewDetailDishItemViewModel]
     
-    init() {
+    init(id: String) {
+        self.id = id
+        self.dishes = []
         self.listItems = []
     }
     
@@ -23,10 +27,10 @@ final class DefaultReviewDetailViewModel: ReviewDetailViewModel {
 
 extension DefaultReviewDetailViewModel {
     func cellForRow(at indexPath: IndexPath) -> ReviewDetailDishItemViewModel {
-        return .init(name: "")
+        return .init(name: dishes[indexPath.row].name)
     }
     
     func numberOfRowsIn(section: Int) -> Int {
-        return 0
+        return dishes.count
     }
 }

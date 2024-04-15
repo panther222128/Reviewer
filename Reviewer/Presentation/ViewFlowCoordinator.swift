@@ -13,6 +13,8 @@ protocol ViewFlowCoordinatorDependencies {
     func makeTasteListViewController(dish: Dish, restaurantName: String) -> TasteListViewController
     
     func makeSettingsViewController() -> SettingsViewController
+    
+    func makeReviewDetailViewController(id: String) -> ReviewDetailViewController
 }
 
 final class ViewFlowCoordinator {
@@ -27,6 +29,8 @@ final class ViewFlowCoordinator {
     private weak var tasteListViewController: TasteListViewController?
     private weak var settingsViewController: SettingsViewController?
     
+    private weak var reviewDetailViewController: ReviewDetailViewController?
+    
     init(tabBarController: UITabBarController, dependencies: ViewFlowCoordinatorDependencies) {
         self.tabBarController = tabBarController
         self.dependencies = dependencies
@@ -36,7 +40,7 @@ final class ViewFlowCoordinator {
         tabBarController?.tabBar.tintColor = .black
         tabBarController?.tabBar.unselectedItemTintColor = .black
         
-        let reviewListViewController = dependencies.makeReviewListViewController(actions: .init(showStudioView: showStudioView(with:)))
+        let reviewListViewController = dependencies.makeReviewListViewController(actions: .init(showStudioView: showStudioView(with:), showReviewDetailView: showReviewDetailView(id:)))
         self.reviewListViewController = reviewListViewController
         
         let reviewListViewTabBarItem = UITabBarItem(title: "List", image: UIImage(systemName: "list.bullet"), tag: 0)
@@ -77,6 +81,12 @@ final class ViewFlowCoordinator {
         let viewController = dependencies.makeTasteListViewController(dish: dish, restaurantName: restaurantName)
         tasteListViewController = viewController
         studioViewController?.navigationController?.pushViewController(viewController, animated: true)
+    }
+    
+    private func showReviewDetailView(id: String) {
+        let viewController = dependencies.makeReviewDetailViewController(id: id)
+        reviewDetailViewController = viewController
+        reviewListNavigator?.pushViewController(viewController, animated: true)
     }
     
 }

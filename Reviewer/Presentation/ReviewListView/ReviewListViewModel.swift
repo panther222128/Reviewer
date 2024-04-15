@@ -13,16 +13,19 @@ protocol ReviewListViewModel: ReviewListDataSource {
     
     func loadListItem()
     func didPressedAlertConfirmButton(with restaurantName: String)
+    func didSelectItem(at indexPath: IndexPath)
 }
 
 struct ReviewListViewModelActions {
     let showStudioView: (String) -> Void
+    let showReviewDetailView: (String) -> Void
 }
 
 final class DefaultReviewListViewModel: ReviewListViewModel {
     
     private let repository: ReviewListRepository
     private let actions: ReviewListViewModelActions
+    private let restaurants: [Restaurant]
     private var listItemViewModels: [ReviewListItemViewModel]
     private var listItemViewModelSubject: CurrentValueSubject<[ReviewListItemViewModel], Never>
     var listItemViewModelPublisher: AnyPublisher<[ReviewListItemViewModel], Never> {
@@ -32,6 +35,7 @@ final class DefaultReviewListViewModel: ReviewListViewModel {
     init(repository: ReviewListRepository, actions: ReviewListViewModelActions) {
         self.repository = repository
         self.actions = actions
+        self.restaurants = []
         self.listItemViewModels = []
         self.listItemViewModelSubject = .init([])
     }
@@ -43,6 +47,10 @@ final class DefaultReviewListViewModel: ReviewListViewModel {
     
     func didPressedAlertConfirmButton(with restaurantName: String) {
         actions.showStudioView(restaurantName)
+    }
+    
+    func didSelectItem(at indexPath: IndexPath) {
+        actions.showReviewDetailView(restaurants[indexPath.row].id)
     }
     
 }

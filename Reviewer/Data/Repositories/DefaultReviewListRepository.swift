@@ -19,19 +19,19 @@ final class DefaultReviewListRepository: ReviewListRepository {
         storage.saveRestaurant(with: name)
     }
     
-    func fetchRestaurants(completion: @escaping ([RestaurantEntity]?, Error?) -> Void) {
+    func fetchRestaurants(completion: @escaping ([Restaurant]?, Error?) -> Void) {
         storage.fetchRestaurants(completion: completion)
     }
     
-    func delete(restaurant: RestaurantEntity) {
+    func delete(restaurant: Restaurant) {
         storage.delete(restaurant: restaurant)
     }
     
-    func update(restaurant: RestaurantEntity, dish: DishEntity) {
+    func update(restaurant: Restaurant, dish: Dish) {
         storage.update(restaurant: restaurant, dish: dish)
     }
     
-    func fetchDishes(of restaurant: RestaurantEntity, completion: @escaping ([DishEntity]?, Error?) -> Void) {
+    func fetchDishes(of restaurant: Restaurant, completion: @escaping ([Dish]?, Error?) -> Void) {
         storage.fetchDishes(of: restaurant, completion: completion)
     }
     

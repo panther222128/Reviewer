@@ -61,4 +61,12 @@ final class SceneDIContainer: ViewFlowCoordinatorDependencies {
         return SettingsViewController.create()
     }
     
+    func makeReviewDetailViewModel(id: String) -> ReviewDetailViewModel {
+        return DefaultReviewDetailViewModel(id: id)
+    }
+    
+    func makeReviewDetailViewController(id: String) -> ReviewDetailViewController {
+        return ReviewDetailViewController.create(with: makeReviewDetailViewModel(id: id))
+    }
+    
 }

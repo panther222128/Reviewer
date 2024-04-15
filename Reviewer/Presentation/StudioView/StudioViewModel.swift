@@ -66,7 +66,7 @@ final class DefaultStudioViewModel: StudioViewModel {
     }
     
     func didLoadTasteView(with dishName: String) {
-        actions.showTasteListView(.init(name: dishName, tastes: []), restaurantName)
+        actions.showTasteListView(.init(id: UUID().uuidString, name: dishName, date: Date(), tastes: []), restaurantName)
     }
     
 }

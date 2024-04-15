@@ -14,6 +14,7 @@ protocol ReviewListDataSource: AnyObject {
 
 protocol ReviewListDelegate: AnyObject {
     func heightForRowAt() -> CGFloat
+    func didSelectItem(at indexPath: IndexPath)
 }
 
 final class ReviewListAdapter: NSObject {
@@ -62,11 +63,19 @@ extension ReviewListAdapter: UITableViewDataSource {
 
 extension ReviewListAdapter: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if let delegate = delegate {
+        if let delegate {
             return delegate.heightForRowAt()
         } else {
             print("Delegate must be initialized.")
             return 0
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if let delegate {
+            delegate.didSelectItem(at: indexPath)
+        } else {
+            print("Cannot find delegate.")
         }
     }
 }
