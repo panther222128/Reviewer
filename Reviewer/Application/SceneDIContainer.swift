@@ -29,12 +29,12 @@ final class SceneDIContainer: ViewFlowCoordinatorDependencies {
         return DefaultReviewListRepository(storage: reviewListStorage)
     }
     
-    func makeReviewListViewModel(actions: ReviewListViewModelActions) -> ReviewListViewModel {
-        return DefaultReviewListViewModel(repository: makeReviewListRepository(), actions: actions)
+    func makeRestaurantListViewModel(actions: RestaurantListViewModelActions) -> RestaurantListViewModel {
+        return DefaultRestaurantListViewModel(repository: makeReviewListRepository(), actions: actions)
     }
     
-    func makeReviewListViewController(actions: ReviewListViewModelActions) -> ReviewListViewController {
-        return ReviewListViewController.create(with: makeReviewListViewModel(actions: actions))
+    func makeRestaurantListViewController(actions: RestaurantListViewModelActions) -> RestaurantListViewController {
+        return RestaurantListViewController.create(with: makeRestaurantListViewModel(actions: actions))
     }
     
     func makeStudioUseCase() -> StudioUseCase  {
@@ -61,12 +61,20 @@ final class SceneDIContainer: ViewFlowCoordinatorDependencies {
         return SettingsViewController.create()
     }
     
-    func makeReviewDetailViewModel(id: String) -> ReviewDetailViewModel {
-        return DefaultReviewDetailViewModel(id: id, repository: makeReviewListRepository())
+    func makeDishListViewModel(id: String, actions: RestaurantDishListViewModelActions) -> RestaurantDishListViewModel {
+        return DefaultRestaurantDishListViewModel(id: id, repository: makeReviewListRepository(), actions: actions)
     }
     
-    func makeReviewDetailViewController(id: String) -> ReviewDetailViewController {
-        return ReviewDetailViewController.create(with: makeReviewDetailViewModel(id: id))
+    func makeRestaurantDishListViewController(id: String, actions: RestaurantDishListViewModelActions) -> RestaurantDishListViewController {
+        return RestaurantDishListViewController.create(with: makeDishListViewModel(id: id, actions: actions))
+    }
+    
+    func makeDishDetailViewModel(tastes: [String]) -> DishDetailViewModel {
+        return DefaultDishDetailViewModel(tastes: tastes)
+    }
+    
+    func makeDishDetailViewController(tastes: [String]) -> DishDetailViewController {
+        return DishDetailViewController.create(with: makeDishDetailViewModel(tastes: tastes))
     }
     
 }

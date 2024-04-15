@@ -8,19 +8,19 @@
 import UIKit
 import Combine
 
-final class ReviewDetailViewController: UIViewController {
+final class RestaurantDishListViewController: UIViewController {
     
-    private var viewModel: ReviewDetailViewModel!
+    private var viewModel: RestaurantDishListViewModel!
     
     private let dishListTableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.separatorInset = .init(top: 0, left: 0, bottom: 0, right: 0)
-        tableView.register(ReviewDetailDishItemCell.self, forCellReuseIdentifier: "ReviewDetailDishItemCellID")
+        tableView.register(RestaurantDishListItemCell.self, forCellReuseIdentifier: "ReviewDetailDishItemCellID")
         return tableView
     }()
     
-    private var reviewDetailListAdapter: ReviewDetailListAdapter?
+    private var reviewDetailListAdapter: RestaurantDishListAdapter?
     
     private var cancellables: Set<AnyCancellable> = []
     
@@ -33,13 +33,13 @@ final class ReviewDetailViewController: UIViewController {
         viewModel.loadDishes()
     }
     
-    static func create(with viewModel: ReviewDetailViewModel) -> ReviewDetailViewController {
-        let viewController = ReviewDetailViewController()
+    static func create(with viewModel: RestaurantDishListViewModel) -> RestaurantDishListViewController {
+        let viewController = RestaurantDishListViewController()
         viewController.viewModel = viewModel
         return viewController
     }
     
-    private func subscribe(reviewDetailListPublisher: AnyPublisher<[ReviewDetailDishItemViewModel], Never>) {
+    private func subscribe(reviewDetailListPublisher: AnyPublisher<[RestaurantDishListItemViewModel], Never>) {
         reviewDetailListPublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
@@ -50,8 +50,12 @@ final class ReviewDetailViewController: UIViewController {
     
 }
 
-extension ReviewDetailViewController: ReviewDetailListDelegate {
+extension RestaurantDishListViewController: RestaurantDishListDelegate {
     func heightForRowAt() -> CGFloat {
         return 64
+    }
+    
+    func didSelectRow(at indexPath: IndexPath) {
+        viewModel.didSelectRow(at: indexPath)
     }
 }

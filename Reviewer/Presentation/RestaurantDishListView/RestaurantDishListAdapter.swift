@@ -7,22 +7,23 @@
 
 import UIKit
 
-protocol ReviewDetailListDataSource: AnyObject {
-    func cellForRow(at indexPath: IndexPath) -> ReviewDetailDishItemViewModel
+protocol RestaurantDishListDataSource: AnyObject {
+    func cellForRow(at indexPath: IndexPath) -> RestaurantDishListItemViewModel
     func numberOfRowsIn(section: Int) -> Int
 }
 
-protocol ReviewDetailListDelegate: AnyObject {
+protocol RestaurantDishListDelegate: AnyObject {
     func heightForRowAt() -> CGFloat
+    func didSelectRow(at indexPath: IndexPath)
 }
 
-final class ReviewDetailListAdapter: NSObject {
+final class RestaurantDishListAdapter: NSObject {
     
     private var tableView: UITableView
-    private weak var dataSource: ReviewDetailListDataSource?
-    private weak var delegate: ReviewDetailListDelegate?
+    private weak var dataSource: RestaurantDishListDataSource?
+    private weak var delegate: RestaurantDishListDelegate?
     
-    init(tableView: UITableView, dataSource: ReviewDetailListDataSource?, delegate: ReviewDetailListDelegate?) {
+    init(tableView: UITableView, dataSource: RestaurantDishListDataSource?, delegate: RestaurantDishListDelegate?) {
         self.tableView = tableView
         self.dataSource = dataSource
         self.delegate = delegate
@@ -35,13 +36,13 @@ final class ReviewDetailListAdapter: NSObject {
     
 }
 
-extension ReviewDetailListAdapter: UITableViewDataSource {
+extension RestaurantDishListAdapter: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return dataSource?.numberOfRowsIn(section: section) ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "ReviewDetailItemCellID", for: indexPath) as? ReviewDetailDishItemCell else { return .init() }
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "ReviewDetailItemCellID", for: indexPath) as? RestaurantDishListItemCell else { return .init() }
         if let dataSource {
             let viewModel = dataSource.cellForRow(at: indexPath)
             cell.apply(viewModel: viewModel)
@@ -53,13 +54,21 @@ extension ReviewDetailListAdapter: UITableViewDataSource {
     }
 }
 
-extension ReviewDetailListAdapter: UITableViewDelegate {
+extension RestaurantDishListAdapter: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if let delegate = delegate {
             return delegate.heightForRowAt()
         } else {
             print("Delegate must be initialized.")
             return 0
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if let delegate = delegate {
+            delegate.didSelectRow(at: indexPath)
+        } else {
+            print("Delegate must be initialized.")
         }
     }
 }

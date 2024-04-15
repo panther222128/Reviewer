@@ -8,31 +8,31 @@
 import Foundation
 import Combine
 
-protocol ReviewListViewModel: ReviewListDataSource {
-    var listItemViewModelPublisher: AnyPublisher<[ReviewListItemViewModel], Never> { get }
+protocol RestaurantListViewModel: RestaurantListDataSource {
+    var listItemViewModelPublisher: AnyPublisher<[RestaurantListItemViewModel], Never> { get }
     
     func loadListItem()
     func didPressedAlertConfirmButton(with restaurantName: String)
     func didSelectItem(at indexPath: IndexPath)
 }
 
-struct ReviewListViewModelActions {
+struct RestaurantListViewModelActions {
     let showStudioView: (String) -> Void
-    let showReviewDetailView: (String) -> Void
+    let showRestaurantDishListView: (String) -> Void
 }
 
-final class DefaultReviewListViewModel: ReviewListViewModel {
+final class DefaultRestaurantListViewModel: RestaurantListViewModel {
     
     private let repository: ReviewListRepository
-    private let actions: ReviewListViewModelActions
+    private let actions: RestaurantListViewModelActions
     private let restaurants: [Restaurant]
-    private var listItemViewModels: [ReviewListItemViewModel]
-    private var listItemViewModelSubject: CurrentValueSubject<[ReviewListItemViewModel], Never>
-    var listItemViewModelPublisher: AnyPublisher<[ReviewListItemViewModel], Never> {
+    private var listItemViewModels: [RestaurantListItemViewModel]
+    private var listItemViewModelSubject: CurrentValueSubject<[RestaurantListItemViewModel], Never>
+    var listItemViewModelPublisher: AnyPublisher<[RestaurantListItemViewModel], Never> {
         return listItemViewModelSubject.eraseToAnyPublisher()
     }
     
-    init(repository: ReviewListRepository, actions: ReviewListViewModelActions) {
+    init(repository: ReviewListRepository, actions: RestaurantListViewModelActions) {
         self.repository = repository
         self.actions = actions
         self.restaurants = []
@@ -50,13 +50,13 @@ final class DefaultReviewListViewModel: ReviewListViewModel {
     }
     
     func didSelectItem(at indexPath: IndexPath) {
-        actions.showReviewDetailView(restaurants[indexPath.row].id)
+        actions.showRestaurantDishListView(restaurants[indexPath.row].id)
     }
     
 }
 
-extension DefaultReviewListViewModel: ReviewListDataSource {
-    func cellForRow(at indexPath: IndexPath) -> ReviewListItemViewModel {
+extension DefaultRestaurantListViewModel: RestaurantListDataSource {
+    func cellForRow(at indexPath: IndexPath) -> RestaurantListItemViewModel {
         return listItemViewModels[indexPath.row]
     }
     

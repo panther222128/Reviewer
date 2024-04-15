@@ -8,28 +8,30 @@
 import UIKit
 
 protocol ViewFlowCoordinatorDependencies {
-    func makeReviewListViewController(actions: ReviewListViewModelActions) -> ReviewListViewController
+    func makeRestaurantListViewController(actions: RestaurantListViewModelActions) -> RestaurantListViewController
     func makeStudioViewController(actions: StudioViewModelActions, restaurantName: String) -> StudioViewController
     func makeTasteListViewController(dish: Dish, restaurantName: String) -> TasteListViewController
     
     func makeSettingsViewController() -> SettingsViewController
     
-    func makeReviewDetailViewController(id: String) -> ReviewDetailViewController
+    func makeRestaurantDishListViewController(id: String, actions: RestaurantDishListViewModelActions) -> RestaurantDishListViewController
+    func makeDishDetailViewController(tastes: [String]) -> DishDetailViewController
 }
 
 final class ViewFlowCoordinator {
     
-    private var reviewListNavigator: UINavigationController?
+    private var restaurantListNavigator: UINavigationController?
     private var settingsListNavigator: UINavigationController?
     private weak var tabBarController: UITabBarController?
     private let dependencies: ViewFlowCoordinatorDependencies
     
-    private weak var reviewListViewController: ReviewListViewController?
+    private weak var restaurantListViewController: RestaurantListViewController?
     private weak var studioViewController: StudioViewController?
     private weak var tasteListViewController: TasteListViewController?
     private weak var settingsViewController: SettingsViewController?
     
-    private weak var reviewDetailViewController: ReviewDetailViewController?
+    private weak var restaurantDishListViewController: RestaurantDishListViewController?
+    private weak var dishDetailViewController: DishDetailViewController?
     
     init(tabBarController: UITabBarController, dependencies: ViewFlowCoordinatorDependencies) {
         self.tabBarController = tabBarController
@@ -40,41 +42,35 @@ final class ViewFlowCoordinator {
         tabBarController?.tabBar.tintColor = .black
         tabBarController?.tabBar.unselectedItemTintColor = .black
         
-        let reviewListViewController = dependencies.makeReviewListViewController(actions: .init(showStudioView: showStudioView(with:), showReviewDetailView: showReviewDetailView(id:)))
-        self.reviewListViewController = reviewListViewController
+        let reviewListViewController = dependencies.makeRestaurantListViewController(actions: .init(showStudioView: showStudioView(with:), showRestaurantDishListView: showRestaurantDishListView(id:)))
+        self.restaurantListViewController = reviewListViewController
         
         let reviewListViewTabBarItem = UITabBarItem(title: "List", image: UIImage(systemName: "list.bullet"), tag: 0)
-        
-        
-        
-        
         
         let settingsViewController = dependencies.makeSettingsViewController()
         self.settingsViewController = settingsViewController
         
         let settingsListViewTabBarItem = UITabBarItem(title: "Settings", image: UIImage(systemName: "gear"), tag: 1)
         
-        
-        
-        reviewListNavigator = UINavigationController()
+        restaurantListNavigator = UINavigationController()
         settingsListNavigator = UINavigationController()
         
-        reviewListNavigator?.tabBarItem = reviewListViewTabBarItem
+        restaurantListNavigator?.tabBarItem = reviewListViewTabBarItem
         settingsListNavigator?.tabBarItem = settingsListViewTabBarItem
         
-        guard let reviewListNavigator = reviewListNavigator else { return }
+        guard let reviewListNavigator = restaurantListNavigator else { return }
         guard let settingsListNavigator = settingsListNavigator else { return }
         
         tabBarController?.viewControllers = [reviewListNavigator, settingsListNavigator]
         
-        self.reviewListNavigator?.pushViewController(reviewListViewController, animated: true)
+        self.restaurantListNavigator?.pushViewController(reviewListViewController, animated: true)
         self.settingsListNavigator?.pushViewController(settingsViewController, animated: true)
     }
     
     private func showStudioView(with restaurantName: String) {
         let viewController = dependencies.makeStudioViewController(actions: .init(showTasteListView: showTasteListView), restaurantName: restaurantName)
         studioViewController = viewController
-        reviewListNavigator?.pushViewController(viewController, animated: true)
+        restaurantListNavigator?.pushViewController(viewController, animated: true)
     }
     
     private func showTasteListView(with dish: Dish, restaurantName: String) {
@@ -83,10 +79,16 @@ final class ViewFlowCoordinator {
         studioViewController?.navigationController?.pushViewController(viewController, animated: true)
     }
     
-    private func showReviewDetailView(id: String) {
-        let viewController = dependencies.makeReviewDetailViewController(id: id)
-        reviewDetailViewController = viewController
-        reviewListNavigator?.pushViewController(viewController, animated: true)
+    private func showRestaurantDishListView(id: String) {
+        let viewController = dependencies.makeRestaurantDishListViewController(id: id, actions: .init(showDishDetail: showDishDetailView(with:)))
+        restaurantDishListViewController = viewController
+        restaurantListNavigator?.pushViewController(viewController, animated: true)
+    }
+    
+    private func showDishDetailView(with tastes: [String]) {
+        let viewController = dependencies.makeDishDetailViewController(tastes: tastes)
+        dishDetailViewController = viewController
+        restaurantDishListViewController?.navigationController?.pushViewController(viewController, animated: true)
     }
     
 }

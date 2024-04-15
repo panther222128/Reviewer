@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class ReviewListItemCell: UITableViewCell {
+final class RestaurantListItemCell: UITableViewCell {
     
     private let restaurantLabel: UILabel = {
         let label = UILabel()
@@ -25,7 +25,7 @@ final class ReviewListItemCell: UITableViewCell {
     }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: .default, reuseIdentifier: "ReviewListItemCellID")
+        super.init(style: .default, reuseIdentifier: "RestaurantListItemCellID")
         addSubviews()
         adjustLayoutOf(restaurantLabel: restaurantLabel)
         adjustLayoutOf(dateLabel: dateLabel)
@@ -35,14 +35,14 @@ final class ReviewListItemCell: UITableViewCell {
         super.init(coder: coder)
     }
     
-    func apply(reviewListItemViewModel: ReviewListItemViewModel) {
+    func apply(reviewListItemViewModel: RestaurantListItemViewModel) {
         restaurantLabel.text = reviewListItemViewModel.restaurantName
         dateLabel.text = reviewListItemViewModel.date.formatYearMonthDate()
     }
     
 }
 
-extension ReviewListItemCell {
+extension RestaurantListItemCell {
     private func addSubviews() {
         addSubview(restaurantLabel)
         addSubview(dateLabel)

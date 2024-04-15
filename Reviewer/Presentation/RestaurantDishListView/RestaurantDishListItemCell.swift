@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class ReviewDetailDishItemCell: UITableViewCell {
+final class RestaurantDishListItemCell: UITableViewCell {
     
     private let dishNameLabel: UILabel = {
         let label = UILabel()
@@ -24,7 +24,7 @@ final class ReviewDetailDishItemCell: UITableViewCell {
         super.init(coder: coder)
     }
     
-    func apply(viewModel: ReviewDetailDishItemViewModel) {
+    func apply(viewModel: RestaurantDishListItemViewModel) {
         dishNameLabel.text = viewModel.name
     }
     

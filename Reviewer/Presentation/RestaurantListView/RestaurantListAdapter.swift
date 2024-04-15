@@ -7,24 +7,24 @@
 
 import UIKit
 
-protocol ReviewListDataSource: AnyObject {
-    func cellForRow(at indexPath: IndexPath) -> ReviewListItemViewModel
+protocol RestaurantListDataSource: AnyObject {
+    func cellForRow(at indexPath: IndexPath) -> RestaurantListItemViewModel
     func numberOfRowsIn(section: Int) -> Int
 }
 
-protocol ReviewListDelegate: AnyObject {
+protocol RestaurantListDelegate: AnyObject {
     func heightForRowAt() -> CGFloat
     func didSelectItem(at indexPath: IndexPath)
 }
 
-final class ReviewListAdapter: NSObject {
+final class RestaurantListAdapter: NSObject {
     
     private let tableView: UITableView
-    private weak var dataSource: ReviewListDataSource?
-    private weak var delegate: ReviewListDelegate?
+    private weak var dataSource: RestaurantListDataSource?
+    private weak var delegate: RestaurantListDelegate?
     
-    init(tableView: UITableView, dataSource: ReviewListDataSource?, delegate: ReviewListDelegate?) {
-        tableView.register(ReviewListItemCell.self, forCellReuseIdentifier: "ReviewListItemCellID")
+    init(tableView: UITableView, dataSource: RestaurantListDataSource?, delegate: RestaurantListDelegate?) {
+        tableView.register(RestaurantListItemCell.self, forCellReuseIdentifier: "ReviewListItemCellID")
         self.tableView = tableView
         self.dataSource = dataSource
         self.delegate = delegate
@@ -36,9 +36,9 @@ final class ReviewListAdapter: NSObject {
     
 }
 
-extension ReviewListAdapter: UITableViewDataSource {
+extension RestaurantListAdapter: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "ReviewListItemCellID", for: indexPath) as? ReviewListItemCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "RestaurantListItemCell", for: indexPath) as? RestaurantListItemCell else {
             print("Datasource must be initialized.")
             return .init()
         }
@@ -61,7 +61,7 @@ extension ReviewListAdapter: UITableViewDataSource {
     }
 }
 
-extension ReviewListAdapter: UITableViewDelegate {
+extension RestaurantListAdapter: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if let delegate {
             return delegate.heightForRowAt()

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ReviewListItemViewModel {
+struct RestaurantListItemViewModel {
     let restaurantName: String
     let date: Date
 }

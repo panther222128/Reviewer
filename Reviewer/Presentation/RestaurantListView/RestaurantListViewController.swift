@@ -8,17 +8,17 @@
 import UIKit
 import Combine
 
-final class ReviewListViewController: UIViewController {
+final class RestaurantListViewController: UIViewController {
     
-    private let reviewListTableView: UITableView = {
+    private let restaurantListTableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.separatorInset = .init(top: 0, left: 0, bottom: 0, right: 0)
         return tableView
     }()
     
-    private var viewModel: ReviewListViewModel!
-    private var listAdapter: ReviewListAdapter?
+    private var viewModel: RestaurantListViewModel!
+    private var listAdapter: RestaurantListAdapter?
     
     private var cancellables: Set<AnyCancellable> = []
     
@@ -26,11 +26,11 @@ final class ReviewListViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         
-        listAdapter = .init(tableView: reviewListTableView, dataSource: viewModel, delegate: self)
+        listAdapter = .init(tableView: restaurantListTableView, dataSource: viewModel, delegate: self)
         
         addSubviews()
         
-        adjustLayoutOf(reviewListTableView: reviewListTableView)
+        adjustLayoutOf(reviewListTableView: restaurantListTableView)
         
         addBarButtonItem()
         
@@ -44,24 +44,24 @@ final class ReviewListViewController: UIViewController {
         tabBarController?.tabBar.isHidden = false
     }
     
-    static func create(with viewModel: ReviewListViewModel) -> ReviewListViewController {
-        let viewController = ReviewListViewController()
+    static func create(with viewModel: RestaurantListViewModel) -> RestaurantListViewController {
+        let viewController = RestaurantListViewController()
         viewController.viewModel = viewModel
         return viewController
     }
     
-    private func subscribe(listItemViewModels: AnyPublisher<[ReviewListItemViewModel], Never>) {
+    private func subscribe(listItemViewModels: AnyPublisher<[RestaurantListItemViewModel], Never>) {
         listItemViewModels
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
-                self?.reviewListTableView.reloadData()
+                self?.restaurantListTableView.reloadData()
             }
             .store(in: &cancellables)
     }
     
 }
 
-extension ReviewListViewController {
+extension RestaurantListViewController {
     private func addBarButtonItem() {
         let barButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didPressedAddButon))
         navigationItem.rightBarButtonItem = barButtonItem
@@ -93,7 +93,7 @@ extension ReviewListViewController {
     }
 }
 
-extension ReviewListViewController: ReviewListDelegate {
+extension RestaurantListViewController: RestaurantListDelegate {
     func heightForRowAt() -> CGFloat {
         return 80
     }
@@ -103,9 +103,9 @@ extension ReviewListViewController: ReviewListDelegate {
     }
 }
 
-extension ReviewListViewController {
+extension RestaurantListViewController {
     private func addSubviews() {
-        view.addSubview(reviewListTableView)
+        view.addSubview(restaurantListTableView)
     }
     
     private func adjustLayoutOf(reviewListTableView: UITableView) {

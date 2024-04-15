@@ -8,30 +8,37 @@
 import Foundation
 import Combine
 
-protocol ReviewDetailViewModel: ReviewDetailListDataSource {
-    var listItemsPublisher: AnyPublisher<[ReviewDetailDishItemViewModel], Never> { get }
+protocol RestaurantDishListViewModel: RestaurantDishListDataSource {
+    var listItemsPublisher: AnyPublisher<[RestaurantDishListItemViewModel], Never> { get }
     
     func loadDishes()
+    func didSelectRow(at indexPath: IndexPath)
 }
 
-final class DefaultReviewDetailViewModel: ReviewDetailViewModel {
+struct RestaurantDishListViewModelActions {
+    let showDishDetail: ([String]) -> Void
+}
+
+final class DefaultRestaurantDishListViewModel: RestaurantDishListViewModel {
     
     private let id: String
     private var dishes: [Dish]
-    private var listItems: [ReviewDetailDishItemViewModel]
-    private let listItemsSubject: CurrentValueSubject<[ReviewDetailDishItemViewModel], Never>
+    private var listItems: [RestaurantDishListItemViewModel]
+    private let listItemsSubject: CurrentValueSubject<[RestaurantDishListItemViewModel], Never>
     private let repository: ReviewListRepository
+    private let actions: RestaurantDishListViewModelActions
     
-    var listItemsPublisher: AnyPublisher<[ReviewDetailDishItemViewModel], Never> {
+    var listItemsPublisher: AnyPublisher<[RestaurantDishListItemViewModel], Never> {
         return listItemsSubject.eraseToAnyPublisher()
     }
     
-    init(id: String, repository: ReviewListRepository) {
+    init(id: String, repository: ReviewListRepository, actions: RestaurantDishListViewModelActions) {
         self.id = id
         self.dishes = []
         self.listItems = []
         self.listItemsSubject = .init([])
         self.repository = repository
+        self.actions = actions
     }
     
     func loadDishes() {
@@ -49,10 +56,14 @@ final class DefaultReviewDetailViewModel: ReviewDetailViewModel {
         }
     }
     
+    func didSelectRow(at indexPath: IndexPath) {
+        actions.showDishDetail(dishes[indexPath.row].tastes)
+    }
+    
 }
 
-extension DefaultReviewDetailViewModel {
-    func cellForRow(at indexPath: IndexPath) -> ReviewDetailDishItemViewModel {
+extension DefaultRestaurantDishListViewModel {
+    func cellForRow(at indexPath: IndexPath) -> RestaurantDishListItemViewModel {
         return .init(name: dishes[indexPath.row].name)
     }
     

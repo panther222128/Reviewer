@@ -7,6 +7,6 @@
 
 import Foundation
 
-struct ReviewDetailDishItemViewModel {
+struct RestaurantDishListItemViewModel {
     let name: String
 }
