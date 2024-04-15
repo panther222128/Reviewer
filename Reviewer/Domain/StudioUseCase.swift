@@ -8,6 +8,8 @@
 import Foundation
 import AVFoundation
 
+// MARK: - Boilerplate
+
 protocol StudioUseCase {
     func setSession(on previewView: PreviewView)
     func integrateSession<T>(on previewView: PreviewView, delegate: T) where T: AVCapturePhotoOutputReadinessCoordinatorDelegate
