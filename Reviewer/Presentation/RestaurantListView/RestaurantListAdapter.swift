@@ -40,14 +40,14 @@ final class RestaurantListAdapter: NSObject {
 extension RestaurantListAdapter: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "RestaurantListItemCellID", for: indexPath) as? RestaurantListItemCell else {
-            print("Datasource must be initialized.")
+            print("Data source must be initialized.")
             return .init()
         }
         if let dataSource = dataSource {
             cell.apply(reviewListItemViewModel: dataSource.cellForRow(at: indexPath))
             return cell
         } else {
-            print("Datasource must be initialized.")
+            print("Data source must be initialized.")
             return .init()
         }
     }
@@ -56,7 +56,7 @@ extension RestaurantListAdapter: UITableViewDataSource {
         if let dataSource = dataSource {
             return dataSource.numberOfRowsIn(section: section)
         } else {
-            print("Datasource must be initialized.")
+            print("Data source must be initialized.")
             return 0
         }
     }

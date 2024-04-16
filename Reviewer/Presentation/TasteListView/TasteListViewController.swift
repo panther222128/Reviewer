@@ -88,7 +88,7 @@ extension TasteListViewController {
         let alertController = UIAlertController(title: "완료", message: nil, preferredStyle: .alert)
 
         let confirmAction = UIAlertAction(title: "저장", style: .default) { _ in
-            // MARK: - Save.
+            self.viewModel.didSaveDish()
             self.navigationController?.popViewController(animated: true)
         }
         alertController.addAction(confirmAction)

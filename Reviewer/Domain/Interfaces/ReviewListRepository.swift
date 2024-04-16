@@ -8,9 +8,9 @@
 import Foundation
 
 protocol ReviewListRepository {
-    func saveRestaurant(with name: String)
+    func saveRestaurant(id: String, name: String)
     func fetchRestaurants(completion: @escaping ([Restaurant]?, Error?) -> Void)
     func delete(with id: String)
-    func update(with id: String, dish: Dish)
+    func save(dish: Dish, id: String)
     func fetchDishes(with id: String, completion: @escaping ([Dish]?, Error?) -> Void)
 }

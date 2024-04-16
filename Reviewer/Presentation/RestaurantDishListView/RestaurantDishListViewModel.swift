@@ -47,6 +47,7 @@ final class DefaultRestaurantDishListViewModel: RestaurantDishListViewModel {
                 if let self = self {
                     self.dishes = dishes
                     self.listItems = self.dishes.map { .init(name: $0.name) }
+                    self.listItemsSubject.send(self.listItems)
                 } else {
                     print("View model is empty.")
                 }

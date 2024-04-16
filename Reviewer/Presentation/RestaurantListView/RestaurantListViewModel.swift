@@ -14,12 +14,12 @@ protocol RestaurantListViewModel: RestaurantListDataSource {
     func loadListItem()
     func didPressedAlertConfirmButton(with restaurantName: String)
     func didSelectItem(at indexPath: IndexPath)
-    func didAddRestaurant(with name: String)
+    func didAddRestaurant(name: String)
     func didDeleteRestaurant(at indexPath: IndexPath)
 }
 
 struct RestaurantListViewModelActions {
-    let showStudioView: (String) -> Void
+    let showStudioView: (String, String) -> Void
     let showRestaurantDishListView: (String) -> Void
 }
 
@@ -28,6 +28,7 @@ final class DefaultRestaurantListViewModel: RestaurantListViewModel {
     private let repository: ReviewListRepository
     private let actions: RestaurantListViewModelActions
     private var restaurants: [Restaurant]
+    private var restaurantId: String
     private var listItemViewModels: [RestaurantListItemViewModel]
     private var listItemViewModelSubject: CurrentValueSubject<[RestaurantListItemViewModel], Never>
     var listItemViewModelPublisher: AnyPublisher<[RestaurantListItemViewModel], Never> {
@@ -38,6 +39,7 @@ final class DefaultRestaurantListViewModel: RestaurantListViewModel {
         self.repository = repository
         self.actions = actions
         self.restaurants = []
+        self.restaurantId = ""
         self.listItemViewModels = []
         self.listItemViewModelSubject = .init([])
     }
@@ -57,15 +59,17 @@ final class DefaultRestaurantListViewModel: RestaurantListViewModel {
     }
     
     func didPressedAlertConfirmButton(with restaurantName: String) {
-        actions.showStudioView(restaurantName)
+        actions.showStudioView(restaurantName, restaurantId)
     }
     
     func didSelectItem(at indexPath: IndexPath) {
         actions.showRestaurantDishListView(restaurants[indexPath.row].id)
     }
     
-    func didAddRestaurant(with name: String) {
-        repository.saveRestaurant(with: name)
+    func didAddRestaurant(name: String) {
+        let id = UUID().uuidString
+        restaurantId = id
+        repository.saveRestaurant(id: id, name: name)
     }
     
     func didDeleteRestaurant(at indexPath: IndexPath) {

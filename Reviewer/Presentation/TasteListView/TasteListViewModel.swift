@@ -14,11 +14,14 @@ protocol TasteListViewModel {
     func loadTastes()
     func didSelectTaste(at index: Int)
     func didDeselectTaste(at index: Int)
+    func didSaveDish()
 }
 
 final class DefaultTasteListViewModel: TasteListViewModel {
     
+    private let repository: ReviewListRepository
     private let restaurantName: String
+    private let restaurantId: String
     private let dishName: String
     private let tastes: [String]
     private let tastesSubject: CurrentValueSubject<[String], Never>
@@ -28,9 +31,11 @@ final class DefaultTasteListViewModel: TasteListViewModel {
     
     private var selectedTastes: [String]
     
-    init(dish: Dish, restaurantName: String) {
+    init(repository: ReviewListRepository, dishName: String, restaurantName: String, restaurantId: String) {
+        self.repository = repository
         self.restaurantName = restaurantName
-        self.dishName = dish.name
+        self.restaurantId = restaurantId
+        self.dishName = dishName
         self.tastes = Constants.tastes
         self.tastesSubject = .init([])
         self.selectedTastes = []
@@ -49,6 +54,12 @@ final class DefaultTasteListViewModel: TasteListViewModel {
             selectedTastes.remove(at: firstIndex)
         } else {
             print("Cannot find selected taste.")
+        }
+    }
+    
+    func didSaveDish() {
+        if !tastes.isEmpty {
+            repository.save(dish: .init(id: UUID().uuidString, name: dishName, date: Date(), tastes: selectedTastes), id: restaurantId)
         }
     }
     

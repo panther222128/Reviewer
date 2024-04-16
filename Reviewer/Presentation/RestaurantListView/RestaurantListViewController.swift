@@ -31,7 +31,7 @@ final class RestaurantListViewController: UIViewController {
         
         addSubviews()
         
-        adjustLayoutOf(reviewListTableView: restaurantListTableView)
+        adjustLayoutOf(restaurantListTableView: restaurantListTableView)
         
         addBarButtonItem()
         
@@ -76,8 +76,8 @@ extension RestaurantListViewController {
             if let textFields = alertController.textFields {
                 if let textField = textFields.first {
                     if let text = textField.text, !text.isEmpty {
+                        self.viewModel.didAddRestaurant(name: text)
                         self.viewModel.didPressedAlertConfirmButton(with: text)
-                        self.viewModel.didAddRestaurant(with: text)
                         self.viewModel.loadListItem()
                     } else {
                         print("Text must not be empty.")
@@ -125,10 +125,10 @@ extension RestaurantListViewController {
         view.addSubview(restaurantListTableView)
     }
     
-    private func adjustLayoutOf(reviewListTableView: UITableView) {
-        reviewListTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        reviewListTableView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        reviewListTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        reviewListTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+    private func adjustLayoutOf(restaurantListTableView: UITableView) {
+        restaurantListTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        restaurantListTableView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        restaurantListTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        restaurantListTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
     }
 }

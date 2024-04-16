@@ -41,20 +41,20 @@ final class SceneDIContainer: ViewFlowCoordinatorDependencies {
         return DefaultStudioUseCase(studio: Studio())
     }
     
-    func makeStudioViewModel(actions: StudioViewModelActions, restaurantName: String) -> StudioViewModel {
-        return DefaultStudioViewModel(actions: actions, studio: Studio(), useCase: makeStudioUseCase(), restaurantName: restaurantName)
+    func makeStudioViewModel(actions: StudioViewModelActions, restaurantName: String, id: String) -> StudioViewModel {
+        return DefaultStudioViewModel(actions: actions, studio: Studio(), useCase: makeStudioUseCase(), restaurantName: restaurantName, id: id)
     }
     
-    func makeStudioViewController(actions: StudioViewModelActions, restaurantName: String) -> StudioViewController {
-        return StudioViewController.create(with: makeStudioViewModel(actions: actions, restaurantName: restaurantName))
+    func makeStudioViewController(actions: StudioViewModelActions, restaurantName: String, id: String) -> StudioViewController {
+        return StudioViewController.create(with: makeStudioViewModel(actions: actions, restaurantName: restaurantName, id: id))
     }
     
-    func makeTasteListViewModel(dish: Dish, restaurantName: String) -> TasteListViewModel {
-        return DefaultTasteListViewModel(dish: dish, restaurantName: restaurantName)
+    func makeTasteListViewModel(dishName: String, restaurantName: String, restaurantId: String) -> TasteListViewModel {
+        return DefaultTasteListViewModel(repository: makeReviewListRepository(), dishName: dishName, restaurantName: restaurantName, restaurantId: restaurantId)
     }
     
-    func makeTasteListViewController(dish: Dish, restaurantName: String) -> TasteListViewController {
-        return TasteListViewController.create(with: makeTasteListViewModel(dish: dish, restaurantName: restaurantName))
+    func makeTasteListViewController(dishName: String, restaurantName: String, restaurantId: String) -> TasteListViewController {
+        return TasteListViewController.create(with: makeTasteListViewModel(dishName: dishName, restaurantName: restaurantName, restaurantId: restaurantId))
     }
     
     func makeSettingsViewController() -> SettingsViewController {

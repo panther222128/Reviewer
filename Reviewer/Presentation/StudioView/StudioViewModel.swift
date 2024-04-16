@@ -9,7 +9,7 @@ import Foundation
 import AVFoundation
 
 protocol StudioViewModel {
-    func setSession(on previewViwe: PreviewView)
+    func setSession(on previewView: PreviewView)
     func integrateCaptureSession<T>(on previewView: PreviewView, delegate: T) where T: AVCapturePhotoOutputReadinessCoordinatorDelegate
     func capturePhoto(from previewView: PreviewView)
     func startSessionRunning()
@@ -20,7 +20,7 @@ protocol StudioViewModel {
 }
 
 struct StudioViewModelActions {
-    let showTasteListView: (Dish, String) -> Void
+    let showTasteListView: (String, String, String) -> Void
 }
 
 final class DefaultStudioViewModel: StudioViewModel {
@@ -29,16 +29,18 @@ final class DefaultStudioViewModel: StudioViewModel {
     private let studio: Studio
     private let useCase: StudioUseCase
     private let restaurantName: String
+    private let restaurantId: String
     
-    init(actions: StudioViewModelActions, studio: Studio, useCase: StudioUseCase, restaurantName: String) {
+    init(actions: StudioViewModelActions, studio: Studio, useCase: StudioUseCase, restaurantName: String, id: String) {
         self.actions = actions
         self.studio = studio
         self.useCase = useCase
         self.restaurantName = restaurantName
+        self.restaurantId = id
     }
     
-    func setSession(on previewViwe: PreviewView) {
-        studio.setSession(on: previewViwe)
+    func setSession(on previewView: PreviewView) {
+        studio.setSession(on: previewView)
     }
     
     func integrateCaptureSession<T>(on previewView: PreviewView, delegate: T) where T: AVCapturePhotoOutputReadinessCoordinatorDelegate {
@@ -66,7 +68,7 @@ final class DefaultStudioViewModel: StudioViewModel {
     }
     
     func didLoadTasteView(with dishName: String) {
-        actions.showTasteListView(.init(id: UUID().uuidString, name: dishName, date: Date(), tastes: []), restaurantName)
+        actions.showTasteListView(dishName, restaurantName, restaurantId)
     }
     
 }

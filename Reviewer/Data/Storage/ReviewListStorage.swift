@@ -9,10 +9,10 @@ import Foundation
 import SwiftData
 
 protocol ReviewListStorage {
-    func saveRestaurant(with name: String)
+    func saveRestaurant(id: String, name: String)
     func fetchRestaurants(completion: @escaping ([Restaurant]?, Error?) -> Void)
     func delete(with id: String)
-    func update(with id: String, dish: Dish)
+    func save(dish: Dish, id: String)
     func fetchDishes(with id: String, completion: @escaping ([Dish]?, Error?) -> Void)
 }
 
@@ -32,9 +32,9 @@ final class DefaultReviewListStorage: ReviewListStorage {
         }
     }
     
-    func saveRestaurant(with name: String) {
+    func saveRestaurant(id: String, name: String) {
         if let context {
-            let restaurant = RestaurantEntity(id: UUID().uuidString, name: name, date: Date())
+            let restaurant = RestaurantEntity(id: id, name: name, date: Date())
             context.insert(restaurant)
         }
     }
@@ -60,7 +60,7 @@ final class DefaultReviewListStorage: ReviewListStorage {
         }
     }
     
-    func update(with id: String, dish: Dish) {
+    func save(dish: Dish, id: String) {
         if let restaurant = fetchRestaurant(with: id) {
             restaurant.dishes.append(.init(id: dish.id, name: dish.name, tastes: dish.tastes))
         } else {

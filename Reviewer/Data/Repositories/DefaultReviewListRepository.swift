@@ -15,8 +15,8 @@ final class DefaultReviewListRepository: ReviewListRepository {
         self.storage = storage
     }
     
-    func saveRestaurant(with name: String) {
-        storage.saveRestaurant(with: name)
+    func saveRestaurant(id: String, name: String) {
+        storage.saveRestaurant(id: id, name: name)
     }
     
     func fetchRestaurants(completion: @escaping ([Restaurant]?, Error?) -> Void) {
@@ -27,8 +27,8 @@ final class DefaultReviewListRepository: ReviewListRepository {
         storage.delete(with: id)
     }
     
-    func update(with id: String, dish: Dish) {
-        storage.update(with: id, dish: dish)
+    func save(dish: Dish, id: String) {
+        storage.save(dish: dish, id: id)
     }
     
     func fetchDishes(with id: String, completion: @escaping ([Dish]?, Error?) -> Void) {

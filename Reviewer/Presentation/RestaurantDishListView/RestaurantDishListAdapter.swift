@@ -38,11 +38,16 @@ final class RestaurantDishListAdapter: NSObject {
 
 extension RestaurantDishListAdapter: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return dataSource?.numberOfRowsIn(section: section) ?? 0
+        if let dataSource {
+            return dataSource.numberOfRowsIn(section: section)
+        } else {
+            print("Cannot find data source.")
+            return 0
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "ReviewDetailItemCellID", for: indexPath) as? RestaurantDishListItemCell else { return .init() }
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "ReviewDetailDishItemCellID", for: indexPath) as? RestaurantDishListItemCell else { return .init() }
         if let dataSource {
             let viewModel = dataSource.cellForRow(at: indexPath)
             cell.apply(viewModel: viewModel)

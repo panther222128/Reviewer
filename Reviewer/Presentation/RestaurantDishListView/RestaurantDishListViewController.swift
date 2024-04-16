@@ -28,7 +28,13 @@ final class RestaurantDishListViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         
+        addSubviews()
+        
+        adjustLayoutOfDishListTableView(dishListTableView: dishListTableView)
+        
         reviewDetailListAdapter = .init(tableView: dishListTableView, dataSource: viewModel, delegate: self)
+        
+        subscribe(reviewDetailListPublisher: viewModel.listItemsPublisher)
         
         viewModel.loadDishes()
     }
@@ -48,6 +54,19 @@ final class RestaurantDishListViewController: UIViewController {
             .store(in: &cancellables)
     }
     
+}
+
+extension RestaurantDishListViewController {
+    private func addSubviews() {
+        view.addSubview(dishListTableView)
+    }
+    
+    private func adjustLayoutOfDishListTableView(dishListTableView: UITableView) {
+        dishListTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        dishListTableView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        dishListTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        dishListTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+    }
 }
 
 extension RestaurantDishListViewController: RestaurantDishListDelegate {
