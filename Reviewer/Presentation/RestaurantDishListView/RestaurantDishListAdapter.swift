@@ -15,6 +15,7 @@ protocol RestaurantDishListDataSource: AnyObject {
 protocol RestaurantDishListDelegate: AnyObject {
     func heightForRowAt() -> CGFloat
     func didSelectRow(at indexPath: IndexPath)
+    func didTrailingSwipeForRow(at indexPath: IndexPath, tableView: UITableView) -> UISwipeActionsConfiguration
 }
 
 final class RestaurantDishListAdapter: NSObject {
@@ -74,6 +75,15 @@ extension RestaurantDishListAdapter: UITableViewDelegate {
             delegate.didSelectRow(at: indexPath)
         } else {
             print("Delegate must be initialized.")
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        if let delegate {
+            return delegate.didTrailingSwipeForRow(at: indexPath, tableView: tableView)
+        } else {
+            print("Cannot find delegate.")
+            return nil
         }
     }
 }

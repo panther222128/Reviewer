@@ -13,6 +13,7 @@ protocol RestaurantDishListViewModel: RestaurantDishListDataSource {
     
     func loadDishes()
     func didSelectRow(at indexPath: IndexPath)
+    func didDeleteDish(at indexPath: IndexPath)
 }
 
 struct RestaurantDishListViewModelActions {
@@ -59,6 +60,11 @@ final class DefaultRestaurantDishListViewModel: RestaurantDishListViewModel {
     
     func didSelectRow(at indexPath: IndexPath) {
         actions.showDishDetail(dishes[indexPath.row].tastes)
+    }
+    
+    func didDeleteDish(at indexPath: IndexPath) {
+        let dishId = dishes[indexPath.row].id
+        repository.deleteDish(dishId: dishId, restaurantId: id)
     }
     
 }

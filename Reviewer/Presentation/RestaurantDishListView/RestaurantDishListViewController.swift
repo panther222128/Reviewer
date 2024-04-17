@@ -77,4 +77,18 @@ extension RestaurantDishListViewController: RestaurantDishListDelegate {
     func didSelectRow(at indexPath: IndexPath) {
         viewModel.didSelectRow(at: indexPath)
     }
+    
+    func didTrailingSwipeForRow(at indexPath: IndexPath, tableView: UITableView) -> UISwipeActionsConfiguration {
+        let deleteAction = UIContextualAction(style: .destructive, title: "삭제") { action, view, completion in
+            
+            self.viewModel.didDeleteDish(at: indexPath)
+            self.viewModel.loadDishes()
+            completion(true)
+        }
+        
+        deleteAction.backgroundColor = .red
+        
+        let swipeActions = UISwipeActionsConfiguration(actions: [deleteAction])
+        return swipeActions
+    }
 }

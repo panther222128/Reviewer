@@ -12,6 +12,7 @@ protocol ReviewListStorage {
     func saveRestaurant(id: String, name: String)
     func fetchRestaurants(completion: @escaping ([Restaurant]?, Error?) -> Void)
     func delete(with id: String)
+    func deleteDish(dishId: String, restaurantId: String)
     func save(dish: Dish, id: String)
     func fetchDishes(with id: String, completion: @escaping ([Dish]?, Error?) -> Void)
 }
@@ -55,6 +56,22 @@ final class DefaultReviewListStorage: ReviewListStorage {
     func delete(with id: String) {
         if let context, let restaurant = fetchRestaurant(with: id) {
             context.delete(restaurant)
+        } else {
+            
+        }
+    }
+    
+    func deleteDish(dishId: String, restaurantId: String) {
+        if let context, let restaurant = fetchRestaurant(with: restaurantId) {
+            let dishes = restaurant.dishes
+            let filteredDishes = dishes.filter { $0.id == dishId }
+            filteredDishes.forEach { context.delete($0) }
+            
+            if let first = filteredDishes.first, let firstIndex = dishes.firstIndex(of: first) {
+                restaurant.dishes.remove(at: firstIndex)
+            } else {
+                
+            }
         } else {
             
         }

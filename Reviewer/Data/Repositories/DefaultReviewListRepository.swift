@@ -27,6 +27,10 @@ final class DefaultReviewListRepository: ReviewListRepository {
         storage.delete(with: id)
     }
     
+    func deleteDish(dishId: String, restaurantId: String) {
+        storage.deleteDish(dishId: dishId, restaurantId: restaurantId)
+    }
+    
     func save(dish: Dish, id: String) {
         storage.save(dish: dish, id: id)
     }
