@@ -48,7 +48,7 @@ final class DefaultRestaurantListViewModel: RestaurantListViewModel {
         repository.fetchRestaurants { [weak self] restaurants, error in
             if let restaurants {
                 if let self = self {
-                    self.restaurants = restaurants
+                    self.restaurants = restaurants.sorted(by: { $0.date < $1.date } )
                     self.listItemViewModels = self.restaurants.map { .init(restaurantName: $0.name, date: $0.date) }
                     self.listItemViewModelSubject.send(self.listItemViewModels)
                 } else {

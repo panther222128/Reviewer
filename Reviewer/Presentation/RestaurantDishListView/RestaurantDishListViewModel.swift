@@ -61,7 +61,7 @@ final class DefaultRestaurantDishListViewModel: RestaurantDishListViewModel {
         repository.fetchDishes(with: id) { [weak self] dishes, error in
             if let dishes {
                 if let self = self {
-                    self.dishes = dishes
+                    self.dishes = dishes.sorted(by: { $0.date < $1.date } )
                     self.listItems = self.dishes.map { .init(name: $0.name) }
                     self.listItemsSubject.send(self.listItems)
                 } else {
