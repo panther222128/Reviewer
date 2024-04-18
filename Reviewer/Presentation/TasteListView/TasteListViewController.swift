@@ -45,14 +45,25 @@ final class TasteListViewController: UIViewController {
         addBarButtonItem()
         
         viewModel.loadTastes()
+        viewModel.loadTitle()
         
         subscribe(tastesPublisher: viewModel.tastesPublisher)
+        subscribe(restaurantNamePublisher: viewModel.restaurantNamePublisher)
     }
     
     static func create(with viewModel: TasteListViewModel) -> TasteListViewController {
         let viewController = TasteListViewController()
         viewController.viewModel = viewModel
         return viewController
+    }
+    
+    private func subscribe(restaurantNamePublisher: AnyPublisher<String, Never>) {
+        restaurantNamePublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] name in
+                self?.title = name
+            }
+            .store(in: &cancellables)
     }
     
     private func subscribe(tastesPublisher: AnyPublisher<[String], Never>) {

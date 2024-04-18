@@ -30,12 +30,16 @@ final class RestaurantDishListViewController: UIViewController {
         
         addSubviews()
         
+        addBarButtonItem()
+        
         adjustLayoutOfDishListTableView(dishListTableView: dishListTableView)
         
         reviewDetailListAdapter = .init(tableView: dishListTableView, dataSource: viewModel, delegate: self)
         
         subscribe(reviewDetailListPublisher: viewModel.listItemsPublisher)
+        subscribe(restaurantNamePublisher: viewModel.restaurantNamePublisher)
         
+        viewModel.loadTitle()
         viewModel.loadDishes()
     }
     
@@ -54,6 +58,15 @@ final class RestaurantDishListViewController: UIViewController {
             .store(in: &cancellables)
     }
     
+    private func subscribe(restaurantNamePublisher: AnyPublisher<String, Never>) {
+        restaurantNamePublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] name in
+                self?.title = name
+            }
+            .store(in: &cancellables)
+    }
+    
 }
 
 extension RestaurantDishListViewController {
@@ -66,6 +79,17 @@ extension RestaurantDishListViewController {
         dishListTableView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         dishListTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         dishListTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+    }
+}
+
+extension RestaurantDishListViewController {
+    private func addBarButtonItem() {
+        let barButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didPressedAddButon))
+        navigationItem.rightBarButtonItem = barButtonItem
+    }
+    
+    @objc private func didPressedAddButon(_ sender: UIBarButtonItem) {
+        self.viewModel.didLoadStudio()
     }
 }
 

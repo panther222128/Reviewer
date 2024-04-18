@@ -14,7 +14,7 @@ protocol ViewFlowCoordinatorDependencies {
     
     func makeSettingsViewController() -> SettingsViewController
     
-    func makeRestaurantDishListViewController(id: String, actions: RestaurantDishListViewModelActions) -> RestaurantDishListViewController
+    func makeRestaurantDishListViewController(id: String, restaurantName: String, actions: RestaurantDishListViewModelActions) -> RestaurantDishListViewController
     func makeDishDetailViewController(tastes: [String]) -> DishDetailViewController
 }
 
@@ -42,7 +42,7 @@ final class ViewFlowCoordinator {
         tabBarController?.tabBar.tintColor = .black
         tabBarController?.tabBar.unselectedItemTintColor = .black
         
-        let reviewListViewController = dependencies.makeRestaurantListViewController(actions: .init(showStudioView: showStudioView(with:id:), showRestaurantDishListView: showRestaurantDishListView(id:)))
+        let reviewListViewController = dependencies.makeRestaurantListViewController(actions: .init(showStudioView: showStudioView(with:id:), showRestaurantDishListView: showRestaurantDishListView(id:restaurantName:)))
         self.restaurantListViewController = reviewListViewController
         
         let reviewListViewTabBarItem = UITabBarItem(title: "List", image: UIImage(systemName: "list.bullet"), tag: 0)
@@ -79,8 +79,8 @@ final class ViewFlowCoordinator {
         studioViewController?.navigationController?.pushViewController(viewController, animated: true)
     }
     
-    private func showRestaurantDishListView(id: String) {
-        let viewController = dependencies.makeRestaurantDishListViewController(id: id, actions: .init(showDishDetail: showDishDetailView(with:)))
+    private func showRestaurantDishListView(id: String, restaurantName: String) {
+        let viewController = dependencies.makeRestaurantDishListViewController(id: id, restaurantName: restaurantName, actions: .init(showDishDetail: showDishDetailView(with:), showStudio: showStudioView(with:id:)))
         restaurantDishListViewController = viewController
         restaurantListNavigator?.pushViewController(viewController, animated: true)
     }

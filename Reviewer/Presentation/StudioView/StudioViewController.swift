@@ -7,6 +7,7 @@
 
 import UIKit
 import AVFoundation
+import Combine
 
 final class StudioViewController: UIViewController {
     
@@ -34,6 +35,8 @@ final class StudioViewController: UIViewController {
     
     private var viewModel: StudioViewModel!
     
+    private var cancellables: Set<AnyCancellable> = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -46,6 +49,10 @@ final class StudioViewController: UIViewController {
         addActionOf(captureButton: captureButton)
         
         tabBarController?.tabBar.isHidden = true
+        
+        subscribe(restaurantNamePublisher: viewModel.restaurantNamePublisher)
+        
+        viewModel.loadTitle()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -64,6 +71,15 @@ final class StudioViewController: UIViewController {
         let viewController = StudioViewController()
         viewController.viewModel = viewModel
         return viewController
+    }
+    
+    private func subscribe(restaurantNamePublisher: AnyPublisher<String, Never>) {
+        restaurantNamePublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] name in
+                self?.title = name
+            }
+            .store(in: &cancellables)
     }
     
     private func checkAuthorizationStatus() {

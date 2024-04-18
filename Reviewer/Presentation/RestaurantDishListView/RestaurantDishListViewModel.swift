@@ -10,19 +10,25 @@ import Combine
 
 protocol RestaurantDishListViewModel: RestaurantDishListDataSource {
     var listItemsPublisher: AnyPublisher<[RestaurantDishListItemViewModel], Never> { get }
+    var restaurantNamePublisher: AnyPublisher<String, Never> { get }
     
+    func loadTitle()
     func loadDishes()
     func didSelectRow(at indexPath: IndexPath)
     func didDeleteDish(at indexPath: IndexPath)
+    func didLoadStudio()
 }
 
 struct RestaurantDishListViewModelActions {
     let showDishDetail: ([String]) -> Void
+    let showStudio: (String, String) -> Void
 }
 
 final class DefaultRestaurantDishListViewModel: RestaurantDishListViewModel {
     
     private let id: String
+    private let restaurantName: String
+    private let restaurantNameSubject: CurrentValueSubject<String, Never>
     private var dishes: [Dish]
     private var listItems: [RestaurantDishListItemViewModel]
     private let listItemsSubject: CurrentValueSubject<[RestaurantDishListItemViewModel], Never>
@@ -32,14 +38,23 @@ final class DefaultRestaurantDishListViewModel: RestaurantDishListViewModel {
     var listItemsPublisher: AnyPublisher<[RestaurantDishListItemViewModel], Never> {
         return listItemsSubject.eraseToAnyPublisher()
     }
+    var restaurantNamePublisher: AnyPublisher<String, Never> {
+        return restaurantNameSubject.eraseToAnyPublisher()
+    }
     
-    init(id: String, repository: ReviewListRepository, actions: RestaurantDishListViewModelActions) {
+    init(id: String, restaurantName: String, repository: ReviewListRepository, actions: RestaurantDishListViewModelActions) {
         self.id = id
+        self.restaurantName = restaurantName
+        self.restaurantNameSubject = .init("")
         self.dishes = []
         self.listItems = []
         self.listItemsSubject = .init([])
         self.repository = repository
         self.actions = actions
+    }
+    
+    func loadTitle() {
+        restaurantNameSubject.send(restaurantName)
     }
     
     func loadDishes() {
@@ -65,6 +80,10 @@ final class DefaultRestaurantDishListViewModel: RestaurantDishListViewModel {
     func didDeleteDish(at indexPath: IndexPath) {
         let dishId = dishes[indexPath.row].id
         repository.deleteDish(dishId: dishId, restaurantId: id)
+    }
+    
+    func didLoadStudio() {
+        actions.showStudio(restaurantName, id)
     }
     
 }

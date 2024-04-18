@@ -9,8 +9,10 @@ import Foundation
 import Combine
 
 protocol TasteListViewModel {
+    var restaurantNamePublisher: AnyPublisher<String, Never> { get }
     var tastesPublisher: AnyPublisher<[String], Never> { get }
     
+    func loadTitle()
     func loadTastes()
     func didSelectTaste(at index: Int)
     func didDeselectTaste(at index: Int)
@@ -21,6 +23,7 @@ final class DefaultTasteListViewModel: TasteListViewModel {
     
     private let repository: ReviewListRepository
     private let restaurantName: String
+    private let restaurantNameSubject: CurrentValueSubject<String, Never>
     private let restaurantId: String
     private let dishName: String
     private let tastes: [String]
@@ -28,17 +31,25 @@ final class DefaultTasteListViewModel: TasteListViewModel {
     var tastesPublisher: AnyPublisher<[String], Never> {
         return tastesSubject.eraseToAnyPublisher()
     }
+    var restaurantNamePublisher: AnyPublisher<String, Never> {
+        return restaurantNameSubject.eraseToAnyPublisher()
+    }
     
     private var selectedTastes: [String]
     
     init(repository: ReviewListRepository, dishName: String, restaurantName: String, restaurantId: String) {
         self.repository = repository
         self.restaurantName = restaurantName
+        self.restaurantNameSubject = .init("")
         self.restaurantId = restaurantId
         self.dishName = dishName
         self.tastes = Constants.tastes
         self.tastesSubject = .init([])
         self.selectedTastes = []
+    }
+    
+    func loadTitle() {
+        restaurantNameSubject.send(restaurantName)
     }
     
     func loadTastes() {

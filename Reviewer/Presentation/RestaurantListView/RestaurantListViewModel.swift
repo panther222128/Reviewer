@@ -20,7 +20,7 @@ protocol RestaurantListViewModel: RestaurantListDataSource {
 
 struct RestaurantListViewModelActions {
     let showStudioView: (String, String) -> Void
-    let showRestaurantDishListView: (String) -> Void
+    let showRestaurantDishListView: (String, String) -> Void
 }
 
 final class DefaultRestaurantListViewModel: RestaurantListViewModel {
@@ -63,7 +63,7 @@ final class DefaultRestaurantListViewModel: RestaurantListViewModel {
     }
     
     func didSelectItem(at indexPath: IndexPath) {
-        actions.showRestaurantDishListView(restaurants[indexPath.row].id)
+        actions.showRestaurantDishListView(restaurants[indexPath.row].id, restaurants[indexPath.row].name)
     }
     
     func didAddRestaurant(name: String) {
