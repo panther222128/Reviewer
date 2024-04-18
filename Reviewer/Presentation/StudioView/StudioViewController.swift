@@ -39,7 +39,7 @@ final class StudioViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .black
         
         checkAuthorizationStatus()
         
@@ -77,6 +77,7 @@ final class StudioViewController: UIViewController {
         restaurantNamePublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] name in
+                self?.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
                 self?.title = name
             }
             .store(in: &cancellables)
