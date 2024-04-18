@@ -31,6 +31,7 @@ final class DishDetailViewController: UIViewController {
         
         addSubviews()
         adjustLayoutOf(dishDetailListTableView: dishDetailListTableView)
+        addBarButtonItem()
         
         subscribe(tastesPublisher: viewModel.tastesPublisher)
         
@@ -52,6 +53,39 @@ final class DishDetailViewController: UIViewController {
             .store(in: &cancellabes)
     }
     
+}
+
+extension DishDetailViewController {
+    private func addBarButtonItem() {
+        let barButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didPressedAddButon))
+        navigationItem.rightBarButtonItem = barButtonItem
+    }
+    
+    @objc private func didPressedAddButon(_ sender: UIBarButtonItem) {
+        let alertController = UIAlertController(title: "맛", message: nil, preferredStyle: .alert)
+        alertController.addTextField()
+        
+        let confirmAction = UIAlertAction(title: "확인", style: .default) { _ in
+            if let textFields = alertController.textFields {
+                if let textField = textFields.first {
+                    if let text = textField.text, !text.isEmpty {
+                        self.viewModel.add(taste: text)
+                        self.viewModel.didLoadTastes()
+                    } else {
+                        print("Text must not be empty.")
+                    }
+                } else {
+                    print("Cannot find text field.")
+                }
+            }
+        }
+        alertController.addAction(confirmAction)
+        
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        alertController.addAction(cancelAction)
+        
+        present(alertController, animated: true, completion: nil)
+    }
 }
 
 extension DishDetailViewController: DishDetailListDelegate {

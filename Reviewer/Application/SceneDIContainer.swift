@@ -69,12 +69,12 @@ final class SceneDIContainer: ViewFlowCoordinatorDependencies {
         return RestaurantDishListViewController.create(with: makeDishListViewModel(id: id, restaurantName: restaurantName, actions: actions))
     }
     
-    func makeDishDetailViewModel(tastes: [String]) -> DishDetailViewModel {
-        return DefaultDishDetailViewModel(tastes: tastes)
+    func makeDishDetailViewModel(restaurantId: String, dishId: String, tastes: [String]) -> DishDetailViewModel {
+        return DefaultDishDetailViewModel(repository: makeReviewListRepository(), restaurantId: restaurantId, dishId: dishId, tastes: tastes)
     }
     
-    func makeDishDetailViewController(tastes: [String]) -> DishDetailViewController {
-        return DishDetailViewController.create(with: makeDishDetailViewModel(tastes: tastes))
+    func makeDishDetailViewController(restaurantId: String, dishId: String, tastes: [String]) -> DishDetailViewController {
+        return DishDetailViewController.create(with: makeDishDetailViewModel(restaurantId: restaurantId, dishId: dishId, tastes: tastes))
     }
     
 }

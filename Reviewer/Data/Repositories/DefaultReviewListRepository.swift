@@ -19,6 +19,10 @@ final class DefaultReviewListRepository: ReviewListRepository {
         storage.saveRestaurant(id: id, name: name)
     }
     
+    func addTaste(restaurantId: String, dishId: String, taste: String) {
+        storage.addTaste(restaurantId: restaurantId, dishId: dishId, taste: taste)
+    }
+    
     func fetchRestaurants(completion: @escaping ([Restaurant]?, Error?) -> Void) {
         storage.fetchRestaurants(completion: completion)
     }
@@ -37,6 +41,10 @@ final class DefaultReviewListRepository: ReviewListRepository {
     
     func fetchDishes(with id: String, completion: @escaping ([Dish]?, Error?) -> Void) {
         storage.fetchDishes(with: id, completion: completion)
+    }
+    
+    func fetchTastes(restaurantId: String, dishId: String, completion: @escaping ([String]?, Error?) -> Void) {
+        storage.fetchTastes(restaurantId: restaurantId, dishId: dishId, completion: completion)
     }
     
 }

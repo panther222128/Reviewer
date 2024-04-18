@@ -15,6 +15,8 @@ protocol ReviewListStorage {
     func deleteDish(dishId: String, restaurantId: String)
     func save(dish: Dish, id: String)
     func fetchDishes(with id: String, completion: @escaping ([Dish]?, Error?) -> Void)
+    func fetchTastes(restaurantId: String, dishId: String, completion: @escaping ([String]?, Error?) -> Void)
+    func addTaste(restaurantId: String, dishId: String, taste: String)
 }
 
 final class DefaultReviewListStorage: ReviewListStorage {
@@ -85,6 +87,15 @@ final class DefaultReviewListStorage: ReviewListStorage {
         }
     }
     
+    func addTaste(restaurantId: String, dishId: String, taste: String) {
+        if let restaurant = fetchRestaurant(with: restaurantId) {
+            let filteredDish = restaurant.dishes.filter { $0.id == dishId }
+            filteredDish.forEach { $0.tastes.append(taste) }
+        } else {
+            
+        }
+    }
+    
     func fetchDishes(with id: String, completion: @escaping ([Dish]?, Error?) -> Void) {
         if let restaurant = fetchRestaurant(with: id) {
             let dishes = restaurant.dishes
@@ -92,6 +103,20 @@ final class DefaultReviewListStorage: ReviewListStorage {
             completion(domain, nil)
         } else {
             print("Cannot find restaurant.")
+            completion(nil, nil)
+        }
+    }
+    
+    func fetchTastes(restaurantId: String, dishId: String, completion: @escaping ([String]?, Error?) -> Void) {
+        if let restaurant = fetchRestaurant(with: restaurantId) {
+            let dishes = restaurant.dishes
+            let filteredDishes = dishes.filter { $0.id == dishId }
+            if let first = filteredDishes.first {
+                completion(first.tastes, nil)
+            } else {
+                completion(nil, nil)
+            }
+        } else {
             completion(nil, nil)
         }
     }

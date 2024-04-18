@@ -12,23 +12,44 @@ protocol DishDetailViewModel: DishDetailListDataSource {
     var tastesPublisher: AnyPublisher<[String], Never> { get }
     
     func loadTastes()
+    func add(taste: String)
+    func didLoadTastes()
 }
 
 final class DefaultDishDetailViewModel: DishDetailViewModel {
     
-    private let tastes: [String]
+    private let repository: ReviewListRepository
+    private let restaurantId: String
+    private let dishId: String
+    private var tastes: [String]
     private let tastesSubject: CurrentValueSubject<[String], Never>
     var tastesPublisher: AnyPublisher<[String], Never> {
         return tastesSubject.eraseToAnyPublisher()
     }
     
-    init(tastes: [String]) {
+    init(repository: ReviewListRepository, restaurantId: String, dishId: String, tastes: [String]) {
+        self.repository = repository
+        self.restaurantId = restaurantId
+        self.dishId = dishId
         self.tastes = tastes
         self.tastesSubject = .init([])
     }
     
     func loadTastes() {
         tastesSubject.send(tastes)
+    }
+    
+    func add(taste: String) {
+        repository.addTaste(restaurantId: restaurantId, dishId: dishId, taste: taste)
+    }
+    
+    func didLoadTastes() {
+        repository.fetchTastes(restaurantId: restaurantId, dishId: dishId) { tastes, error in
+            if let tastes {
+                self.tastes = tastes
+                self.tastesSubject.send(self.tastes)
+            }
+        }
     }
     
 }
