@@ -41,20 +41,20 @@ final class SceneDIContainer: ViewFlowCoordinatorDependencies {
         return DefaultStudioUseCase(studio: Studio())
     }
     
-    func makeStudioViewModel(actions: StudioViewModelActions, restaurantName: String, id: String) -> StudioViewModel {
-        return DefaultStudioViewModel(actions: actions, studio: Studio(), useCase: makeStudioUseCase(), restaurantName: restaurantName, id: id)
+    func makeStudioViewModel(actions: StudioViewModelActions, id: String, restaurantName: String) -> StudioViewModel {
+        return DefaultStudioViewModel(studio: Studio(), useCase: makeStudioUseCase(), actions: actions, id: id, restaurantName: restaurantName)
     }
     
-    func makeStudioViewController(actions: StudioViewModelActions, restaurantName: String, id: String) -> StudioViewController {
-        return StudioViewController.create(with: makeStudioViewModel(actions: actions, restaurantName: restaurantName, id: id))
+    func makeStudioViewController(actions: StudioViewModelActions, id: String, restaurantName: String) -> StudioViewController {
+        return StudioViewController.create(with: makeStudioViewModel(actions: actions, id: id, restaurantName: restaurantName))
     }
     
-    func makeTasteListViewModel(dishName: String, restaurantName: String, restaurantId: String) -> TasteListViewModel {
-        return DefaultTasteListViewModel(repository: makeReviewListRepository(), dishName: dishName, restaurantName: restaurantName, restaurantId: restaurantId)
+    func makeTasteListViewModel(restaurantId: String, restaurantName: String, dishName: String) -> TasteListViewModel {
+        return DefaultTasteListViewModel(repository: makeReviewListRepository(), restaurantId: restaurantId, restaurantName: restaurantName, dishName: dishName)
     }
     
-    func makeTasteListViewController(dishName: String, restaurantName: String, restaurantId: String) -> TasteListViewController {
-        return TasteListViewController.create(with: makeTasteListViewModel(dishName: dishName, restaurantName: restaurantName, restaurantId: restaurantId))
+    func makeTasteListViewController(restaurantId: String, restaurantName: String, dishName: String) -> TasteListViewController {
+        return TasteListViewController.create(with: makeTasteListViewModel(restaurantId: restaurantId, restaurantName: restaurantName, dishName: dishName))
     }
     
     func makeSettingsViewController() -> SettingsViewController {
@@ -62,7 +62,7 @@ final class SceneDIContainer: ViewFlowCoordinatorDependencies {
     }
     
     func makeDishListViewModel(id: String, restaurantName: String, actions: RestaurantDishListViewModelActions) -> RestaurantDishListViewModel {
-        return DefaultRestaurantDishListViewModel(id: id, restaurantName: restaurantName, repository: makeReviewListRepository(), actions: actions)
+        return DefaultRestaurantDishListViewModel(repository: makeReviewListRepository(), actions: actions, id: id, restaurantName: restaurantName)
     }
     
     func makeRestaurantDishListViewController(id: String, restaurantName: String, actions: RestaurantDishListViewModelActions) -> RestaurantDishListViewController {

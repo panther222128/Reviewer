@@ -22,9 +22,9 @@ protocol TasteListViewModel {
 final class DefaultTasteListViewModel: TasteListViewModel {
     
     private let repository: ReviewListRepository
+    private let restaurantId: String
     private let restaurantName: String
     private let restaurantNameSubject: CurrentValueSubject<String, Never>
-    private let restaurantId: String
     private let dishName: String
     private let tastes: [String]
     private let tastesSubject: CurrentValueSubject<[String], Never>
@@ -37,11 +37,11 @@ final class DefaultTasteListViewModel: TasteListViewModel {
     
     private var selectedTastes: [String]
     
-    init(repository: ReviewListRepository, dishName: String, restaurantName: String, restaurantId: String) {
+    init(repository: ReviewListRepository, restaurantId: String, restaurantName: String, dishName: String) {
         self.repository = repository
+        self.restaurantId = restaurantId
         self.restaurantName = restaurantName
         self.restaurantNameSubject = .init("")
-        self.restaurantId = restaurantId
         self.dishName = dishName
         self.tastes = Constants.tastes
         self.tastesSubject = .init([])

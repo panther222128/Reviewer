@@ -24,7 +24,7 @@ protocol StudioViewModel {
 }
 
 struct StudioViewModelActions {
-    let showTasteListView: (String, String, String) -> Void
+    let showTasteListView: (_ restaurantId: String, _ restaurantName: String, _ dishName: String) -> Void
 }
 
 final class DefaultStudioViewModel: StudioViewModel {
@@ -32,21 +32,21 @@ final class DefaultStudioViewModel: StudioViewModel {
     private let actions: StudioViewModelActions
     private let studio: Studio
     private let useCase: StudioUseCase
+    private let restaurantId: String
     private let restaurantName: String
     private let restaurantNameSubject: CurrentValueSubject<String, Never>
-    private let restaurantId: String
     
     var restaurantNamePublisher: AnyPublisher<String, Never> {
         return restaurantNameSubject.eraseToAnyPublisher()
     }
     
-    init(actions: StudioViewModelActions, studio: Studio, useCase: StudioUseCase, restaurantName: String, id: String) {
-        self.actions = actions
+    init(studio: Studio, useCase: StudioUseCase, actions: StudioViewModelActions, id: String, restaurantName: String) {
         self.studio = studio
         self.useCase = useCase
+        self.actions = actions
+        self.restaurantId = id
         self.restaurantName = restaurantName
         self.restaurantNameSubject = .init("")
-        self.restaurantId = id
     }
     
     func loadTitle() {
@@ -82,7 +82,7 @@ final class DefaultStudioViewModel: StudioViewModel {
     }
     
     func didLoadTasteView(with dishName: String) {
-        actions.showTasteListView(dishName, restaurantName, restaurantId)
+        actions.showTasteListView(restaurantId, restaurantName, dishName)
     }
     
 }

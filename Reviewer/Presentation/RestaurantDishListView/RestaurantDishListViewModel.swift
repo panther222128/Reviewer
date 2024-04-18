@@ -21,19 +21,19 @@ protocol RestaurantDishListViewModel: RestaurantDishListDataSource {
 
 struct RestaurantDishListViewModelActions {
     let showDishDetail: ([String]) -> Void
-    let showStudio: (String, String) -> Void
+    let showStudio: (_ restaurantId: String, _ restaurantName: String) -> Void
 }
 
 final class DefaultRestaurantDishListViewModel: RestaurantDishListViewModel {
     
+    private let repository: ReviewListRepository
+    private let actions: RestaurantDishListViewModelActions
     private let id: String
     private let restaurantName: String
     private let restaurantNameSubject: CurrentValueSubject<String, Never>
     private var dishes: [Dish]
     private var listItems: [RestaurantDishListItemViewModel]
     private let listItemsSubject: CurrentValueSubject<[RestaurantDishListItemViewModel], Never>
-    private let repository: ReviewListRepository
-    private let actions: RestaurantDishListViewModelActions
     
     var listItemsPublisher: AnyPublisher<[RestaurantDishListItemViewModel], Never> {
         return listItemsSubject.eraseToAnyPublisher()
@@ -42,7 +42,7 @@ final class DefaultRestaurantDishListViewModel: RestaurantDishListViewModel {
         return restaurantNameSubject.eraseToAnyPublisher()
     }
     
-    init(id: String, restaurantName: String, repository: ReviewListRepository, actions: RestaurantDishListViewModelActions) {
+    init(repository: ReviewListRepository, actions: RestaurantDishListViewModelActions, id: String, restaurantName: String) {
         self.id = id
         self.restaurantName = restaurantName
         self.restaurantNameSubject = .init("")
@@ -83,7 +83,7 @@ final class DefaultRestaurantDishListViewModel: RestaurantDishListViewModel {
     }
     
     func didLoadStudio() {
-        actions.showStudio(restaurantName, id)
+        actions.showStudio(id, restaurantName)
     }
     
 }

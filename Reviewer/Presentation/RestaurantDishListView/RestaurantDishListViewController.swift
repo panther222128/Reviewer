@@ -38,7 +38,10 @@ final class RestaurantDishListViewController: UIViewController {
         
         subscribe(reviewDetailListPublisher: viewModel.listItemsPublisher)
         subscribe(restaurantNamePublisher: viewModel.restaurantNamePublisher)
-        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
         viewModel.loadTitle()
         viewModel.loadDishes()
     }
