@@ -107,9 +107,7 @@ extension RestaurantListViewController: RestaurantListDelegate {
     
     func didTrailingSwipeForRow(at indexPath: IndexPath, tableView: UITableView) -> UISwipeActionsConfiguration {
         let deleteAction = UIContextualAction(style: .destructive, title: "삭제") { action, view, completion in
-            
-            self.viewModel.didDeleteRestaurant(at: indexPath)
-            self.viewModel.loadListItem()
+            self.presentDeleteAlert(at: indexPath)
             completion(true)
         }
         
@@ -117,6 +115,19 @@ extension RestaurantListViewController: RestaurantListDelegate {
         
         let swipeActions = UISwipeActionsConfiguration(actions: [deleteAction])
         return swipeActions
+    }
+    
+    private func presentDeleteAlert(at indexPath: IndexPath) {
+        let alert = UIAlertController(title: "삭제", message: "삭제하시겠습니까?", preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel)
+        let deleteAction = UIAlertAction(title: "삭제", style: .destructive) { _ in
+            self.viewModel.didDeleteRestaurant(at: indexPath)
+            self.viewModel.loadListItem()
+        }
+        alert.addAction(cancelAction)
+        alert.addAction(deleteAction)
+        
+        present(alert, animated: true)
     }
 }
 
