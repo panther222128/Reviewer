@@ -37,6 +37,11 @@
 		A9896F002BC8CB2300BC79E3 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9896EFF2BC8CB2300BC79E3 /* Constants.swift */; };
 		A9896F022BC8D1CB00BC79E3 /* OnOffButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9896F012BC8D1CB00BC79E3 /* OnOffButton.swift */; };
 		A9896F052BC8E6F000BC79E3 /* Dish.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9896F042BC8E6F000BC79E3 /* Dish.swift */; };
+		A9C89D032BD24F9300E386D0 /* SwitchSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9C89D022BD24F9300E386D0 /* SwitchSettingView.swift */; };
+		A9C89D052BD25B0D00E386D0 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9C89D042BD25B0D00E386D0 /* SettingsViewModel.swift */; };
+		A9C89D072BD25B5000E386D0 /* DefaultSettingsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9C89D062BD25B5000E386D0 /* DefaultSettingsRepository.swift */; };
+		A9C89D092BD25B5A00E386D0 /* SettingsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9C89D082BD25B5A00E386D0 /* SettingsStorage.swift */; };
+		A9C89D0B2BD25B6800E386D0 /* SettingsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9C89D0A2BD25B6800E386D0 /* SettingsRepository.swift */; };
 		A9CFEC4A2BC806F800AFE7C3 /* TasteListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9CFEC492BC806F800AFE7C3 /* TasteListViewController.swift */; };
 		A9CFEC4C2BC80ADD00AFE7C3 /* TasteListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9CFEC4B2BC80ADD00AFE7C3 /* TasteListViewModel.swift */; };
 		A9CFEC4F2BC80FCE00AFE7C3 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9CFEC4E2BC80FCE00AFE7C3 /* SettingsViewController.swift */; };
@@ -85,6 +90,11 @@
 		A9896EFF2BC8CB2300BC79E3 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		A9896F012BC8D1CB00BC79E3 /* OnOffButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnOffButton.swift; sourceTree = "<group>"; };
 		A9896F042BC8E6F000BC79E3 /* Dish.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dish.swift; sourceTree = "<group>"; };
+		A9C89D022BD24F9300E386D0 /* SwitchSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchSettingView.swift; sourceTree = "<group>"; };
+		A9C89D042BD25B0D00E386D0 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		A9C89D062BD25B5000E386D0 /* DefaultSettingsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultSettingsRepository.swift; sourceTree = "<group>"; };
+		A9C89D082BD25B5A00E386D0 /* SettingsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStorage.swift; sourceTree = "<group>"; };
+		A9C89D0A2BD25B6800E386D0 /* SettingsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRepository.swift; sourceTree = "<group>"; };
 		A9CFEC492BC806F800AFE7C3 /* TasteListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasteListViewController.swift; sourceTree = "<group>"; };
 		A9CFEC4B2BC80ADD00AFE7C3 /* TasteListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasteListViewModel.swift; sourceTree = "<group>"; };
 		A9CFEC4E2BC80FCE00AFE7C3 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
@@ -218,6 +228,7 @@
 				A97DAB952BCB85A1000867D9 /* ReviewListStorage.swift */,
 				A97DABC22BCBBA18000867D9 /* RestaurantEntity.swift */,
 				A97DABC42BCBBA24000867D9 /* DishEntity.swift */,
+				A9C89D082BD25B5A00E386D0 /* SettingsStorage.swift */,
 			);
 			path = Storage;
 			sourceTree = "<group>";
@@ -226,6 +237,7 @@
 			isa = PBXGroup;
 			children = (
 				A97DAB932BCB8510000867D9 /* DefaultReviewListRepository.swift */,
+				A9C89D062BD25B5000E386D0 /* DefaultSettingsRepository.swift */,
 			);
 			path = Repositories;
 			sourceTree = "<group>";
@@ -234,6 +246,7 @@
 			isa = PBXGroup;
 			children = (
 				A97DAB912BCB84F9000867D9 /* ReviewListRepository.swift */,
+				A9C89D0A2BD25B6800E386D0 /* SettingsRepository.swift */,
 			);
 			path = Interfaces;
 			sourceTree = "<group>";
@@ -273,6 +286,8 @@
 			isa = PBXGroup;
 			children = (
 				A9CFEC4E2BC80FCE00AFE7C3 /* SettingsViewController.swift */,
+				A9C89D022BD24F9300E386D0 /* SwitchSettingView.swift */,
+				A9C89D042BD25B0D00E386D0 /* SettingsViewModel.swift */,
 			);
 			path = SettingsViewController;
 			sourceTree = "<group>";
@@ -392,6 +407,7 @@
 				A97DAB922BCB84F9000867D9 /* ReviewListRepository.swift in Sources */,
 				A9CFEC4F2BC80FCE00AFE7C3 /* SettingsViewController.swift in Sources */,
 				A97DAB962BCB85A1000867D9 /* ReviewListStorage.swift in Sources */,
+				A9C89D072BD25B5000E386D0 /* DefaultSettingsRepository.swift in Sources */,
 				A9E86E312BC64C0D00576877 /* RestaurantListItemViewModel.swift in Sources */,
 				A9E86E372BC665F100576877 /* StudioViewController.swift in Sources */,
 				A93CF6E82BC2A8AF0077B0A2 /* RestaurantListViewController.swift in Sources */,
@@ -399,12 +415,15 @@
 				A9E86E342BC64D5D00576877 /* Date+FormattedString.swift in Sources */,
 				A9896F002BC8CB2300BC79E3 /* Constants.swift in Sources */,
 				A9E86E3E2BC6737700576877 /* Studio.swift in Sources */,
+				A9C89D052BD25B0D00E386D0 /* SettingsViewModel.swift in Sources */,
 				A9CFEC4A2BC806F800AFE7C3 /* TasteListViewController.swift in Sources */,
 				A93CF6D02BC2A8120077B0A2 /* AppDelegate.swift in Sources */,
 				A9E86E2D2BC648F300576877 /* RestaurantListAdapter.swift in Sources */,
 				A006CEB22BCCBF8C0065553F /* DishDetailListAdapter.swift in Sources */,
 				A006CEB02BCCBF050065553F /* DishDetailViewModel.swift in Sources */,
 				A93CF6EC2BC2A93B0077B0A2 /* AppDIContainer.swift in Sources */,
+				A9C89D092BD25B5A00E386D0 /* SettingsStorage.swift in Sources */,
+				A9C89D032BD24F9300E386D0 /* SwitchSettingView.swift in Sources */,
 				A97DABD22BCBFF15000867D9 /* RestaurantDishListAdapter.swift in Sources */,
 				A93CF6F22BC2A96E0077B0A2 /* ViewFlowCoordinator.swift in Sources */,
 				A9E86E3C2BC672BF00576877 /* PreviewView.swift in Sources */,
@@ -414,6 +433,7 @@
 				A93CF6EA2BC2A8FE0077B0A2 /* RestaurantListViewModel.swift in Sources */,
 				A006CEB62BCCC12B0065553F /* DishDetailListItemCell.swift in Sources */,
 				A93CF6EE2BC2A9420077B0A2 /* AppFlowCoordinator.swift in Sources */,
+				A9C89D0B2BD25B6800E386D0 /* SettingsRepository.swift in Sources */,
 				A97DAB942BCB8510000867D9 /* DefaultReviewListRepository.swift in Sources */,
 				A9E86E432BC68ACA00576877 /* StudioUseCase.swift in Sources */,
 				A9E86E402BC6887400576877 /* PhotoCaptureProcessor.swift in Sources */,

@@ -9,6 +9,7 @@ import Foundation
 import Combine
 
 protocol RestaurantListViewModel: RestaurantListDataSource {
+    var isDeleteImmediate: Bool { get }
     var listItemViewModelPublisher: AnyPublisher<[RestaurantListItemViewModel], Never> { get }
     
     func loadListItem()
@@ -16,6 +17,7 @@ protocol RestaurantListViewModel: RestaurantListDataSource {
     func didSelectItem(at indexPath: IndexPath)
     func didAddRestaurant(name: String)
     func didDeleteRestaurant(at indexPath: IndexPath)
+    func loadIsDeleteImmediate()
 }
 
 struct RestaurantListViewModelActions {
@@ -26,20 +28,24 @@ struct RestaurantListViewModelActions {
 final class DefaultRestaurantListViewModel: RestaurantListViewModel {
     
     private let repository: ReviewListRepository
+    private let settingsRepository: SettingsRepository
     private let actions: RestaurantListViewModelActions
     private var restaurants: [Restaurant]
     private var restaurantId: String
+    private(set) var isDeleteImmediate: Bool
     private var listItemViewModels: [RestaurantListItemViewModel]
     private var listItemViewModelSubject: CurrentValueSubject<[RestaurantListItemViewModel], Never>
     var listItemViewModelPublisher: AnyPublisher<[RestaurantListItemViewModel], Never> {
         return listItemViewModelSubject.eraseToAnyPublisher()
     }
     
-    init(repository: ReviewListRepository, actions: RestaurantListViewModelActions) {
+    init(repository: ReviewListRepository, settingsRepository: SettingsRepository, actions: RestaurantListViewModelActions) {
         self.repository = repository
+        self.settingsRepository = settingsRepository
         self.actions = actions
         self.restaurants = []
         self.restaurantId = ""
+        self.isDeleteImmediate = false
         self.listItemViewModels = []
         self.listItemViewModelSubject = .init([])
     }
@@ -76,6 +82,19 @@ final class DefaultRestaurantListViewModel: RestaurantListViewModel {
         let restaurantId = restaurants[indexPath.row].id
         repository.delete(with: restaurantId)
         restaurants.remove(at: indexPath.row)
+    }
+    
+    func loadIsDeleteImmediate() {
+        settingsRepository.fetchIsDeleteImmediate { [weak self] result in
+            switch result {
+            case .success(let isDeleteImmediate):
+                self?.isDeleteImmediate = isDeleteImmediate
+                
+            case .failure(let failure):
+                return
+                
+            }
+        }
     }
     
 }

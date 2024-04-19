@@ -16,6 +16,7 @@ final class SceneDIContainer: ViewFlowCoordinatorDependencies {
     private let dependencies: Dependencies
     
     lazy var reviewListStorage: ReviewListStorage = DefaultReviewListStorage()
+    lazy var settingsStorage: SettingsStorage = DefaultSettingsStorage()
     
     init(dependencies: Dependencies) {
         self.dependencies = dependencies
@@ -29,8 +30,12 @@ final class SceneDIContainer: ViewFlowCoordinatorDependencies {
         return DefaultReviewListRepository(storage: reviewListStorage)
     }
     
+    func makeSettingsRepository() -> SettingsRepository {
+        return DefaultSettingsRepository(storage: settingsStorage)
+    }
+    
     func makeRestaurantListViewModel(actions: RestaurantListViewModelActions) -> RestaurantListViewModel {
-        return DefaultRestaurantListViewModel(repository: makeReviewListRepository(), actions: actions)
+        return DefaultRestaurantListViewModel(repository: makeReviewListRepository(), settingsRepository: makeSettingsRepository(), actions: actions)
     }
     
     func makeRestaurantListViewController(actions: RestaurantListViewModelActions) -> RestaurantListViewController {
@@ -57,8 +62,12 @@ final class SceneDIContainer: ViewFlowCoordinatorDependencies {
         return TasteListViewController.create(with: makeTasteListViewModel(restaurantId: restaurantId, restaurantName: restaurantName, dishName: dishName))
     }
     
+    func makeSettingsViewModel() -> SettingsViewModel {
+        return DefaultSettingsViewModel(repository: makeSettingsRepository())
+    }
+    
     func makeSettingsViewController() -> SettingsViewController {
-        return SettingsViewController.create()
+        return SettingsViewController.create(with: makeSettingsViewModel())
     }
     
     func makeDishListViewModel(id: String, restaurantName: String, actions: RestaurantDishListViewModelActions) -> RestaurantDishListViewModel {

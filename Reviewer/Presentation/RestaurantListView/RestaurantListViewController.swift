@@ -43,6 +43,8 @@ final class RestaurantListViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = false
+        
+        viewModel.loadIsDeleteImmediate()
     }
     
     static func create(with viewModel: RestaurantListViewModel) -> RestaurantListViewController {
@@ -107,7 +109,12 @@ extension RestaurantListViewController: RestaurantListDelegate {
     
     func didTrailingSwipeForRow(at indexPath: IndexPath, tableView: UITableView) -> UISwipeActionsConfiguration {
         let deleteAction = UIContextualAction(style: .destructive, title: "삭제") { action, view, completion in
-            self.presentDeleteAlert(at: indexPath)
+            if self.viewModel.isDeleteImmediate {
+                self.viewModel.didDeleteRestaurant(at: indexPath)
+                self.viewModel.loadListItem()
+            } else {
+                self.presentDeleteAlert(at: indexPath)
+            }
             completion(true)
         }
         
