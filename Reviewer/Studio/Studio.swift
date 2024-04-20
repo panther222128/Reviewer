@@ -8,26 +8,35 @@
 import Foundation
 import AVFoundation
 import UIKit
+import Photos
 
-final class Studio {
+final class Studio: NSObject {
 
     private let sessionQueue: DispatchQueue
     private let captureSession: AVCaptureSession
     private var captureDevice: AVCaptureDevice?
     @objc dynamic var videoDeviceInput: AVCaptureDeviceInput?
     private var photoOutput: AVCapturePhotoOutput
+    private var movieFileOutput: AVCaptureMovieFileOutput?
     private var photoSettings: AVCapturePhotoSettings?
     private var photoOutputReadinessCoordinator: AVCapturePhotoOutputReadinessCoordinator?
     private var videoDeviceRotationCoordinator: AVCaptureDevice.RotationCoordinator?
     private var videoRotationAngleForHorizonLevelPreviewObservation: NSKeyValueObservation?
     private var inProgressPhotoCaptureDelegates: [Int64: PhotoCaptureProcessor]
+    private var backgroundRecordingID: UIBackgroundTaskIdentifier?
     
-    init() {
+    enum CaptureMode: Int {
+        case photo = 0
+        case movie = 1
+    }
+    
+    override init() {
         self.sessionQueue = DispatchQueue(label: "session queue")
         self.captureSession = AVCaptureSession()
         self.captureDevice = nil
         self.videoDeviceInput = nil
         self.photoOutput = AVCapturePhotoOutput()
+        self.movieFileOutput = nil
         self.photoSettings = nil
         self.photoOutputReadinessCoordinator = nil
         self.videoRotationAngleForHorizonLevelPreviewObservation = nil
@@ -126,8 +135,77 @@ final class Studio {
         }
     }
     
+    func captureMovie() {
+        if let videoDeviceRotationCoordinator = self.videoDeviceRotationCoordinator {
+            let videoRotationAngle = videoDeviceRotationCoordinator.videoRotationAngleForHorizonLevelCapture
+            
+            sessionQueue.async {
+                if let movieFileOutput = self.movieFileOutput {
+                    if !movieFileOutput.isRecording {
+                        if UIDevice.current.isMultitaskingSupported {
+                            self.backgroundRecordingID = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
+                        }
+                        
+                        let movieFileOutputConnection = movieFileOutput.connection(with: .video)
+                        movieFileOutputConnection?.videoRotationAngle = videoRotationAngle
+                        
+                        let availableVideoCodecTypes = movieFileOutput.availableVideoCodecTypes
+                        
+                        if availableVideoCodecTypes.contains(.hevc) {
+                            movieFileOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.hevc], for: movieFileOutputConnection!)
+                        }
+                        
+                        let outputFileName = NSUUID().uuidString
+                        let outputFilePath = (NSTemporaryDirectory() as NSString).appendingPathComponent((outputFileName as NSString).appendingPathExtension("mov")!)
+                        movieFileOutput.startRecording(to: URL(fileURLWithPath: outputFilePath), recordingDelegate: self)
+                    } else {
+                        movieFileOutput.stopRecording()
+                    }
+                } else {
+                    print("Not movie captureMode")
+                }
+            }
+        }
+    }
+    
     func setReadinessCoordinatorDelegate<T>(_ viewController: T) where T: AVCapturePhotoOutputReadinessCoordinatorDelegate {
         photoOutputReadinessCoordinator?.delegate = viewController
+    }
+    
+    func changeCapture(mode: Int) {
+        if mode == CaptureMode.photo.rawValue {
+            sessionQueue.async {
+                self.captureSession.beginConfiguration()
+                if let movieFileOutput = self.movieFileOutput {
+                    self.captureSession.removeOutput(movieFileOutput)
+                } else {
+                    print("Capture session output problem.")
+                }
+                self.captureSession.sessionPreset = .photo
+                self.movieFileOutput = nil
+                
+                self.configurePhotoOutput(with: .quality)
+                
+                self.captureSession.commitConfiguration()
+            }
+        } else if mode == CaptureMode.movie.rawValue {
+            sessionQueue.async {
+                let movieFileOutput = AVCaptureMovieFileOutput()
+                if self.captureSession.canAddOutput(movieFileOutput) {
+                    self.captureSession.beginConfiguration()
+                    self.captureSession.addOutput(movieFileOutput)
+                    self.captureSession.sessionPreset = .high
+                    
+                    if let connection = movieFileOutput.connection(with: .video) {
+                        if connection.isVideoMirroringSupported {
+                            connection.preferredVideoStabilizationMode = .auto
+                        }
+                    }
+                    self.captureSession.commitConfiguration()
+                    self.movieFileOutput = movieFileOutput
+                }
+            }
+        }
     }
     
     private func setSession(preset: AVCaptureSession.Preset) {
@@ -266,5 +344,59 @@ final class Studio {
             print("Video device input empty.")
         }
     }
+    
+}
+
+extension Studio: AVCaptureFileOutputRecordingDelegate {
+    func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: (any Error)?) {
+        func cleanup() {
+            let path = outputFileURL.path
+            if FileManager.default.fileExists(atPath: path) {
+                do {
+                    try FileManager.default.removeItem(atPath: path)
+                } catch {
+                    print("Could not remove file at url: \(outputFileURL)")
+                }
+            }
+            
+            if let currentBackgroundRecordingID = backgroundRecordingID {
+                backgroundRecordingID = UIBackgroundTaskIdentifier.invalid
+                
+                if currentBackgroundRecordingID != UIBackgroundTaskIdentifier.invalid {
+                    UIApplication.shared.endBackgroundTask(currentBackgroundRecordingID)
+                }
+            }
+        }
+        
+        var success = true
+        
+        if error != nil {
+            print("Movie file finishing error: \(String(describing: error))")
+            success = (((error! as NSError).userInfo[AVErrorRecordingSuccessfullyFinishedKey] as AnyObject).boolValue)!
+        }
+        
+        if success {
+            PHPhotoLibrary.requestAuthorization { status in
+                if status == .authorized {
+                    PHPhotoLibrary.shared().performChanges({
+                        let options = PHAssetResourceCreationOptions()
+                        options.shouldMoveFile = true
+                        let creationRequest = PHAssetCreationRequest.forAsset()
+                        creationRequest.addResource(with: .video, fileURL: outputFileURL, options: options)
+                    }, completionHandler: { success, error in
+                        if !success {
+                            print("AVCam couldn't save the movie to your photo library: \(String(describing: error))")
+                        }
+                        cleanup()
+                    })
+                } else {
+                    cleanup()
+                }
+            }
+        } else {
+            cleanup()
+        }
+    }
+    
     
 }

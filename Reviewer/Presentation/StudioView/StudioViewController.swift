@@ -17,6 +17,13 @@ final class StudioViewController: UIViewController {
         case configurationFailed
     }
     
+    private var _supportedInterfaceOrientations: UIInterfaceOrientationMask = .all
+    
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        get { return _supportedInterfaceOrientations }
+        set { _supportedInterfaceOrientations = newValue }
+    }
+    
     private var setupResult: SessionSetupResult = .success
     
     private let captureButton: UIButton = {
@@ -27,10 +34,28 @@ final class StudioViewController: UIViewController {
         return button
     }()
     
+    private let recordButton: RecordButton = {
+        let button = RecordButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
     private let previewView: PreviewView = {
         let previewView = PreviewView()
         previewView.translatesAutoresizingMaskIntoConstraints = false
         return previewView
+    }()
+    
+    private let captureModeSegmentationControl: UISegmentedControl = {
+        let segmentedControl = UISegmentedControl()
+        segmentedControl.translatesAutoresizingMaskIntoConstraints = false
+        let symbolConfiguration = UIImage.SymbolConfiguration(pointSize: 36, weight: .bold, scale: .default)
+        let cameraImage = UIImage(systemName: "camera", withConfiguration: symbolConfiguration)
+        let movieClapperImage = UIImage(systemName: "movieclapper", withConfiguration: symbolConfiguration)
+        segmentedControl.insertSegment(with: cameraImage, at: 0, animated: true)
+        segmentedControl.insertSegment(with: movieClapperImage, at: 1, animated: true)
+        segmentedControl.selectedSegmentIndex = 0
+        return segmentedControl
     }()
     
     private var viewModel: StudioViewModel!
@@ -47,7 +72,12 @@ final class StudioViewController: UIViewController {
         adjustLayoutOf(previewView: previewView)
         adjustLayoutOf(captureButton: captureButton)
         addActionOf(captureButton: captureButton)
+        adjustLayoutOf(captureModeSegmentationControl: captureModeSegmentationControl)
+        adjustLayoutOf(recordButton: recordButton)
+        addActionOf(recordButton: recordButton)
+        addCaptureModeSegmentedControlTarget()
         
+        recordButton.isHidden = true
         tabBarController?.tabBar.isHidden = true
         
         subscribe(restaurantNamePublisher: viewModel.restaurantNamePublisher)
@@ -83,6 +113,28 @@ final class StudioViewController: UIViewController {
             .store(in: &cancellables)
     }
     
+    private func addCaptureModeSegmentedControlTarget() {
+        captureModeSegmentationControl.addTarget(self, action: #selector(didSelectCaptureMode), for: .valueChanged)
+    }
+    
+    @objc func didSelectCaptureMode(_ sender: UISegmentedControl) {
+        switch sender.selectedSegmentIndex {
+        case 0:
+            captureButton.isHidden = false
+            recordButton.isHidden = true
+            viewModel.changeCapture(mode: sender.selectedSegmentIndex)
+            
+        case 1:
+            captureButton.isHidden = true
+            recordButton.isHidden = false
+            viewModel.changeCapture(mode: sender.selectedSegmentIndex)
+            
+        default:
+            break
+            
+        }
+    }
+    
     private func checkAuthorizationStatus() {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .authorized:
@@ -109,6 +161,8 @@ extension StudioViewController {
     private func addSubviews() {
         view.addSubview(previewView)
         view.addSubview(captureButton)
+        view.addSubview(recordButton)
+        previewView.addSubview(captureModeSegmentationControl)
     }
     
     private func adjustLayoutOf(previewView: PreviewView) {
@@ -121,6 +175,16 @@ extension StudioViewController {
     private func adjustLayoutOf(captureButton: UIButton) {
         captureButton.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         captureButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40).isActive = true
+    }
+    
+    private func adjustLayoutOf(recordButton: RecordButton) {
+        recordButton.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        recordButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -60).isActive = true
+    }
+    
+    private func adjustLayoutOf(captureModeSegmentationControl: UISegmentedControl) {
+        captureModeSegmentationControl.bottomAnchor.constraint(equalTo: previewView.safeAreaLayoutGuide.bottomAnchor).isActive = true
+        captureModeSegmentationControl.centerXAnchor.constraint(equalTo: previewView.centerXAnchor).isActive = true
     }
     
     private func addActionOf(captureButton: UIButton) {
@@ -151,6 +215,26 @@ extension StudioViewController {
             self.present(alertController, animated: true, completion: nil)
         }
         captureButton.addAction(action, for: .touchUpInside)
+    }
+    
+    private func addActionOf(recordButton: RecordButton) {
+        if let window = self.view.window, let windowScene = window.windowScene {
+            switch windowScene.interfaceOrientation {
+            case .portrait: self.supportedInterfaceOrientations = .portrait
+            case .landscapeLeft: self.supportedInterfaceOrientations = .landscapeLeft
+            case .landscapeRight: self.supportedInterfaceOrientations = .landscapeRight
+            case .portraitUpsideDown: self.supportedInterfaceOrientations = .portraitUpsideDown
+            case .unknown: self.supportedInterfaceOrientations = .portrait
+            default: self.supportedInterfaceOrientations = .portrait
+            }
+        }
+        self.setNeedsUpdateOfSupportedInterfaceOrientations()
+        
+        let action = UIAction { _ in
+            recordButton.toggle()
+            self.viewModel.didRecord()
+        }
+        recordButton.addAction(action, for: .touchUpInside)
     }
 }
 

@@ -20,6 +20,8 @@ protocol StudioViewModel {
     func stopSessionRunning()
     func suspendSessionQueue()
     func resumeSessionQueue()
+    func changeCapture(mode: Int)
+    func didRecord()
     func didLoadTasteView(with dishName: String)
 }
 
@@ -79,6 +81,14 @@ final class DefaultStudioViewModel: StudioViewModel {
     
     func resumeSessionQueue() {
         studio.resumeSessionQueue()
+    }
+    
+    func changeCapture(mode: Int) {
+        studio.changeCapture(mode: mode)
+    }
+    
+    func didRecord() {
+        studio.captureMovie()
     }
     
     func didLoadTasteView(with dishName: String) {
