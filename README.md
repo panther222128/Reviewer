@@ -1,5 +1,7 @@
 ## Reviewer
 
+사진 순서: 저장된 오마카세 리스트, 오마카세 저장, 사진 촬영, 영상 촬영, 촬영 후 음식 저장, 음식 맛 저장, 저장 확인, 오마카세 저장된 화면, 저장된 오마카세 음식 리스트, 저장된 음식 맛 상세
+
 <img src="https://github.com/panther222128/Reviewer/assets/61342175/ba261df4-bc70-4d8d-8c0c-64fdd6208236"  width="400"/>
 
 <img src="https://github.com/panther222128/Reviewer/assets/61342175/55cdd903-a56f-4c6e-9ac4-9f7308f07f20"  width="400"/>
