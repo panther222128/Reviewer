@@ -14,9 +14,12 @@ final class Studio: NSObject {
 
     private let sessionQueue: DispatchQueue
     private let captureSession: AVCaptureSession
-    private var captureDevice: AVCaptureDevice?
+    private var videoCaptureDevice: AVCaptureDevice?
+    private var audioCaptureDevice: AVCaptureDevice?
     @objc dynamic var videoDeviceInput: AVCaptureDeviceInput?
+    @objc dynamic var audioDeviceInput: AVCaptureDeviceInput?
     private var photoOutput: AVCapturePhotoOutput
+    private var audioDataOutput: AVCaptureAudioDataOutput?
     private var movieFileOutput: AVCaptureMovieFileOutput?
     private var photoSettings: AVCapturePhotoSettings?
     private var photoOutputReadinessCoordinator: AVCapturePhotoOutputReadinessCoordinator?
@@ -33,9 +36,12 @@ final class Studio: NSObject {
     override init() {
         self.sessionQueue = DispatchQueue(label: "session queue")
         self.captureSession = AVCaptureSession()
-        self.captureDevice = nil
+        self.videoCaptureDevice = nil
+        self.audioCaptureDevice = nil
         self.videoDeviceInput = nil
+        self.audioDeviceInput = nil
         self.photoOutput = AVCapturePhotoOutput()
+        self.audioDataOutput = nil
         self.movieFileOutput = nil
         self.photoSettings = nil
         self.photoOutputReadinessCoordinator = nil
@@ -83,7 +89,7 @@ final class Studio: NSObject {
             let outputs = self.captureSession.outputs
             outputs.forEach { self.captureSession.removeOutput($0) }
             
-            self.captureDevice = nil
+            self.videoCaptureDevice = nil
             self.videoDeviceInput = nil
             self.photoSettings = nil
             self.photoOutputReadinessCoordinator = nil
@@ -181,6 +187,22 @@ final class Studio: NSObject {
                 } else {
                     print("Capture session output problem.")
                 }
+                if let audioDataOutput = self.audioDataOutput {
+                    self.captureSession.removeOutput(audioDataOutput)
+                    self.audioDataOutput = nil
+                } else {
+                    print("Capture session output problem.")
+                }
+                
+                if let audioDeviceInput = self.audioDeviceInput {
+                    self.captureSession.removeInput(audioDeviceInput)
+                    self.audioDeviceInput = nil
+                } else {
+                    print("Capture session input problem.")
+                }
+                
+                self.audioCaptureDevice = nil
+
                 self.captureSession.sessionPreset = .photo
                 self.movieFileOutput = nil
                 
@@ -195,6 +217,10 @@ final class Studio: NSObject {
                     self.captureSession.beginConfiguration()
                     self.captureSession.addOutput(movieFileOutput)
                     self.captureSession.sessionPreset = .high
+                    
+                    self.findMicrohone()
+                    self.addAudioDeviceInput()
+                    self.addAudioDataOutput()
                     
                     if let connection = movieFileOutput.connection(with: .video) {
                         if connection.isVideoMirroringSupported {
@@ -222,8 +248,8 @@ final class Studio: NSObject {
             captureSession.commitConfiguration()
         }
         
-        captureDevice = AVCaptureDevice.systemPreferredCamera
-        guard let captureDevice = captureDevice else {
+        videoCaptureDevice = AVCaptureDevice.systemPreferredCamera
+        guard let captureDevice = videoCaptureDevice else {
             print("Cannot find capture device.")
             captureSession.commitConfiguration()
             return
@@ -237,7 +263,7 @@ final class Studio: NSObject {
         }
         
         do {
-            if let captureDevice = captureDevice {
+            if let captureDevice = videoCaptureDevice {
                 let videoDeviceInput = try AVCaptureDeviceInput(device: captureDevice)
                 if captureSession.canAddInput(videoDeviceInput) {
                     // MARK: - If you want to manage input and output connection directly, you can use captureSession.addInputWithNoConnections() and captureSession.addOutputWithNoConnections()
@@ -260,6 +286,20 @@ final class Studio: NSObject {
         }
     }
     
+    private func findMicrohone() {
+        captureSession.beginConfiguration()
+        defer {
+            captureSession.commitConfiguration()
+        }
+        
+        if let microphone = AVCaptureDevice.default(for: .audio) {
+            audioCaptureDevice = microphone
+        } else {
+            print("Cannot find available microphone.")
+            captureSession.commitConfiguration()
+        }
+    }
+    
     private func addPhotoOutput() {
         captureSession.beginConfiguration()
         defer {
@@ -272,6 +312,53 @@ final class Studio: NSObject {
         } else {
             print("Cannot add photo output.")
             captureSession.commitConfiguration()
+        }
+    }
+    
+    private func addAudioDeviceInput() {
+        captureSession.beginConfiguration()
+        defer {
+            captureSession.commitConfiguration()
+        }
+        
+        do {
+            if let audioCaptureDevice {
+                let audioDeviceInput = try AVCaptureDeviceInput(device: audioCaptureDevice)
+                if captureSession.canAddInput(audioDeviceInput) {
+                    captureSession.addInput(audioDeviceInput)
+                    self.audioDeviceInput = audioDeviceInput
+                } else {
+                    captureSession.commitConfiguration()
+                    print("Cannot add audio device input.")
+                }
+            } else {
+                captureSession.commitConfiguration()
+                print("Cannot find audio capture device.")
+            }
+        } catch {
+            captureSession.commitConfiguration()
+            print("Cannot initialize audio device input.")
+        }
+    }
+    
+    private func addAudioDataOutput() {
+        captureSession.beginConfiguration()
+        defer {
+            captureSession.commitConfiguration()
+        }
+        
+        let audioDataOutput = AVCaptureAudioDataOutput()
+        self.audioDataOutput = audioDataOutput
+        
+        if let output = self.audioDataOutput {
+            if captureSession.canAddOutput(output) {
+                captureSession.addOutput(output)
+            } else {
+                print("Cannot add audio data output.")
+                captureSession.commitConfiguration()
+            }
+        } else {
+            print("Cannot find audio data output.")
         }
     }
     

@@ -13,9 +13,9 @@ final class RecordButton: UIButton {
         didSet {
             let symbolConfiguration = UIImage.SymbolConfiguration(pointSize: 64, weight: .bold, scale: .default)
             if isSelected {
-                selectImageView.image = UIImage(systemName: "record.circle", withConfiguration: symbolConfiguration)
-            } else {
                 selectImageView.image = UIImage(systemName: "record.circle.fill", withConfiguration: symbolConfiguration)
+            } else {
+                selectImageView.image = UIImage(systemName: "record.circle", withConfiguration: symbolConfiguration)
             }
         }
     }
