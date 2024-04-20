@@ -70,7 +70,7 @@ final class DefaultTasteListViewModel: TasteListViewModel {
     
     func didSaveDish() {
         if !tastes.isEmpty {
-            repository.save(dish: .init(id: UUID().uuidString, name: dishName, date: Date(), tastes: selectedTastes), id: restaurantId)
+            repository.save(restaurantId: restaurantId, dish: .init(id: UUID().uuidString, name: dishName, date: Date(), tastes: selectedTastes))
         }
     }
     

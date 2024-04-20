@@ -58,7 +58,7 @@ final class DefaultRestaurantDishListViewModel: RestaurantDishListViewModel {
     }
     
     func loadDishes() {
-        repository.fetchDishes(with: id) { [weak self] result in
+        repository.fetchDishes(restaurantId: id) { [weak self] result in
             switch result {
             case .success(let dishes):
                 if let self = self {
@@ -80,7 +80,7 @@ final class DefaultRestaurantDishListViewModel: RestaurantDishListViewModel {
     
     func didDeleteDish(at indexPath: IndexPath) {
         let dishId = dishes[indexPath.row].id
-        repository.deleteDish(dishId: dishId, restaurantId: id)
+        repository.deleteDish(restaurantId: id, dishId: dishId)
     }
     
     func didLoadStudio() {

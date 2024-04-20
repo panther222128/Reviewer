@@ -80,12 +80,12 @@ final class DefaultRestaurantListViewModel: RestaurantListViewModel {
     func didAddRestaurant(name: String) {
         let id = UUID().uuidString
         restaurantId = id
-        repository.saveRestaurant(id: id, name: name)
+        repository.saveRestaurant(restairamtId: id, name: name)
     }
     
     func didDeleteRestaurant(at indexPath: IndexPath) {
         let restaurantId = restaurants[indexPath.row].id
-        repository.delete(with: restaurantId)
+        repository.deleteRestaurant(restaurantId: restaurantId)
         restaurants.remove(at: indexPath.row)
     }
     

@@ -14,12 +14,12 @@ enum ReviewListStorageError: Error {
 }
 
 protocol ReviewListStorage {
-    func saveRestaurant(id: String, name: String)
+    func saveRestaurant(restaurantId: String, name: String)
     func fetchRestaurants(completion: @escaping (Result<[Restaurant], Error>) -> Void)
-    func delete(with id: String)
-    func deleteDish(dishId: String, restaurantId: String)
-    func save(dish: Dish, id: String)
-    func fetchDishes(with id: String, completion: @escaping (Result<[Dish], Error>) -> Void)
+    func deleteRestaurant(restaurantId: String)
+    func deleteDish(restaurantId: String, dishId: String)
+    func saveDish(restaurantId: String, dish: Dish)
+    func fetchDishes(restaurantId: String, completion: @escaping (Result<[Dish], Error>) -> Void)
     func fetchTastes(restaurantId: String, dishId: String, completion: @escaping (Result<[String], Error>) -> Void)
     func addTaste(restaurantId: String, dishId: String, taste: String)
 }
@@ -40,9 +40,9 @@ final class DefaultReviewListStorage: ReviewListStorage {
         }
     }
     
-    func saveRestaurant(id: String, name: String) {
+    func saveRestaurant(restaurantId: String, name: String) {
         if let context {
-            let restaurant = RestaurantEntity(id: id, name: name, date: Date())
+            let restaurant = RestaurantEntity(id: restaurantId, name: name, date: Date())
             context.insert(restaurant)
         }
     }
@@ -60,16 +60,16 @@ final class DefaultReviewListStorage: ReviewListStorage {
         }
     }
     
-    func delete(with id: String) {
-        if let context, let restaurant = fetchRestaurant(with: id) {
+    func deleteRestaurant(restaurantId: String) {
+        if let context, let restaurant = fetchRestaurant(restaurantId: restaurantId) {
             context.delete(restaurant)
         } else {
             
         }
     }
     
-    func deleteDish(dishId: String, restaurantId: String) {
-        if let context, let restaurant = fetchRestaurant(with: restaurantId) {
+    func deleteDish(restaurantId: String, dishId: String) {
+        if let context, let restaurant = fetchRestaurant(restaurantId: restaurantId) {
             let dishes = restaurant.dishes
             let filteredDishes = dishes.filter { $0.id == dishId }
             filteredDishes.forEach { context.delete($0) }
@@ -84,8 +84,8 @@ final class DefaultReviewListStorage: ReviewListStorage {
         }
     }
     
-    func save(dish: Dish, id: String) {
-        if let restaurant = fetchRestaurant(with: id) {
+    func saveDish(restaurantId: String, dish: Dish) {
+        if let restaurant = fetchRestaurant(restaurantId: restaurantId) {
             restaurant.dishes.append(.init(id: dish.id, name: dish.name, tastes: dish.tastes))
         } else {
             
@@ -93,7 +93,7 @@ final class DefaultReviewListStorage: ReviewListStorage {
     }
     
     func addTaste(restaurantId: String, dishId: String, taste: String) {
-        if let restaurant = fetchRestaurant(with: restaurantId) {
+        if let restaurant = fetchRestaurant(restaurantId: restaurantId) {
             let filteredDish = restaurant.dishes.filter { $0.id == dishId }
             filteredDish.forEach { $0.tastes.append(taste) }
         } else {
@@ -101,8 +101,8 @@ final class DefaultReviewListStorage: ReviewListStorage {
         }
     }
     
-    func fetchDishes(with id: String, completion: @escaping (Result<[Dish], Error>) -> Void) {
-        if let restaurant = fetchRestaurant(with: id) {
+    func fetchDishes(restaurantId: String, completion: @escaping (Result<[Dish], Error>) -> Void) {
+        if let restaurant = fetchRestaurant(restaurantId: restaurantId) {
             let dishes = restaurant.dishes
             let domain = dishes.map { $0.toDomain() }
             completion(.success(domain))
@@ -113,7 +113,7 @@ final class DefaultReviewListStorage: ReviewListStorage {
     }
     
     func fetchTastes(restaurantId: String, dishId: String, completion: @escaping (Result<[String], Error>) -> Void) {
-        if let restaurant = fetchRestaurant(with: restaurantId) {
+        if let restaurant = fetchRestaurant(restaurantId: restaurantId) {
             let dishes = restaurant.dishes
             let filteredDishes = dishes.filter { $0.id == dishId }
             if let first = filteredDishes.first {
@@ -126,12 +126,12 @@ final class DefaultReviewListStorage: ReviewListStorage {
         }
     }
     
-    private func fetchRestaurant(with id: String) -> RestaurantEntity? {
+    private func fetchRestaurant(restaurantId: String) -> RestaurantEntity? {
         let descriptor = FetchDescriptor<RestaurantEntity>(sortBy: [SortDescriptor<RestaurantEntity>(\.date)])
         if let context {
             do {
                 let data = try context.fetch(descriptor)
-                if let target = data.filter({ $0.id == id }).first {
+                if let target = data.filter({ $0.id == restaurantId }).first {
                     return target
                 } else {
                     print("Cannot find data.")

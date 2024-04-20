@@ -15,8 +15,8 @@ final class DefaultReviewListRepository: ReviewListRepository {
         self.storage = storage
     }
     
-    func saveRestaurant(id: String, name: String) {
-        storage.saveRestaurant(id: id, name: name)
+    func saveRestaurant(restairamtId: String, name: String) {
+        storage.saveRestaurant(restaurantId: restairamtId, name: name)
     }
     
     func addTaste(restaurantId: String, dishId: String, taste: String) {
@@ -27,20 +27,20 @@ final class DefaultReviewListRepository: ReviewListRepository {
         storage.fetchRestaurants(completion: completion)
     }
     
-    func delete(with id: String) {
-        storage.delete(with: id)
+    func deleteRestaurant(restaurantId: String) {
+        storage.deleteRestaurant(restaurantId: restaurantId)
     }
     
-    func deleteDish(dishId: String, restaurantId: String) {
-        storage.deleteDish(dishId: dishId, restaurantId: restaurantId)
+    func deleteDish(restaurantId: String, dishId: String) {
+        storage.deleteDish(restaurantId: restaurantId, dishId: dishId)
     }
     
-    func save(dish: Dish, id: String) {
-        storage.save(dish: dish, id: id)
+    func save(restaurantId: String, dish: Dish) {
+        storage.saveDish(restaurantId: restaurantId, dish: dish)
     }
     
-    func fetchDishes(with id: String, completion: @escaping (Result<[Dish], Error>) -> Void) {
-        storage.fetchDishes(with: id, completion: completion)
+    func fetchDishes(restaurantId: String, completion: @escaping (Result<[Dish], Error>) -> Void) {
+        storage.fetchDishes(restaurantId: restaurantId, completion: completion)
     }
     
     func fetchTastes(restaurantId: String, dishId: String, completion: @escaping (Result<[String], Error>) -> Void) {
