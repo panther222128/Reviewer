@@ -63,7 +63,7 @@ final class SettingsViewController: UIViewController {
         deleteModeSwitchSettingView.addSettingSwitch(target: self, action: #selector(didToggleSwitch), for: .valueChanged)
     }
     
-    @objc func didToggleSwitch(_ sender: UISwitch) {
+    @objc private func didToggleSwitch(_ sender: UISwitch) {
         if sender.isOn {
             viewModel.didToggleSwitch(to: false)
         } else {

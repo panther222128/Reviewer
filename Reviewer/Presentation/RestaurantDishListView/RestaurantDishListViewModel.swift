@@ -58,8 +58,9 @@ final class DefaultRestaurantDishListViewModel: RestaurantDishListViewModel {
     }
     
     func loadDishes() {
-        repository.fetchDishes(with: id) { [weak self] dishes, error in
-            if let dishes {
+        repository.fetchDishes(with: id) { [weak self] result in
+            switch result {
+            case .success(let dishes):
                 if let self = self {
                     self.dishes = dishes.sorted(by: { $0.date < $1.date } )
                     self.listItems = self.dishes.map { .init(name: $0.name) }
@@ -67,8 +68,8 @@ final class DefaultRestaurantDishListViewModel: RestaurantDishListViewModel {
                 } else {
                     print("View model is empty.")
                 }
-            } else {
-                print("Cannot find dishes.")
+            case .failure(let error):
+                print(error)
             }
         }
     }

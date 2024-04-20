@@ -16,8 +16,8 @@ final class Studio: NSObject {
     private let captureSession: AVCaptureSession
     private var videoCaptureDevice: AVCaptureDevice?
     private var audioCaptureDevice: AVCaptureDevice?
-    @objc dynamic var videoDeviceInput: AVCaptureDeviceInput?
-    @objc dynamic var audioDeviceInput: AVCaptureDeviceInput?
+    @objc dynamic private var videoDeviceInput: AVCaptureDeviceInput?
+    @objc dynamic private var audioDeviceInput: AVCaptureDeviceInput?
     private var photoOutput: AVCapturePhotoOutput
     private var audioDataOutput: AVCaptureAudioDataOutput?
     private var movieFileOutput: AVCaptureMovieFileOutput?

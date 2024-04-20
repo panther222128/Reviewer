@@ -119,7 +119,7 @@ final class StudioViewController: UIViewController {
         captureModeSegmentationControl.addTarget(self, action: #selector(didSelectCaptureMode), for: .valueChanged)
     }
     
-    @objc func didSelectCaptureMode(_ sender: UISegmentedControl) {
+    @objc private func didSelectCaptureMode(_ sender: UISegmentedControl) {
         switch sender.selectedSegmentIndex {
         case 0:
             captureButton.isHidden = false

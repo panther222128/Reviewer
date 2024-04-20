@@ -51,8 +51,9 @@ final class DefaultRestaurantListViewModel: RestaurantListViewModel {
     }
     
     func loadListItem() {
-        repository.fetchRestaurants { [weak self] restaurants, error in
-            if let restaurants {
+        repository.fetchRestaurants { [weak self] result in
+            switch result {
+            case .success(let restaurants):
                 if let self = self {
                     self.restaurants = restaurants.sorted(by: { $0.date < $1.date } )
                     self.listItemViewModels = self.restaurants.map { .init(restaurantName: $0.name, date: $0.date) }
@@ -60,6 +61,10 @@ final class DefaultRestaurantListViewModel: RestaurantListViewModel {
                 } else {
                     print("Cannot find view model.")
                 }
+                
+            case .failure(let error):
+                print(error)
+                
             }
         }
     }

@@ -8,14 +8,19 @@
 import Foundation
 import SwiftData
 
+enum ReviewListStorageError: Error {
+    case cannotFindRestaurants
+    case cannotFindRestaurant
+}
+
 protocol ReviewListStorage {
     func saveRestaurant(id: String, name: String)
-    func fetchRestaurants(completion: @escaping ([Restaurant]?, Error?) -> Void)
+    func fetchRestaurants(completion: @escaping (Result<[Restaurant], Error>) -> Void)
     func delete(with id: String)
     func deleteDish(dishId: String, restaurantId: String)
     func save(dish: Dish, id: String)
-    func fetchDishes(with id: String, completion: @escaping ([Dish]?, Error?) -> Void)
-    func fetchTastes(restaurantId: String, dishId: String, completion: @escaping ([String]?, Error?) -> Void)
+    func fetchDishes(with id: String, completion: @escaping (Result<[Dish], Error>) -> Void)
+    func fetchTastes(restaurantId: String, dishId: String, completion: @escaping (Result<[String], Error>) -> Void)
     func addTaste(restaurantId: String, dishId: String, taste: String)
 }
 
@@ -42,15 +47,15 @@ final class DefaultReviewListStorage: ReviewListStorage {
         }
     }
     
-    func fetchRestaurants(completion: @escaping ([Restaurant]?, Error?) -> Void) {
+    func fetchRestaurants(completion: @escaping (Result<[Restaurant], Error>) -> Void) {
         let descriptor = FetchDescriptor<RestaurantEntity>(sortBy: [SortDescriptor<RestaurantEntity>(\.date)])
         if let context {
             do {
                 let data = try context.fetch(descriptor)
                 let domain = data.map { $0.toDomain() }
-                completion(domain, nil)
+                completion(.success(domain))
             } catch {
-                completion(nil, error)
+                completion(.failure(error))
             }
         }
     }
@@ -96,28 +101,28 @@ final class DefaultReviewListStorage: ReviewListStorage {
         }
     }
     
-    func fetchDishes(with id: String, completion: @escaping ([Dish]?, Error?) -> Void) {
+    func fetchDishes(with id: String, completion: @escaping (Result<[Dish], Error>) -> Void) {
         if let restaurant = fetchRestaurant(with: id) {
             let dishes = restaurant.dishes
             let domain = dishes.map { $0.toDomain() }
-            completion(domain, nil)
+            completion(.success(domain))
         } else {
             print("Cannot find restaurant.")
-            completion(nil, nil)
+            completion(.failure(ReviewListStorageError.cannotFindRestaurants))
         }
     }
     
-    func fetchTastes(restaurantId: String, dishId: String, completion: @escaping ([String]?, Error?) -> Void) {
+    func fetchTastes(restaurantId: String, dishId: String, completion: @escaping (Result<[String], Error>) -> Void) {
         if let restaurant = fetchRestaurant(with: restaurantId) {
             let dishes = restaurant.dishes
             let filteredDishes = dishes.filter { $0.id == dishId }
             if let first = filteredDishes.first {
-                completion(first.tastes, nil)
+                completion(.success(first.tastes))
             } else {
-                completion(nil, nil)
+                completion(.failure(ReviewListStorageError.cannotFindRestaurant))
             }
         } else {
-            completion(nil, nil)
+            completion(.failure(ReviewListStorageError.cannotFindRestaurants))
         }
     }
     

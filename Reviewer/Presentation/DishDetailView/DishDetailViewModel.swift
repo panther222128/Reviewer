@@ -44,10 +44,14 @@ final class DefaultDishDetailViewModel: DishDetailViewModel {
     }
     
     func didLoadTastes() {
-        repository.fetchTastes(restaurantId: restaurantId, dishId: dishId) { tastes, error in
-            if let tastes {
+        repository.fetchTastes(restaurantId: restaurantId, dishId: dishId) { result in
+            switch result {
+            case .success(let tastes):
                 self.tastes = tastes
                 self.tastesSubject.send(self.tastes)
+            case .failure(let error):
+                print(error)
+                
             }
         }
     }
