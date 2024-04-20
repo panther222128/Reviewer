@@ -3,8 +3,6 @@
 
 <img src="https://github.com/panther222128/Reviewer/assets/61342175/0011302e-db91-42cd-bfa5-34a53fa9f8b4"  width="400"/>
 
-<img src="https://github.com/panther222128/Reviewer/assets/61342175/0011302e-db91-42cd-bfa5-34a53fa9f8b4"  width="400"/>
-
 <img src="https://github.com/panther222128/Reviewer/assets/61342175/cc85697a-76d6-4d82-b6e9-45960fe98d70"  width="400"/>
 
 <img src="https://github.com/panther222128/Reviewer/assets/61342175/e88d3865-2c86-40ff-9287-027bc8d830a9"  width="400"/>
