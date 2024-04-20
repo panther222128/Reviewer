@@ -58,6 +58,8 @@ final class StudioViewController: UIViewController {
         return segmentedControl
     }()
     
+    private var isRecord: Bool = false
+    
     private var viewModel: StudioViewModel!
     
     private var cancellables: Set<AnyCancellable> = []
@@ -190,29 +192,7 @@ extension StudioViewController {
     private func addActionOf(captureButton: UIButton) {
         let action = UIAction { action in
             self.viewModel.capturePhoto(from: self.previewView)
-            let alertController = UIAlertController(title: "음식 이름", message: nil, preferredStyle: .alert)
-            alertController.addTextField()
-            
-            let confirmAction = UIAlertAction(title: "확인", style: .default) { _ in
-                if let textFields = alertController.textFields {
-                    if let textField = textFields.first {
-                        if let text = textField.text, !text.isEmpty {
-                            self.viewModel.didLoadTasteView(with: text)
-                        } else {
-                            print("Text must not be empty.")
-                        }
-                    } else {
-                        print("Cannot find text field.")
-                    }
-                }
-            }
-            alertController.addAction(confirmAction)
-            
-            let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
-            
-            alertController.addAction(cancelAction)
-            
-            self.present(alertController, animated: true, completion: nil)
+            self.presentDishNameTextFieldAlert()
         }
         captureButton.addAction(action, for: .touchUpInside)
     }
@@ -231,10 +211,44 @@ extension StudioViewController {
         self.setNeedsUpdateOfSupportedInterfaceOrientations()
         
         let action = UIAction { _ in
-            recordButton.toggle()
-            self.viewModel.didRecord()
+            if !self.isRecord {
+                self.isRecord.toggle()
+                recordButton.toggle()
+                self.viewModel.didRecord()
+            } else {
+                self.isRecord.toggle()
+                recordButton.toggle()
+                self.viewModel.didRecord()
+                self.presentDishNameTextFieldAlert()
+            }
         }
         recordButton.addAction(action, for: .touchUpInside)
+    }
+    
+    private func presentDishNameTextFieldAlert() {
+        let alertController = UIAlertController(title: "음식 이름", message: nil, preferredStyle: .alert)
+        alertController.addTextField()
+        
+        let confirmAction = UIAlertAction(title: "확인", style: .default) { _ in
+            if let textFields = alertController.textFields {
+                if let textField = textFields.first {
+                    if let text = textField.text, !text.isEmpty {
+                        self.viewModel.didLoadTasteView(with: text)
+                    } else {
+                        print("Text must not be empty.")
+                    }
+                } else {
+                    print("Cannot find text field.")
+                }
+            }
+        }
+        alertController.addAction(confirmAction)
+        
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        
+        alertController.addAction(cancelAction)
+        
+        self.present(alertController, animated: true, completion: nil)
     }
 }
 
