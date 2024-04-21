@@ -12,7 +12,7 @@ import AVFoundation
 
 protocol StudioUseCase {
     func setSession(on previewView: PreviewView)
-    func integrateSession<T>(on previewView: PreviewView, delegate: T) where T: AVCapturePhotoOutputReadinessCoordinatorDelegate
+    func integrateSession<T>(on previewView: PreviewView, mode: Studio.CaptureMode, preset: AVCaptureSession.Preset, delegate: T) where T: AVCapturePhotoOutputReadinessCoordinatorDelegate
     func capturePhoto(from previewView: PreviewView)
     func startSessionRunning()
     func stopSessionRunning()
@@ -32,8 +32,8 @@ final class DefaultStudioUseCase: StudioUseCase {
         studio.setSession(on: previewView)
     }
     
-    func integrateSession<T>(on previewView: PreviewView, delegate: T) where T: AVCapturePhotoOutputReadinessCoordinatorDelegate {
-        studio.integrateSession(on: previewView, delegate: delegate)
+    func integrateSession<T>(on previewView: PreviewView, mode: Studio.CaptureMode, preset: AVCaptureSession.Preset, delegate: T) where T: AVCapturePhotoOutputReadinessCoordinatorDelegate {
+        studio.integrateSession(on: previewView, mode: mode, preset: preset, delegate: delegate)
     }
     
     func capturePhoto(from previewView: PreviewView) {

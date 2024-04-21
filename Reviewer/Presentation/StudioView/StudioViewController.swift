@@ -68,6 +68,15 @@ final class StudioViewController: UIViewController {
         return segmentedControl
     }()
     
+    private let movieResolutioonSegmentedControl: UISegmentedControl = {
+        let segmentedControl = UISegmentedControl()
+        segmentedControl.translatesAutoresizingMaskIntoConstraints = false
+        segmentedControl.insertSegment(withTitle: "HD", at: 0, animated: true)
+        segmentedControl.insertSegment(withTitle: "4K", at: 1, animated: true)
+        segmentedControl.selectedSegmentIndex = 0
+        return segmentedControl
+    }()
+    
     private var isRecord: Bool = false
     
     private var viewModel: StudioViewModel!
@@ -85,11 +94,15 @@ final class StudioViewController: UIViewController {
         adjustLayoutOf(captureButton: captureButton)
         addActionOf(captureButton: captureButton)
         adjustLayoutOf(videoZoomFactorSegmentedControl: videoZoomFactorSegmentedControl)
+        adjustLayoutOf(movieResolutionSegmentedControl: movieResolutioonSegmentedControl)
         adjustLayoutOf(captureModeSegmentationControl: captureModeSegmentedControl)
         adjustLayoutOf(recordButton: recordButton)
         addActionOf(recordButton: recordButton)
         addZoomFactorSegmentedControlTarget()
+        addMovieResolutionSegmentedControlTarget()
         addCaptureModeSegmentedControlTarget()
+        
+        movieResolutioonSegmentedControl.isHidden = true
         
         addFocusGesture()
         
@@ -103,9 +116,21 @@ final class StudioViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        viewModel.setSession(on: previewView)
-        viewModel.integrateCaptureSession(on: previewView, delegate: self)
-        viewModel.startSessionRunning()
+        if captureModeSegmentedControl.selectedSegmentIndex == 0 {
+            viewModel.setSession(on: previewView)
+            viewModel.integrateCaptureSession(on: previewView, mode: .photo, preset: .photo, delegate: self)
+            viewModel.startSessionRunning()
+        } else {
+            if movieResolutioonSegmentedControl.selectedSegmentIndex == 0 {
+                viewModel.setSession(on: previewView)
+                viewModel.integrateCaptureSession(on: previewView, mode: .movie, preset: .hd1920x1080, delegate: self)
+                viewModel.startSessionRunning()
+            } else if movieResolutioonSegmentedControl.selectedSegmentIndex == 1 {
+                viewModel.setSession(on: previewView)
+                viewModel.integrateCaptureSession(on: previewView, mode: .movie, preset: .hd4K3840x2160, delegate: self)
+                viewModel.startSessionRunning()
+            }
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -137,6 +162,14 @@ final class StudioViewController: UIViewController {
         viewModel.didChangeZoomFactor(at: sender.selectedSegmentIndex)
     }
     
+    private func addMovieResolutionSegmentedControlTarget() {
+        movieResolutioonSegmentedControl.addTarget(self, action: #selector(didSelectResolution), for: .valueChanged)
+    }
+    
+    @objc private func didSelectResolution(_ sender: UISegmentedControl) {
+        viewModel.didChangeResolution(at: sender.selectedSegmentIndex)
+    }
+    
     private func addCaptureModeSegmentedControlTarget() {
         captureModeSegmentedControl.addTarget(self, action: #selector(didSelectCaptureMode), for: .valueChanged)
     }
@@ -146,11 +179,13 @@ final class StudioViewController: UIViewController {
         case 0:
             captureButton.isHidden = false
             recordButton.isHidden = true
+            movieResolutioonSegmentedControl.isHidden = true
             viewModel.changeCapture(mode: sender.selectedSegmentIndex)
             
         case 1:
             captureButton.isHidden = true
             recordButton.isHidden = false
+            movieResolutioonSegmentedControl.isHidden = false
             viewModel.changeCapture(mode: sender.selectedSegmentIndex)
             
         default:
@@ -201,6 +236,7 @@ extension StudioViewController {
         view.addSubview(captureButton)
         view.addSubview(recordButton)
         previewView.addSubview(videoZoomFactorSegmentedControl)
+        previewView.addSubview(movieResolutioonSegmentedControl)
         previewView.addSubview(captureModeSegmentedControl)
     }
     
@@ -222,8 +258,13 @@ extension StudioViewController {
     }
     
     private func adjustLayoutOf(videoZoomFactorSegmentedControl: UISegmentedControl) {
-        videoZoomFactorSegmentedControl.bottomAnchor.constraint(equalTo: previewView.safeAreaLayoutGuide.bottomAnchor, constant: -200).isActive = true
+        videoZoomFactorSegmentedControl.bottomAnchor.constraint(equalTo: previewView.safeAreaLayoutGuide.bottomAnchor, constant: -150).isActive = true
         videoZoomFactorSegmentedControl.centerXAnchor.constraint(equalTo: previewView.centerXAnchor).isActive = true
+    }
+    
+    private func adjustLayoutOf(movieResolutionSegmentedControl: UISegmentedControl) {
+        movieResolutionSegmentedControl.topAnchor.constraint(equalTo: previewView.safeAreaLayoutGuide.topAnchor, constant: 100).isActive = true
+        movieResolutionSegmentedControl.centerXAnchor.constraint(equalTo: previewView.centerXAnchor).isActive = true
     }
     
     private func adjustLayoutOf(captureModeSegmentationControl: UISegmentedControl) {

@@ -14,7 +14,7 @@ protocol StudioViewModel {
     
     func loadTitle()
     func setSession(on previewView: PreviewView)
-    func integrateCaptureSession<T>(on previewView: PreviewView, delegate: T) where T: AVCapturePhotoOutputReadinessCoordinatorDelegate
+    func integrateCaptureSession<T>(on previewView: PreviewView, mode: Studio.CaptureMode, preset: AVCaptureSession.Preset, delegate: T) where T: AVCapturePhotoOutputReadinessCoordinatorDelegate
     func capturePhoto(from previewView: PreviewView)
     func startSessionRunning()
     func stopSessionRunning()
@@ -23,6 +23,7 @@ protocol StudioViewModel {
     func changeCapture(mode: Int)
     func didRecord()
     func didChangeZoomFactor(at number: Int)
+    func didChangeResolution(at number: Int)
     func focus(at devicePoint: CGPoint, monitorSubjectAreaChange: Bool)
     func didLoadTasteView(with dishName: String)
 }
@@ -61,8 +62,8 @@ final class DefaultStudioViewModel: StudioViewModel {
         studio.setSession(on: previewView)
     }
     
-    func integrateCaptureSession<T>(on previewView: PreviewView, delegate: T) where T: AVCapturePhotoOutputReadinessCoordinatorDelegate {
-        studio.integrateSession(on: previewView, delegate: delegate)
+    func integrateCaptureSession<T>(on previewView: PreviewView, mode: Studio.CaptureMode, preset: AVCaptureSession.Preset, delegate: T) where T: AVCapturePhotoOutputReadinessCoordinatorDelegate {
+        studio.integrateSession(on: previewView, mode: mode, preset: preset, delegate: delegate)
     }
     
     func capturePhoto(from previewView: PreviewView) {
@@ -95,6 +96,10 @@ final class DefaultStudioViewModel: StudioViewModel {
     
     func didChangeZoomFactor(at number: Int) {
         studio.changeZoomFactor(at: number)
+    }
+    
+    func didChangeResolution(at number: Int) {
+        studio.changeVideoResolution(at: number)
     }
     
     func focus(at devicePoint: CGPoint, monitorSubjectAreaChange: Bool) {

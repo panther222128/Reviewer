@@ -60,51 +60,76 @@ final class Studio: NSObject {
         previewView.session = captureSession
     }
     
-    func integrateSession<T>(on previewView: PreviewView, delegate: T) where T: AVCapturePhotoOutputReadinessCoordinatorDelegate {
+    func integrateSession<T>(on previewView: PreviewView, mode: CaptureMode, preset: AVCaptureSession.Preset, delegate: T) where T: AVCapturePhotoOutputReadinessCoordinatorDelegate {
         sessionQueue.async {
-            self.setSession(preset: .photo)
-            self.findCamera()
-            self.addVideoDeviceInput(on: previewView)
-            self.addPhotoOutput()
-            self.setReadinessCoordinatorDelegate(delegate)
-            self.configurePhotoOutput(with: .quality)
+            if mode.rawValue == 0 {
+                self.setSession(preset: .photo)
+                self.findCamera()
+                self.addVideoDeviceInput(on: previewView)
+                self.addPhotoOutput()
+                self.setReadinessCoordinatorDelegate(delegate)
+                self.configurePhotoOutput(with: .quality)
+            } else if mode.rawValue == 1 {
+                self.setSession(preset: preset)
+                self.findCamera()
+                self.findMicrohone()
+                self.addVideoDeviceInput(on: previewView)
+                self.addMovieFileOutput()
+            }
         }
     }
     
-    func startSessionRunning() {
-        sessionQueue.async {
-            self.captureSession.startRunning()
+    func changeCapture(mode: Int) {
+        if mode == CaptureMode.photo.rawValue {
+            sessionQueue.async {
+                self.captureSession.beginConfiguration()
+                if let movieFileOutput = self.movieFileOutput {
+                    self.captureSession.removeOutput(movieFileOutput)
+                } else {
+                    print("Capture session output problem.")
+                }
+                if let audioDataOutput = self.audioDataOutput {
+                    self.captureSession.removeOutput(audioDataOutput)
+                    self.audioDataOutput = nil
+                } else {
+                    print("Capture session output problem.")
+                }
+                
+                if let audioDeviceInput = self.audioDeviceInput {
+                    self.captureSession.removeInput(audioDeviceInput)
+                    self.audioDeviceInput = nil
+                } else {
+                    print("Capture session input problem.")
+                }
+                
+                self.audioCaptureDevice = nil
+
+                self.captureSession.sessionPreset = .photo
+                self.movieFileOutput = nil
+                self.addPhotoOutput()
+                self.configurePhotoOutput(with: .quality)
+                
+                self.captureSession.commitConfiguration()
+            }
+        } else if mode == CaptureMode.movie.rawValue {
+            sessionQueue.async {
+                self.addMovieFileOutput()
+            }
         }
     }
     
-    func suspendSessionQueue() {
-        sessionQueue.suspend()
-    }
-    
-    func resumeSessionQueue() {
-        sessionQueue.resume()
-    }
-    
-    func stopSessionRunning() {
-        sessionQueue.async {
-            self.captureSession.stopRunning()
-            
-            // MARK: - When capture session's output or input removed, connection also removed automatically.
-            let inputs = self.captureSession.inputs
-            inputs.forEach { self.captureSession.removeInput($0) }
-            
-            let outputs = self.captureSession.outputs
-            outputs.forEach { self.captureSession.removeOutput($0) }
-            
-            self.videoCaptureDevice = nil
-            self.videoDeviceInput = nil
-            self.photoSettings = nil
-            self.photoOutputReadinessCoordinator = nil
-            self.videoDeviceRotationCoordinator = nil
-            self.videoRotationAngleForHorizonLevelPreviewObservation = nil
+    private func setSession(preset: AVCaptureSession.Preset) {
+        captureSession.beginConfiguration()
+        defer {
+            captureSession.commitConfiguration()
         }
+        captureSession.sessionPreset = preset
     }
     
+}
+
+// MARK: - Action
+extension Studio {
     func capturePhoto(from previewView: PreviewView) {
         if let photoSettings = photoSettings {
             let photoSettings = AVCapturePhotoSettings(from: photoSettings)
@@ -180,127 +205,10 @@ final class Studio: NSObject {
             }
         }
     }
-    
-    func setReadinessCoordinatorDelegate<T>(_ viewController: T) where T: AVCapturePhotoOutputReadinessCoordinatorDelegate {
-        photoOutputReadinessCoordinator?.delegate = viewController
-    }
-    
-    func changeCapture(mode: Int) {
-        if mode == CaptureMode.photo.rawValue {
-            sessionQueue.async {
-                self.captureSession.beginConfiguration()
-                if let movieFileOutput = self.movieFileOutput {
-                    self.captureSession.removeOutput(movieFileOutput)
-                } else {
-                    print("Capture session output problem.")
-                }
-                if let audioDataOutput = self.audioDataOutput {
-                    self.captureSession.removeOutput(audioDataOutput)
-                    self.audioDataOutput = nil
-                } else {
-                    print("Capture session output problem.")
-                }
-                
-                if let audioDeviceInput = self.audioDeviceInput {
-                    self.captureSession.removeInput(audioDeviceInput)
-                    self.audioDeviceInput = nil
-                } else {
-                    print("Capture session input problem.")
-                }
-                
-                self.audioCaptureDevice = nil
+}
 
-                self.captureSession.sessionPreset = .photo
-                self.movieFileOutput = nil
-                
-                self.configurePhotoOutput(with: .quality)
-                
-                self.captureSession.commitConfiguration()
-            }
-        } else if mode == CaptureMode.movie.rawValue {
-            sessionQueue.async {
-                let movieFileOutput = AVCaptureMovieFileOutput()
-                if self.captureSession.canAddOutput(movieFileOutput) {
-                    self.captureSession.beginConfiguration()
-                    self.captureSession.addOutput(movieFileOutput)
-                    self.captureSession.sessionPreset = .high
-                    
-                    self.findMicrohone()
-                    self.addAudioDeviceInput()
-                    self.addAudioDataOutput()
-                    
-                    if let connection = movieFileOutput.connection(with: .video) {
-                        if connection.isVideoMirroringSupported {
-                            connection.preferredVideoStabilizationMode = .auto
-                        }
-                    }
-                    self.captureSession.commitConfiguration()
-                    self.movieFileOutput = movieFileOutput
-                }
-            }
-        }
-    }
-    
-    func changeZoomFactor(at number: Int) {
-        sessionQueue.async {
-            if let videoDeviceInput = self.videoDeviceInput {
-                let device = videoDeviceInput.device
-                do {
-                    try device.lockForConfiguration()
-                    
-                    if number == 0 {
-                        device.videoZoomFactor = 1.0
-                    } else if number == 1 {
-                        device.videoZoomFactor = 1.5
-                    } else if number == 2 {
-                        device.videoZoomFactor = 2.0
-                    }
-
-                    device.unlockForConfiguration()
-                } catch {
-                    print("Could not lock device for configuration.")
-                }
-            }
-        }
-    }
-    
-    func focus(at devicePoint: CGPoint, monitorSubjectAreaChange: Bool) {
-        sessionQueue.async {
-            if let videoDeviceInput = self.videoDeviceInput {
-                let device = videoDeviceInput.device
-                let focusMode: AVCaptureDevice.FocusMode = .autoFocus
-                let exposureMode: AVCaptureDevice.ExposureMode = .autoExpose
-                do {
-                    try device.lockForConfiguration()
-                    if device.isFocusPointOfInterestSupported && device.isFocusModeSupported(focusMode) {
-                        device.focusPointOfInterest = devicePoint
-                        device.focusMode = focusMode
-                    }
-                    
-                    if device.isExposurePointOfInterestSupported && device.isExposureModeSupported(exposureMode) {
-                        device.exposurePointOfInterest = devicePoint
-                        device.exposureMode = exposureMode
-                    }
-                    
-                    device.isSubjectAreaChangeMonitoringEnabled = monitorSubjectAreaChange
-                    device.unlockForConfiguration()
-                } catch {
-                    print("Could not lock device for configuration.")
-                }
-            } else {
-                
-            }
-        }
-    }
-    
-    private func setSession(preset: AVCaptureSession.Preset) {
-        captureSession.beginConfiguration()
-        defer {
-            captureSession.commitConfiguration()
-        }
-        captureSession.sessionPreset = preset
-    }
-    
+// MARK: - Device
+extension Studio {
     private func findCamera() {
         captureSession.beginConfiguration()
         defer {
@@ -312,6 +220,49 @@ final class Studio: NSObject {
             print("Cannot find capture device.")
             captureSession.commitConfiguration()
             return
+        }
+    }
+    
+    private func findMicrohone() {
+        captureSession.beginConfiguration()
+        defer {
+            captureSession.commitConfiguration()
+        }
+        
+        if let microphone = AVCaptureDevice.default(for: .audio) {
+            audioCaptureDevice = microphone
+        } else {
+            print("Cannot find available microphone.")
+            captureSession.commitConfiguration()
+        }
+    }
+}
+
+// MARK: Input
+extension Studio {
+    private func addAudioDeviceInput() {
+        captureSession.beginConfiguration()
+        defer {
+            captureSession.commitConfiguration()
+        }
+        
+        do {
+            if let audioCaptureDevice {
+                let audioDeviceInput = try AVCaptureDeviceInput(device: audioCaptureDevice)
+                if captureSession.canAddInput(audioDeviceInput) {
+                    captureSession.addInput(audioDeviceInput)
+                    self.audioDeviceInput = audioDeviceInput
+                } else {
+                    captureSession.commitConfiguration()
+                    print("Cannot add audio device input.")
+                }
+            } else {
+                captureSession.commitConfiguration()
+                print("Cannot find audio capture device.")
+            }
+        } catch {
+            captureSession.commitConfiguration()
+            print("Cannot initialize audio device input.")
         }
     }
     
@@ -344,62 +295,10 @@ final class Studio: NSObject {
             print("Cannot initialize video device input.")
         }
     }
-    
-    private func findMicrohone() {
-        captureSession.beginConfiguration()
-        defer {
-            captureSession.commitConfiguration()
-        }
-        
-        if let microphone = AVCaptureDevice.default(for: .audio) {
-            audioCaptureDevice = microphone
-        } else {
-            print("Cannot find available microphone.")
-            captureSession.commitConfiguration()
-        }
-    }
-    
-    private func addPhotoOutput() {
-        captureSession.beginConfiguration()
-        defer {
-            captureSession.commitConfiguration()
-        }
-        
-        // MARK - If capture session contains input and output, connection automatically created.
-        if captureSession.canAddOutput(photoOutput) {
-            captureSession.addOutput(photoOutput)
-        } else {
-            print("Cannot add photo output.")
-            captureSession.commitConfiguration()
-        }
-    }
-    
-    private func addAudioDeviceInput() {
-        captureSession.beginConfiguration()
-        defer {
-            captureSession.commitConfiguration()
-        }
-        
-        do {
-            if let audioCaptureDevice {
-                let audioDeviceInput = try AVCaptureDeviceInput(device: audioCaptureDevice)
-                if captureSession.canAddInput(audioDeviceInput) {
-                    captureSession.addInput(audioDeviceInput)
-                    self.audioDeviceInput = audioDeviceInput
-                } else {
-                    captureSession.commitConfiguration()
-                    print("Cannot add audio device input.")
-                }
-            } else {
-                captureSession.commitConfiguration()
-                print("Cannot find audio capture device.")
-            }
-        } catch {
-            captureSession.commitConfiguration()
-            print("Cannot initialize audio device input.")
-        }
-    }
-    
+}
+
+// MAKK: - Output
+extension Studio {
     private func addAudioDataOutput() {
         captureSession.beginConfiguration()
         defer {
@@ -449,50 +348,158 @@ final class Studio: NSObject {
         }
     }
     
-    private func setUpPhotoSettings(with quality: AVCapturePhotoOutput.QualityPrioritization) -> AVCapturePhotoSettings {
+    private func addPhotoOutput() {
         captureSession.beginConfiguration()
         defer {
             captureSession.commitConfiguration()
         }
-        var photoSettings = AVCapturePhotoSettings()
         
-        if self.photoOutput.availablePhotoCodecTypes.contains(AVVideoCodecType.hevc) {
-            photoSettings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.hevc])
+        if let movieFileOutput = self.movieFileOutput {
+            captureSession.removeOutput(movieFileOutput)
+        }
+        
+        // MARK - If capture session contains input and output, connection automatically created.
+        if captureSession.canAddOutput(photoOutput) {
+            captureSession.addOutput(photoOutput)
         } else {
-            photoSettings = AVCapturePhotoSettings()
+            print("Cannot add photo output.")
+            captureSession.commitConfiguration()
         }
-        
-        photoSettings.maxPhotoDimensions = self.photoOutput.maxPhotoDimensions
-        if !photoSettings.availablePreviewPhotoPixelFormatTypes.isEmpty {
-            photoSettings.previewPhotoFormat = [kCVPixelBufferPixelFormatTypeKey as String: photoSettings.__availablePreviewPhotoPixelFormatTypes.first!]
-        }
-
-        photoSettings.photoQualityPrioritization = quality
-
-        return photoSettings
     }
     
-    private func createDeviceRotationCoordinator(on previewView: PreviewView) {
-        if let videoDeviceInput = self.videoDeviceInput {
-            self.videoDeviceRotationCoordinator = AVCaptureDevice.RotationCoordinator(device: videoDeviceInput.device, previewLayer: previewView.videoPreviewLayer)
-            if let videoDeviceRotationCoordinator = videoDeviceRotationCoordinator {
-                previewView.videoPreviewLayer.connection?.videoRotationAngle = videoDeviceRotationCoordinator.videoRotationAngleForHorizonLevelPreview
-                
-                self.videoRotationAngleForHorizonLevelPreviewObservation = videoDeviceRotationCoordinator.observe(\.videoRotationAngleForHorizonLevelPreview, options: .new) { _, change in
-                    guard let videoRotationAngleForHorizonLevelPreview = change.newValue else { return }
-                    
-                    previewView.videoPreviewLayer.connection?.videoRotationAngle = videoRotationAngleForHorizonLevelPreview
+    private func addMovieFileOutput() {
+        let movieFileOutput = AVCaptureMovieFileOutput()
+        if self.captureSession.canAddOutput(movieFileOutput) {
+            self.captureSession.beginConfiguration()
+            self.captureSession.addOutput(movieFileOutput)
+            self.captureSession.sessionPreset = .hd1920x1080
+            
+            self.findMicrohone()
+            self.addAudioDeviceInput()
+            self.addAudioDataOutput()
+            
+            if let connection = movieFileOutput.connection(with: .video) {
+                if connection.isVideoMirroringSupported {
+                    connection.preferredVideoStabilizationMode = .auto
                 }
-            } else {
-                print("Cannot instantiate video device rotation coordinator.")
             }
-        } else {
-            print("Video device input empty.")
+            self.captureSession.commitConfiguration()
+            self.movieFileOutput = movieFileOutput
         }
     }
     
+    func setReadinessCoordinatorDelegate<T>(_ viewController: T) where T: AVCapturePhotoOutputReadinessCoordinatorDelegate {
+        photoOutputReadinessCoordinator?.delegate = viewController
+    }
 }
 
+// MARK: - Run capture session
+extension Studio {
+    func startSessionRunning() {
+        sessionQueue.async {
+            self.captureSession.startRunning()
+        }
+    }
+    
+    func suspendSessionQueue() {
+        sessionQueue.suspend()
+    }
+    
+    func resumeSessionQueue() {
+        sessionQueue.resume()
+    }
+    
+    func stopSessionRunning() {
+        sessionQueue.async {
+            self.captureSession.stopRunning()
+            
+            // MARK: - When capture session's output or input removed, connection also removed automatically.
+            let inputs = self.captureSession.inputs
+            inputs.forEach { self.captureSession.removeInput($0) }
+            
+            let outputs = self.captureSession.outputs
+            outputs.forEach { self.captureSession.removeOutput($0) }
+            
+            self.videoCaptureDevice = nil
+            self.videoDeviceInput = nil
+            self.photoSettings = nil
+            self.photoOutputReadinessCoordinator = nil
+            self.videoDeviceRotationCoordinator = nil
+            self.videoRotationAngleForHorizonLevelPreviewObservation = nil
+        }
+    }
+}
+
+// MARK: - Additional feature
+extension Studio {
+    func changeZoomFactor(at number: Int) {
+        sessionQueue.async {
+            if let videoDeviceInput = self.videoDeviceInput {
+                let device = videoDeviceInput.device
+                do {
+                    try device.lockForConfiguration()
+                    
+                    if number == 0 {
+                        device.videoZoomFactor = 1.0
+                    } else if number == 1 {
+                        device.videoZoomFactor = 1.5
+                    } else if number == 2 {
+                        device.videoZoomFactor = 2.0
+                    }
+
+                    device.unlockForConfiguration()
+                } catch {
+                    print("Could not lock device for configuration.")
+                }
+            }
+        }
+    }
+    
+    func changeVideoResolution(at number: Int) {
+        sessionQueue.async {
+            self.captureSession.beginConfiguration()
+            defer {
+                self.captureSession.commitConfiguration()
+            }
+            if number == 0 {
+                self.captureSession.sessionPreset = .hd1920x1080
+            } else if number == 1 {
+                self.captureSession.sessionPreset = .hd4K3840x2160
+            }
+        }
+    }
+    
+    func focus(at devicePoint: CGPoint, monitorSubjectAreaChange: Bool) {
+        sessionQueue.async {
+            if let videoDeviceInput = self.videoDeviceInput {
+                let device = videoDeviceInput.device
+                let focusMode: AVCaptureDevice.FocusMode = .autoFocus
+                let exposureMode: AVCaptureDevice.ExposureMode = .autoExpose
+                do {
+                    try device.lockForConfiguration()
+                    if device.isFocusPointOfInterestSupported && device.isFocusModeSupported(focusMode) {
+                        device.focusPointOfInterest = devicePoint
+                        device.focusMode = focusMode
+                    }
+                    
+                    if device.isExposurePointOfInterestSupported && device.isExposureModeSupported(exposureMode) {
+                        device.exposurePointOfInterest = devicePoint
+                        device.exposureMode = exposureMode
+                    }
+                    
+                    device.isSubjectAreaChangeMonitoringEnabled = monitorSubjectAreaChange
+                    device.unlockForConfiguration()
+                } catch {
+                    print("Could not lock device for configuration.")
+                }
+            } else {
+                
+            }
+        }
+    }
+}
+
+// MARK: - Save movie
 extension Studio: AVCaptureFileOutputRecordingDelegate {
     func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: (any Error)?) {
         func cleanup() {
@@ -544,5 +551,52 @@ extension Studio: AVCaptureFileOutputRecordingDelegate {
         }
     }
     
-    
+}
+
+// MARK: - Rotation
+extension Studio {
+    private func createDeviceRotationCoordinator(on previewView: PreviewView) {
+        if let videoDeviceInput = self.videoDeviceInput {
+            self.videoDeviceRotationCoordinator = AVCaptureDevice.RotationCoordinator(device: videoDeviceInput.device, previewLayer: previewView.videoPreviewLayer)
+            if let videoDeviceRotationCoordinator = videoDeviceRotationCoordinator {
+                previewView.videoPreviewLayer.connection?.videoRotationAngle = videoDeviceRotationCoordinator.videoRotationAngleForHorizonLevelPreview
+                
+                self.videoRotationAngleForHorizonLevelPreviewObservation = videoDeviceRotationCoordinator.observe(\.videoRotationAngleForHorizonLevelPreview, options: .new) { _, change in
+                    guard let videoRotationAngleForHorizonLevelPreview = change.newValue else { return }
+                    
+                    previewView.videoPreviewLayer.connection?.videoRotationAngle = videoRotationAngleForHorizonLevelPreview
+                }
+            } else {
+                print("Cannot instantiate video device rotation coordinator.")
+            }
+        } else {
+            print("Video device input empty.")
+        }
+    }
+}
+
+// MARK: - Photo settings
+extension Studio {
+    private func setUpPhotoSettings(with quality: AVCapturePhotoOutput.QualityPrioritization) -> AVCapturePhotoSettings {
+        captureSession.beginConfiguration()
+        defer {
+            captureSession.commitConfiguration()
+        }
+        var photoSettings = AVCapturePhotoSettings()
+        
+        if self.photoOutput.availablePhotoCodecTypes.contains(AVVideoCodecType.hevc) {
+            photoSettings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.hevc])
+        } else {
+            photoSettings = AVCapturePhotoSettings()
+        }
+        
+        photoSettings.maxPhotoDimensions = self.photoOutput.maxPhotoDimensions
+        if !photoSettings.availablePreviewPhotoPixelFormatTypes.isEmpty {
+            photoSettings.previewPhotoFormat = [kCVPixelBufferPixelFormatTypeKey as String: photoSettings.__availablePreviewPhotoPixelFormatTypes.first!]
+        }
+
+        photoSettings.photoQualityPrioritization = quality
+
+        return photoSettings
+    }
 }
