@@ -34,7 +34,6 @@ final class Studio: NSObject {
     }
     
     enum SupportedZoomFactor: CGFloat {
-        case half = 0.5
         case one = 1
         case oneAndHalf = 1.5
         case two = 2.0
