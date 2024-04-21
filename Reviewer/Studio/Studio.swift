@@ -33,6 +33,13 @@ final class Studio: NSObject {
         case movie = 1
     }
     
+    enum SupportedZoomFactor: CGFloat {
+        case half = 0.5
+        case one = 1
+        case oneAndHalf = 1.5
+        case two = 2.0
+    }
+    
     override init() {
         self.sessionQueue = DispatchQueue(label: "session queue")
         self.captureSession = AVCaptureSession()
@@ -229,6 +236,29 @@ final class Studio: NSObject {
                     }
                     self.captureSession.commitConfiguration()
                     self.movieFileOutput = movieFileOutput
+                }
+            }
+        }
+    }
+    
+    func changeZoomFactor(at number: Int) {
+        sessionQueue.async {
+            if let videoDeviceInput = self.videoDeviceInput {
+                let device = videoDeviceInput.device
+                do {
+                    try device.lockForConfiguration()
+                    
+                    if number == 0 {
+                        device.videoZoomFactor = 1.0
+                    } else if number == 1 {
+                        device.videoZoomFactor = 1.5
+                    } else if number == 2 {
+                        device.videoZoomFactor = 2.0
+                    }
+
+                    device.unlockForConfiguration()
+                } catch {
+                    print("Could not lock device for configuration.")
                 }
             }
         }

@@ -46,7 +46,7 @@ final class StudioViewController: UIViewController {
         return previewView
     }()
     
-    private let captureModeSegmentationControl: UISegmentedControl = {
+    private let captureModeSegmentedControl: UISegmentedControl = {
         let segmentedControl = UISegmentedControl()
         segmentedControl.translatesAutoresizingMaskIntoConstraints = false
         let symbolConfiguration = UIImage.SymbolConfiguration(pointSize: 36, weight: .bold, scale: .default)
@@ -54,6 +54,16 @@ final class StudioViewController: UIViewController {
         let movieClapperImage = UIImage(systemName: "movieclapper", withConfiguration: symbolConfiguration)
         segmentedControl.insertSegment(with: cameraImage, at: 0, animated: true)
         segmentedControl.insertSegment(with: movieClapperImage, at: 1, animated: true)
+        segmentedControl.selectedSegmentIndex = 0
+        return segmentedControl
+    }()
+    
+    private let videoZoomFactorSegmentedControl: UISegmentedControl = {
+        let segmentedControl = UISegmentedControl()
+        segmentedControl.translatesAutoresizingMaskIntoConstraints = false
+        segmentedControl.insertSegment(withTitle: "1.0x", at: 0, animated: true)
+        segmentedControl.insertSegment(withTitle: "1.5x", at: 1, animated: true)
+        segmentedControl.insertSegment(withTitle: "2.0x", at: 2, animated: true)
         segmentedControl.selectedSegmentIndex = 0
         return segmentedControl
     }()
@@ -74,9 +84,11 @@ final class StudioViewController: UIViewController {
         adjustLayoutOf(previewView: previewView)
         adjustLayoutOf(captureButton: captureButton)
         addActionOf(captureButton: captureButton)
-        adjustLayoutOf(captureModeSegmentationControl: captureModeSegmentationControl)
+        adjustLayoutOf(videoZoomFactorSegmentedControl: videoZoomFactorSegmentedControl)
+        adjustLayoutOf(captureModeSegmentationControl: captureModeSegmentedControl)
         adjustLayoutOf(recordButton: recordButton)
         addActionOf(recordButton: recordButton)
+        addZoomFactorSegmentedControlTarget()
         addCaptureModeSegmentedControlTarget()
         
         addFocusGesture()
@@ -117,8 +129,16 @@ final class StudioViewController: UIViewController {
             .store(in: &cancellables)
     }
     
+    private func addZoomFactorSegmentedControlTarget() {
+        videoZoomFactorSegmentedControl.addTarget(self, action: #selector(didSelectZoomFactor), for: .valueChanged)
+    }
+    
+    @objc private func didSelectZoomFactor(_ sender: UISegmentedControl) {
+        viewModel.didChangeZoomFactor(at: sender.selectedSegmentIndex)
+    }
+    
     private func addCaptureModeSegmentedControlTarget() {
-        captureModeSegmentationControl.addTarget(self, action: #selector(didSelectCaptureMode), for: .valueChanged)
+        captureModeSegmentedControl.addTarget(self, action: #selector(didSelectCaptureMode), for: .valueChanged)
     }
     
     @objc private func didSelectCaptureMode(_ sender: UISegmentedControl) {
@@ -180,7 +200,8 @@ extension StudioViewController {
         view.addSubview(previewView)
         view.addSubview(captureButton)
         view.addSubview(recordButton)
-        previewView.addSubview(captureModeSegmentationControl)
+        previewView.addSubview(videoZoomFactorSegmentedControl)
+        previewView.addSubview(captureModeSegmentedControl)
     }
     
     private func adjustLayoutOf(previewView: PreviewView) {
@@ -198,6 +219,11 @@ extension StudioViewController {
     private func adjustLayoutOf(recordButton: RecordButton) {
         recordButton.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         recordButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -60).isActive = true
+    }
+    
+    private func adjustLayoutOf(videoZoomFactorSegmentedControl: UISegmentedControl) {
+        videoZoomFactorSegmentedControl.bottomAnchor.constraint(equalTo: previewView.safeAreaLayoutGuide.bottomAnchor, constant: -200).isActive = true
+        videoZoomFactorSegmentedControl.centerXAnchor.constraint(equalTo: previewView.centerXAnchor).isActive = true
     }
     
     private func adjustLayoutOf(captureModeSegmentationControl: UISegmentedControl) {
