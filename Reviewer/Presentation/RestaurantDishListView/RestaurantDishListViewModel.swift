@@ -9,6 +9,7 @@ import Foundation
 import Combine
 
 protocol RestaurantDishListViewModel: RestaurantDishListDataSource {
+    var isDeleteImmediate: Bool { get }
     var listItemsPublisher: AnyPublisher<[RestaurantDishListItemViewModel], Never> { get }
     var restaurantNamePublisher: AnyPublisher<String, Never> { get }
     
@@ -17,6 +18,7 @@ protocol RestaurantDishListViewModel: RestaurantDishListDataSource {
     func didSelectRow(at indexPath: IndexPath)
     func didDeleteDish(at indexPath: IndexPath)
     func didLoadStudio()
+    func loadIsDeleteImmediate()
 }
 
 struct RestaurantDishListViewModelActions {
@@ -27,10 +29,12 @@ struct RestaurantDishListViewModelActions {
 final class DefaultRestaurantDishListViewModel: RestaurantDishListViewModel {
     
     private let repository: ReviewListRepository
+    private let settingsRepository: SettingsRepository
     private let actions: RestaurantDishListViewModelActions
     private let id: String
     private let restaurantName: String
     private let restaurantNameSubject: CurrentValueSubject<String, Never>
+    private(set) var isDeleteImmediate: Bool
     private var dishes: [Dish]
     private var listItems: [RestaurantDishListItemViewModel]
     private let listItemsSubject: CurrentValueSubject<[RestaurantDishListItemViewModel], Never>
@@ -42,14 +46,16 @@ final class DefaultRestaurantDishListViewModel: RestaurantDishListViewModel {
         return restaurantNameSubject.eraseToAnyPublisher()
     }
     
-    init(repository: ReviewListRepository, actions: RestaurantDishListViewModelActions, id: String, restaurantName: String) {
+    init(repository: ReviewListRepository, settingsRepository: SettingsRepository, actions: RestaurantDishListViewModelActions, id: String, restaurantName: String) {
         self.id = id
         self.restaurantName = restaurantName
         self.restaurantNameSubject = .init("")
+        self.isDeleteImmediate = false
         self.dishes = []
         self.listItems = []
         self.listItemsSubject = .init([])
         self.repository = repository
+        self.settingsRepository = settingsRepository
         self.actions = actions
     }
     
@@ -85,6 +91,19 @@ final class DefaultRestaurantDishListViewModel: RestaurantDishListViewModel {
     
     func didLoadStudio() {
         actions.showStudio(id, restaurantName)
+    }
+    
+    func loadIsDeleteImmediate() {
+        settingsRepository.fetchIsDeleteImmediate { [weak self] result in
+            switch result {
+            case .success(let isDeleteImmediate):
+                self?.isDeleteImmediate = isDeleteImmediate
+                
+            case .failure(let failure):
+                return
+                
+            }
+        }
     }
     
 }

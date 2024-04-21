@@ -71,7 +71,7 @@ final class SceneDIContainer: ViewFlowCoordinatorDependencies {
     }
     
     func makeDishListViewModel(id: String, restaurantName: String, actions: RestaurantDishListViewModelActions) -> RestaurantDishListViewModel {
-        return DefaultRestaurantDishListViewModel(repository: makeReviewListRepository(), actions: actions, id: id, restaurantName: restaurantName)
+        return DefaultRestaurantDishListViewModel(repository: makeReviewListRepository(), settingsRepository: makeSettingsRepository(), actions: actions, id: id, restaurantName: restaurantName)
     }
     
     func makeRestaurantDishListViewController(id: String, restaurantName: String, actions: RestaurantDishListViewModelActions) -> RestaurantDishListViewController {
