@@ -83,6 +83,10 @@ final class StudioViewController: UIViewController {
     
     private var cancellables: Set<AnyCancellable> = []
     
+    override var shouldAutorotate: Bool {
+        return !isRecord
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
