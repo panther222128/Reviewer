@@ -10,8 +10,10 @@ import Combine
 
 protocol DishDetailViewModel: DishDetailListDataSource {
     var tastesPublisher: AnyPublisher<[String], Never> { get }
+    var dishNamePublisher: AnyPublisher<String, Never> { get }
     
     func loadTastes()
+    func loadDishName()
     func add(taste: String)
     func didLoadTastes()
 }
@@ -23,20 +25,31 @@ final class DefaultDishDetailViewModel: DishDetailViewModel {
     private let dishId: String
     private var tastes: [String]
     private let tastesSubject: CurrentValueSubject<[String], Never>
+    private let dishName: String
+    private let dishNameSubject: CurrentValueSubject<String, Never>
     var tastesPublisher: AnyPublisher<[String], Never> {
         return tastesSubject.eraseToAnyPublisher()
     }
+    var dishNamePublisher: AnyPublisher<String, Never> {
+        return dishNameSubject.eraseToAnyPublisher()
+    }
     
-    init(repository: ReviewListRepository, restaurantId: String, dishId: String, tastes: [String]) {
+    init(repository: ReviewListRepository, restaurantId: String, dishId: String, tastes: [String], dishName: String) {
         self.repository = repository
         self.restaurantId = restaurantId
         self.dishId = dishId
         self.tastes = tastes
         self.tastesSubject = .init([])
+        self.dishName = dishName
+        self.dishNameSubject = .init("")
     }
     
     func loadTastes() {
         tastesSubject.send(tastes)
+    }
+    
+    func loadDishName() {
+        dishNameSubject.send(dishName)
     }
     
     func add(taste: String) {

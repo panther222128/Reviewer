@@ -34,8 +34,10 @@ final class DishDetailViewController: UIViewController {
         addBarButtonItem()
         
         subscribe(tastesPublisher: viewModel.tastesPublisher)
+        subscribe(dishNamePublisher: viewModel.dishNamePublisher)
         
         viewModel.loadTastes()
+        viewModel.loadDishName()
     }
     
     static func create(with viewModel: DishDetailViewModel) -> DishDetailViewController {
@@ -49,6 +51,15 @@ final class DishDetailViewController: UIViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
                 self?.dishDetailListTableView.reloadData()
+            }
+            .store(in: &cancellabes)
+    }
+    
+    private func subscribe(dishNamePublisher: AnyPublisher<String, Never>) {
+        dishNamePublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] dishName in
+                self?.title = dishName
             }
             .store(in: &cancellabes)
     }

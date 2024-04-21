@@ -22,6 +22,7 @@ protocol StudioViewModel {
     func resumeSessionQueue()
     func changeCapture(mode: Int)
     func didRecord()
+    func focus(at devicePoint: CGPoint, monitorSubjectAreaChange: Bool)
     func didLoadTasteView(with dishName: String)
 }
 
@@ -89,6 +90,10 @@ final class DefaultStudioViewModel: StudioViewModel {
     
     func didRecord() {
         studio.captureMovie()
+    }
+    
+    func focus(at devicePoint: CGPoint, monitorSubjectAreaChange: Bool) {
+        studio.focus(at: devicePoint, monitorSubjectAreaChange: monitorSubjectAreaChange)
     }
     
     func didLoadTasteView(with dishName: String) {

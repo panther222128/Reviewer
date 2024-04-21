@@ -79,6 +79,8 @@ final class StudioViewController: UIViewController {
         addActionOf(recordButton: recordButton)
         addCaptureModeSegmentedControlTarget()
         
+        addFocusGesture()
+        
         recordButton.isHidden = true
         tabBarController?.tabBar.isHidden = true
         
@@ -155,6 +157,20 @@ final class StudioViewController: UIViewController {
             setupResult = .notAuthorized
             
         }
+    }
+    
+    private func addFocusGesture() {
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(focusOn))
+        previewView.addGestureRecognizer(gesture)
+    }
+    
+    @objc private func focusOn(_ gestureRecognizer: UITapGestureRecognizer) {
+        let devicePoint = previewView.videoPreviewLayer.captureDevicePointConverted(fromLayerPoint: gestureRecognizer.location(in: gestureRecognizer.view))
+        focus(at: devicePoint, monitorSubjectAreaChange: true)
+    }
+    
+    private func focus(at devicePoint: CGPoint, monitorSubjectAreaChange: Bool) {
+        viewModel.focus(at: devicePoint, monitorSubjectAreaChange: monitorSubjectAreaChange)
     }
     
 }

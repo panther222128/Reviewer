@@ -15,7 +15,7 @@ protocol ViewFlowCoordinatorDependencies {
     func makeSettingsViewController() -> SettingsViewController
     
     func makeRestaurantDishListViewController(id: String, restaurantName: String, actions: RestaurantDishListViewModelActions) -> RestaurantDishListViewController
-    func makeDishDetailViewController(restaurantId: String, dishId: String, tastes: [String]) -> DishDetailViewController
+    func makeDishDetailViewController(restaurantId: String, dishId: String, tastes: [String], dishName: String) -> DishDetailViewController
 }
 
 final class ViewFlowCoordinator {
@@ -80,13 +80,13 @@ final class ViewFlowCoordinator {
     }
     
     private func showRestaurantDishListView(id: String, restaurantName: String) {
-        let viewController = dependencies.makeRestaurantDishListViewController(id: id, restaurantName: restaurantName, actions: .init(showDishDetail: showDishDetailView(restaurantId:dishId:with:), showStudio: showStudioView(id:restaurantName:)))
+        let viewController = dependencies.makeRestaurantDishListViewController(id: id, restaurantName: restaurantName, actions: .init(showDishDetail: showDishDetailView(restaurantId:dishId:with:dishName:), showStudio: showStudioView(id:restaurantName:)))
         restaurantDishListViewController = viewController
         restaurantListNavigator?.pushViewController(viewController, animated: true)
     }
     
-    private func showDishDetailView(restaurantId: String, dishId: String, with tastes: [String]) {
-        let viewController = dependencies.makeDishDetailViewController(restaurantId: restaurantId, dishId: dishId, tastes: tastes)
+    private func showDishDetailView(restaurantId: String, dishId: String, with tastes: [String], dishName: String) {
+        let viewController = dependencies.makeDishDetailViewController(restaurantId: restaurantId, dishId: dishId, tastes: tastes, dishName: dishName)
         dishDetailViewController = viewController
         restaurantDishListViewController?.navigationController?.pushViewController(viewController, animated: true)
     }

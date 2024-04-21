@@ -234,6 +234,35 @@ final class Studio: NSObject {
         }
     }
     
+    func focus(at devicePoint: CGPoint, monitorSubjectAreaChange: Bool) {
+        sessionQueue.async {
+            if let videoDeviceInput = self.videoDeviceInput {
+                let device = videoDeviceInput.device
+                let focusMode: AVCaptureDevice.FocusMode = .autoFocus
+                let exposureMode: AVCaptureDevice.ExposureMode = .autoExpose
+                do {
+                    try device.lockForConfiguration()
+                    if device.isFocusPointOfInterestSupported && device.isFocusModeSupported(focusMode) {
+                        device.focusPointOfInterest = devicePoint
+                        device.focusMode = focusMode
+                    }
+                    
+                    if device.isExposurePointOfInterestSupported && device.isExposureModeSupported(exposureMode) {
+                        device.exposurePointOfInterest = devicePoint
+                        device.exposureMode = exposureMode
+                    }
+                    
+                    device.isSubjectAreaChangeMonitoringEnabled = monitorSubjectAreaChange
+                    device.unlockForConfiguration()
+                } catch {
+                    print("Could not lock device for configuration.")
+                }
+            } else {
+                
+            }
+        }
+    }
+    
     private func setSession(preset: AVCaptureSession.Preset) {
         captureSession.beginConfiguration()
         defer {

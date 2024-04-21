@@ -20,7 +20,7 @@ protocol RestaurantDishListViewModel: RestaurantDishListDataSource {
 }
 
 struct RestaurantDishListViewModelActions {
-    let showDishDetail: (_ restaurantId: String, _ dishId: String, _ tastes: [String]) -> Void
+    let showDishDetail: (_ restaurantId: String, _ dishId: String, _ tastes: [String], _ dishName: String) -> Void
     let showStudio: (_ restaurantId: String, _ restaurantName: String) -> Void
 }
 
@@ -75,7 +75,7 @@ final class DefaultRestaurantDishListViewModel: RestaurantDishListViewModel {
     }
     
     func didSelectRow(at indexPath: IndexPath) {
-        actions.showDishDetail(id, dishes[indexPath.row].id, dishes[indexPath.row].tastes)
+        actions.showDishDetail(id, dishes[indexPath.row].id, dishes[indexPath.row].tastes, dishes[indexPath.row].name)
     }
     
     func didDeleteDish(at indexPath: IndexPath) {
