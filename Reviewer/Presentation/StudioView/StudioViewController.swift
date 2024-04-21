@@ -298,11 +298,13 @@ extension StudioViewController {
                 self.isRecord.toggle()
                 recordButton.toggle()
                 self.viewModel.didRecord()
+                self.movieResolutioonSegmentedControl.isHidden = true
             } else {
                 self.isRecord.toggle()
                 recordButton.toggle()
                 self.viewModel.didRecord()
                 self.presentDishNameTextFieldAlert()
+                self.movieResolutioonSegmentedControl.isHidden = false
             }
         }
         recordButton.addAction(action, for: .touchUpInside)
