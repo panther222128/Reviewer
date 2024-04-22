@@ -24,6 +24,7 @@ protocol StudioViewModel {
     func didRecord()
     func didChangeZoomFactor(at number: Int)
     func didChangeResolution(at number: Int)
+    func changeFrameRate(_ rate: Float64, width: Int32, height: Int32)
     func focus(at devicePoint: CGPoint, monitorSubjectAreaChange: Bool)
     func didLoadTasteView(with dishName: String)
 }
@@ -100,6 +101,10 @@ final class DefaultStudioViewModel: StudioViewModel {
     
     func didChangeResolution(at number: Int) {
         studio.changeVideoResolution(at: number)
+    }
+    
+    func changeFrameRate(_ rate: Float64, width: Int32, height: Int32) {
+        studio.changeFrameRate(rate, width: width, height: height)
     }
     
     func focus(at devicePoint: CGPoint, monitorSubjectAreaChange: Bool) {

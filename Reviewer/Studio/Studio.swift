@@ -117,6 +117,64 @@ final class Studio: NSObject {
         }
     }
     
+    func changeFrameRate(_ rate: Float64, width: Int32, height: Int32) {
+        sessionQueue.async {
+            if let videoCaptureDevice = self.videoCaptureDevice {
+                self.captureSession.beginConfiguration()
+                defer {
+                    self.captureSession.commitConfiguration()
+                }
+                
+                do {
+                    try videoCaptureDevice.lockForConfiguration()
+                    
+                    var desiredFormat: AVCaptureDevice.Format?
+                    
+                    let formats = videoCaptureDevice.formats
+                    
+                    for format in formats {
+                        let description = format.formatDescription
+                        
+                        let dimensionWidth = description.dimensions.width
+                        let dimensionHeight = description.dimensions.height
+                        
+                        if dimensionWidth != width || dimensionHeight != height {
+                            continue
+                        }
+                        
+                        let frameRates = format.videoSupportedFrameRateRanges
+                        
+                        for range in frameRates {
+                            if range.maxFrameRate >= rate && range.minFrameRate <= rate {
+                                desiredFormat = format
+                                break
+                            }
+                        }
+                    }
+                    
+                    guard let desiredFormat = desiredFormat else {
+                        print("Cannot find desired format.")
+                        return
+                    }
+                    
+                    videoCaptureDevice.activeFormat = desiredFormat
+                    
+                    if rate == 30 {
+                        videoCaptureDevice.activeVideoMinFrameDuration = CMTime(value: 1, timescale: 30)
+                    } else if rate == 60 {
+                        videoCaptureDevice.activeVideoMinFrameDuration = CMTime(value: 1, timescale: 60)
+                    }
+                    
+                    videoCaptureDevice.unlockForConfiguration()
+                } catch {
+                    print("Cannot lock device.")
+                }
+            } else {
+                print("Cannot find video device.")
+            }
+        }
+    }
+    
     private func setSession(preset: AVCaptureSession.Preset) {
         captureSession.beginConfiguration()
         defer {
@@ -214,7 +272,7 @@ extension Studio {
             captureSession.commitConfiguration()
         }
         
-        videoCaptureDevice = AVCaptureDevice.systemPreferredCamera
+        videoCaptureDevice = AVCaptureDevice.default(for: .video)
         guard let captureDevice = videoCaptureDevice else {
             print("Cannot find capture device.")
             captureSession.commitConfiguration()
