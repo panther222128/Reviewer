@@ -426,21 +426,24 @@ extension Studio {
     
     private func addMovieFileOutput() {
         let movieFileOutput = AVCaptureMovieFileOutput()
-        if self.captureSession.canAddOutput(movieFileOutput) {
-            self.captureSession.beginConfiguration()
-            self.captureSession.addOutput(movieFileOutput)
-            self.captureSession.sessionPreset = .hd1920x1080
+        if captureSession.canAddOutput(movieFileOutput) {
+            captureSession.beginConfiguration()
             
-            self.findMicrohone()
-            self.addAudioDeviceInput()
-            self.addAudioDataOutput()
+            captureSession.removeOutput(photoOutput)
+            
+            captureSession.addOutput(movieFileOutput)
+            captureSession.sessionPreset = .hd1920x1080
+            
+            findMicrohone()
+            addAudioDeviceInput()
+            addAudioDataOutput()
             
             if let connection = movieFileOutput.connection(with: .video) {
                 if connection.isVideoMirroringSupported {
                     connection.preferredVideoStabilizationMode = .auto
                 }
             }
-            self.captureSession.commitConfiguration()
+            captureSession.commitConfiguration()
             self.movieFileOutput = movieFileOutput
         }
     }

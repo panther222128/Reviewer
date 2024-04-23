@@ -109,7 +109,7 @@ final class StudioViewController: UIViewController {
         adjustLayoutOf(videoZoomFactorSegmentedControl: videoZoomFactorSegmentedControl)
         adjustLayoutOf(movieResolutionSegmentedControl: movieResolutionSegmentedControl)
         adjustLayoutOf(frameRateSegmentedControl: frameRateSegmentedControl)
-        adjustLayoutOf(captureModeSegmentationControl: captureModeSegmentedControl)
+        adjustLayoutOf(captureModeSegmentedControl: captureModeSegmentedControl)
         adjustLayoutOf(recordButton: recordButton)
         addActionOf(recordButton: recordButton)
         addZoomFactorSegmentedControlTarget()
@@ -290,10 +290,10 @@ extension StudioViewController {
         view.addSubview(previewView)
         view.addSubview(captureButton)
         view.addSubview(recordButton)
-        previewView.addSubview(videoZoomFactorSegmentedControl)
-        previewView.addSubview(frameRateSegmentedControl)
-        previewView.addSubview(movieResolutionSegmentedControl)
-        previewView.addSubview(captureModeSegmentedControl)
+        view.addSubview(frameRateSegmentedControl)
+        view.addSubview(movieResolutionSegmentedControl)
+        view.addSubview(videoZoomFactorSegmentedControl)
+        view.addSubview(captureModeSegmentedControl)
     }
     
     private func adjustLayoutOf(previewView: PreviewView) {
@@ -314,23 +314,23 @@ extension StudioViewController {
     }
     
     private func adjustLayoutOf(videoZoomFactorSegmentedControl: UISegmentedControl) {
-        videoZoomFactorSegmentedControl.bottomAnchor.constraint(equalTo: previewView.safeAreaLayoutGuide.bottomAnchor, constant: -150).isActive = true
-        videoZoomFactorSegmentedControl.centerXAnchor.constraint(equalTo: previewView.centerXAnchor).isActive = true
+        videoZoomFactorSegmentedControl.bottomAnchor.constraint(equalTo: captureModeSegmentedControl.safeAreaLayoutGuide.topAnchor, constant: -15).isActive = true
+        videoZoomFactorSegmentedControl.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
     }
     
     private func adjustLayoutOf(frameRateSegmentedControl: UISegmentedControl) {
-        frameRateSegmentedControl.topAnchor.constraint(equalTo: movieResolutionSegmentedControl.safeAreaLayoutGuide.bottomAnchor, constant: 20).isActive = true
-        frameRateSegmentedControl.centerXAnchor.constraint(equalTo: previewView.centerXAnchor).isActive = true
+        frameRateSegmentedControl.topAnchor.constraint(equalTo: movieResolutionSegmentedControl.bottomAnchor, constant: 15).isActive = true
+        frameRateSegmentedControl.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
     }
     
     private func adjustLayoutOf(movieResolutionSegmentedControl: UISegmentedControl) {
-        movieResolutionSegmentedControl.topAnchor.constraint(equalTo: previewView.safeAreaLayoutGuide.topAnchor, constant: 100).isActive = true
-        movieResolutionSegmentedControl.centerXAnchor.constraint(equalTo: previewView.centerXAnchor).isActive = true
+        movieResolutionSegmentedControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 15).isActive = true
+        movieResolutionSegmentedControl.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
     }
     
-    private func adjustLayoutOf(captureModeSegmentationControl: UISegmentedControl) {
-        captureModeSegmentationControl.bottomAnchor.constraint(equalTo: previewView.safeAreaLayoutGuide.bottomAnchor).isActive = true
-        captureModeSegmentationControl.centerXAnchor.constraint(equalTo: previewView.centerXAnchor).isActive = true
+    private func adjustLayoutOf(captureModeSegmentedControl: UISegmentedControl) {
+        captureModeSegmentedControl.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -15).isActive = true
+        captureModeSegmentedControl.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
     }
     
     private func addActionOf(captureButton: UIButton) {
@@ -361,6 +361,7 @@ extension StudioViewController {
                 self.viewModel.didRecord()
                 self.movieResolutionSegmentedControl.isHidden = true
                 self.frameRateSegmentedControl.isHidden = true
+                self.captureModeSegmentedControl.isHidden = true
             } else {
                 self.isRecord.toggle()
                 recordButton.toggle()
@@ -368,6 +369,7 @@ extension StudioViewController {
                 self.presentDishNameTextFieldAlert()
                 self.movieResolutionSegmentedControl.isHidden = false
                 self.frameRateSegmentedControl.isHidden = false
+                self.captureModeSegmentedControl.isHidden = false
             }
         }
         recordButton.addAction(action, for: .touchUpInside)
