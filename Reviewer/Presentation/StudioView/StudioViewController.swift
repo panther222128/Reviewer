@@ -29,8 +29,9 @@ final class StudioViewController: UIViewController {
     private let captureButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setTitle("Capture", for: .normal)
-        button.setTitleColor(.black, for: .normal)
+        let symbolConfiguration = UIImage.SymbolConfiguration(pointSize: 64, weight: .bold, scale: .default)
+        let shutterImage = UIImage(systemName: "camera.shutter.button", withConfiguration: symbolConfiguration)
+        button.setImage(shutterImage, for: .normal)
         return button
     }()
     
@@ -304,17 +305,17 @@ extension StudioViewController {
     }
     
     private func adjustLayoutOf(captureButton: UIButton) {
-        captureButton.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        captureButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -40).isActive = true
+        captureButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -15).isActive = true
+        captureButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
     }
     
     private func adjustLayoutOf(recordButton: RecordButton) {
-        recordButton.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        recordButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -60).isActive = true
+        recordButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -15).isActive = true
+        recordButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
     }
     
     private func adjustLayoutOf(videoZoomFactorSegmentedControl: UISegmentedControl) {
-        videoZoomFactorSegmentedControl.bottomAnchor.constraint(equalTo: captureModeSegmentedControl.safeAreaLayoutGuide.topAnchor, constant: -15).isActive = true
+        videoZoomFactorSegmentedControl.bottomAnchor.constraint(equalTo: captureModeSegmentedControl.topAnchor, constant: -15).isActive = true
         videoZoomFactorSegmentedControl.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
     }
     
@@ -329,7 +330,7 @@ extension StudioViewController {
     }
     
     private func adjustLayoutOf(captureModeSegmentedControl: UISegmentedControl) {
-        captureModeSegmentedControl.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -15).isActive = true
+        captureModeSegmentedControl.bottomAnchor.constraint(equalTo: captureButton.topAnchor, constant: -15).isActive = true
         captureModeSegmentedControl.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
     }
     
