@@ -52,11 +52,7 @@ final class OnOffButton: UIButton {
     }
     
     func toggle() {
-        if isSelected {
-            isSelected = false
-        } else {
-            isSelected = true
-        }
+        isSelected = isSelected ? false : true
     }
     
     private func addSubviews() {

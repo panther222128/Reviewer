@@ -441,7 +441,11 @@ extension Studio {
             if let connection = movieFileOutput.connection(with: .video) {
                 if connection.isVideoMirroringSupported {
                     connection.preferredVideoStabilizationMode = .auto
+                } else {
+                    print("Movie connection dosen't support video mirroring")
                 }
+            } else {
+                print("Movie connection is empty.")
             }
             captureSession.commitConfiguration()
             self.movieFileOutput = movieFileOutput
@@ -511,6 +515,8 @@ extension Studio {
                 } catch {
                     print("Could not lock device for configuration.")
                 }
+            } else {
+                print("Video device input is empty.")
             }
         }
     }
@@ -553,7 +559,7 @@ extension Studio {
                     print("Could not lock device for configuration.")
                 }
             } else {
-                
+                print("Video device input is empty.")
             }
         }
     }
@@ -577,7 +583,11 @@ extension Studio: AVCaptureFileOutputRecordingDelegate {
                 
                 if currentBackgroundRecordingID != UIBackgroundTaskIdentifier.invalid {
                     UIApplication.shared.endBackgroundTask(currentBackgroundRecordingID)
+                } else {
+                    print("Cannot find current background recording ID.")
                 }
+            } else {
+                print("Background recording ID is empty.")
             }
         }
         

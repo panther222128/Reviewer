@@ -12,11 +12,7 @@ final class RecordButton: UIButton {
     override var isSelected: Bool {
         didSet {
             let symbolConfiguration = UIImage.SymbolConfiguration(pointSize: 64, weight: .bold, scale: .default)
-            if isSelected {
-                selectImageView.image = UIImage(systemName: "record.circle.fill", withConfiguration: symbolConfiguration)
-            } else {
-                selectImageView.image = UIImage(systemName: "record.circle", withConfiguration: symbolConfiguration)
-            }
+            selectImageView.image = isSelected ? UIImage(systemName: "record.circle.fill", withConfiguration: symbolConfiguration) : UIImage(systemName: "record.circle", withConfiguration: symbolConfiguration)
         }
     }
     
@@ -45,11 +41,7 @@ final class RecordButton: UIButton {
     }
     
     func toggle() {
-        if isSelected {
-            isSelected = false
-        } else {
-            isSelected = true
-        }
+        isSelected = isSelected ? false : true
     }
     
     private func addSubviews() {

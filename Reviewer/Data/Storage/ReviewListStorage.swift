@@ -34,6 +34,8 @@ final class DefaultReviewListStorage: ReviewListStorage {
             container = try ModelContainer(for: RestaurantEntity.self)
             if let container {
                 context = ModelContext(container)
+            } else {
+                print("Cannot create context.")
             }
         } catch {
             print(error)
@@ -44,6 +46,8 @@ final class DefaultReviewListStorage: ReviewListStorage {
         if let context {
             let restaurant = RestaurantEntity(id: restaurantId, name: name, date: Date())
             context.insert(restaurant)
+        } else {
+            print("Cannot save restaurant.")
         }
     }
     
@@ -64,7 +68,7 @@ final class DefaultReviewListStorage: ReviewListStorage {
         if let context, let restaurant = fetchRestaurant(restaurantId: restaurantId) {
             context.delete(restaurant)
         } else {
-            
+            print("Cannot delete restaurant.")
         }
     }
     
@@ -77,10 +81,10 @@ final class DefaultReviewListStorage: ReviewListStorage {
             if let first = filteredDishes.first, let firstIndex = dishes.firstIndex(of: first) {
                 restaurant.dishes.remove(at: firstIndex)
             } else {
-                
+                print("Cannot find dish.")
             }
         } else {
-            
+            print("Cannot delete dish.")
         }
     }
     
@@ -88,7 +92,7 @@ final class DefaultReviewListStorage: ReviewListStorage {
         if let restaurant = fetchRestaurant(restaurantId: restaurantId) {
             restaurant.dishes.append(.init(id: dish.id, name: dish.name, tastes: dish.tastes))
         } else {
-            
+            print("Cannot save dish.")
         }
     }
     
@@ -97,7 +101,7 @@ final class DefaultReviewListStorage: ReviewListStorage {
             let filteredDish = restaurant.dishes.filter { $0.id == dishId }
             filteredDish.forEach { $0.tastes.append(taste) }
         } else {
-            
+            print("Cannot save taste.")
         }
     }
     
