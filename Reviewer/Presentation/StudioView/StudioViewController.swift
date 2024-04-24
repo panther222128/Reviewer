@@ -26,6 +26,9 @@ final class StudioViewController: UIViewController {
     
     private var setupResult: SessionSetupResult = .success
     
+    private var portraitConstraints: [NSLayoutConstraint] = []
+    private var landscapeConstraints: [NSLayoutConstraint] = []
+    
     private let captureButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -112,6 +115,10 @@ final class StudioViewController: UIViewController {
         adjustLayoutOf(frameRateSegmentedControl: frameRateSegmentedControl)
         adjustLayoutOf(captureModeSegmentedControl: captureModeSegmentedControl)
         adjustLayoutOf(recordButton: recordButton)
+        adjustLandscapeLayoutOf(recordButton: recordButton)
+        adjustLandscapeLayoutOf(captureButton: captureButton)
+        adjustLandscapeLayoutOf(captureModeSegmentedControl: captureModeSegmentedControl)
+        adjustLandscapeLayoutOf(videoZoomFactorSegmentedControl: videoZoomFactorSegmentedControl)
         addActionOf(recordButton: recordButton)
         addZoomFactorSegmentedControlTarget()
         addMovieResolutionSegmentedControlTarget()
@@ -129,6 +136,8 @@ final class StudioViewController: UIViewController {
         subscribe(restaurantNamePublisher: viewModel.restaurantNamePublisher)
         
         viewModel.loadTitle()
+        
+        NSLayoutConstraint.activate(portraitConstraints)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -169,6 +178,22 @@ final class StudioViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         viewModel.stopSessionRunning()
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        coordinator.animate { _ in
+            
+        } completion: { _ in
+            if UIDevice.current.orientation.isPortrait {
+                NSLayoutConstraint.activate(self.portraitConstraints)
+                NSLayoutConstraint.deactivate(self.landscapeConstraints)
+            } else if UIDevice.current.orientation.isLandscape {
+                NSLayoutConstraint.activate(self.landscapeConstraints)
+                NSLayoutConstraint.deactivate(self.portraitConstraints)
+            }
+        }
+
     }
     
     static func create(with viewModel: StudioViewModel) -> StudioViewController {
@@ -305,18 +330,43 @@ extension StudioViewController {
     }
     
     private func adjustLayoutOf(captureButton: UIButton) {
-        captureButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -15).isActive = true
-        captureButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        portraitConstraints.append(captureButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -40))
+        portraitConstraints.append(captureButton.centerXAnchor.constraint(equalTo: view.centerXAnchor))
     }
     
     private func adjustLayoutOf(recordButton: RecordButton) {
-        recordButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -15).isActive = true
-        recordButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        portraitConstraints.append(recordButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -40))
+        portraitConstraints.append(recordButton.centerXAnchor.constraint(equalTo: view.centerXAnchor))
+    }
+    
+    private func adjustLayoutOf(captureModeSegmentedControl: UISegmentedControl) {
+        portraitConstraints.append(captureModeSegmentedControl.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -150))
+        portraitConstraints.append(captureModeSegmentedControl.centerXAnchor.constraint(equalTo: view.centerXAnchor))
     }
     
     private func adjustLayoutOf(videoZoomFactorSegmentedControl: UISegmentedControl) {
-        videoZoomFactorSegmentedControl.bottomAnchor.constraint(equalTo: captureModeSegmentedControl.topAnchor, constant: -15).isActive = true
-        videoZoomFactorSegmentedControl.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        portraitConstraints.append(videoZoomFactorSegmentedControl.bottomAnchor.constraint(equalTo: captureModeSegmentedControl.topAnchor, constant: -15))
+        portraitConstraints.append(videoZoomFactorSegmentedControl.centerXAnchor.constraint(equalTo: view.centerXAnchor))
+    }
+    
+    private func adjustLandscapeLayoutOf(captureButton: UIButton) {
+        landscapeConstraints.append(captureButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15))
+        landscapeConstraints.append(captureButton.centerYAnchor.constraint(equalTo: view.centerYAnchor))
+    }
+    
+    private func adjustLandscapeLayoutOf(recordButton: RecordButton) {
+        landscapeConstraints.append(recordButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -15))
+        landscapeConstraints.append(recordButton.centerYAnchor.constraint(equalTo: view.centerYAnchor))
+    }
+    
+    private func adjustLandscapeLayoutOf(captureModeSegmentedControl: UISegmentedControl) {
+        landscapeConstraints.append(captureModeSegmentedControl.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10))
+        landscapeConstraints.append(captureModeSegmentedControl.centerXAnchor.constraint(equalTo: view.centerXAnchor))
+    }
+    
+    private func adjustLandscapeLayoutOf(videoZoomFactorSegmentedControl: UISegmentedControl) {
+        landscapeConstraints.append(videoZoomFactorSegmentedControl.bottomAnchor.constraint(equalTo: captureModeSegmentedControl.topAnchor, constant: -15))
+        landscapeConstraints.append(videoZoomFactorSegmentedControl.centerXAnchor.constraint(equalTo: view.centerXAnchor))
     }
     
     private func adjustLayoutOf(frameRateSegmentedControl: UISegmentedControl) {
@@ -327,11 +377,6 @@ extension StudioViewController {
     private func adjustLayoutOf(movieResolutionSegmentedControl: UISegmentedControl) {
         movieResolutionSegmentedControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 15).isActive = true
         movieResolutionSegmentedControl.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-    }
-    
-    private func adjustLayoutOf(captureModeSegmentedControl: UISegmentedControl) {
-        captureModeSegmentedControl.bottomAnchor.constraint(equalTo: captureButton.topAnchor, constant: -15).isActive = true
-        captureModeSegmentedControl.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
     }
     
     private func addActionOf(captureButton: UIButton) {
