@@ -12,7 +12,7 @@ final class OnOffButton: UIButton {
     override var isSelected: Bool {
         didSet {
             if isSelected {
-                selectImageView.image = UIImage(systemName: "circle.circle.fill")
+                selectImageView.image = UIImage(systemName: "circle.fill")
             } else {
                 selectImageView.image = UIImage(systemName: "circle")
             }
