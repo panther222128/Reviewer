@@ -8,6 +8,7 @@
 import Foundation
 
 struct TastesSection {
+    let categoryIndex: Int
     let title: String
     let tastes: [String]
 }

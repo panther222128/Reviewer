@@ -10,12 +10,12 @@ import Combine
 
 protocol TasteListViewModel {
     var restaurantNamePublisher: AnyPublisher<String, Never> { get }
-    var tastesPublisher: AnyPublisher<[String], Never> { get }
+    var tastesSectionsPublisher: AnyPublisher<[TastesSection], Never> { get }
     
     func loadTitle()
     func loadTastes()
-    func didSelectTaste(at index: Int)
-    func didDeselectTaste(at index: Int)
+    func didSelectTaste(at categoryIndex: Int, at index: Int)
+    func didDeselectTaste(at categoryIndex: Int, at index: Int)
     func didSaveDish()
 }
 
@@ -26,13 +26,15 @@ final class DefaultTasteListViewModel: TasteListViewModel {
     private let restaurantName: String
     private let restaurantNameSubject: CurrentValueSubject<String, Never>
     private let dishName: String
-    private let tastes: [String]
-    private let tastesSubject: CurrentValueSubject<[String], Never>
-    var tastesPublisher: AnyPublisher<[String], Never> {
-        return tastesSubject.eraseToAnyPublisher()
-    }
+    
+    private var tastesSections: [TastesSection]
+    private let tastesSectionsSubject: CurrentValueSubject<[TastesSection], Never>
+
     var restaurantNamePublisher: AnyPublisher<String, Never> {
         return restaurantNameSubject.eraseToAnyPublisher()
+    }
+    var tastesSectionsPublisher: AnyPublisher<[TastesSection], Never> {
+        return tastesSectionsSubject.eraseToAnyPublisher()
     }
     
     private var selectedTastes: [String]
@@ -43,9 +45,9 @@ final class DefaultTasteListViewModel: TasteListViewModel {
         self.restaurantName = restaurantName
         self.restaurantNameSubject = .init("")
         self.dishName = dishName
-        self.tastes = Constants.tastes
-        self.tastesSubject = .init([])
         self.selectedTastes = []
+        self.tastesSections = Constants.tastesSections
+        self.tastesSectionsSubject = .init([])
     }
     
     func loadTitle() {
@@ -53,15 +55,15 @@ final class DefaultTasteListViewModel: TasteListViewModel {
     }
     
     func loadTastes() {
-        tastesSubject.send(tastes)
+        tastesSectionsSubject.send(self.tastesSections)
     }
     
-    func didSelectTaste(at index: Int) {
-        selectedTastes.append(tastes[index])
+    func didSelectTaste(at categoryIndex: Int, at index: Int) {
+        selectedTastes.append(tastesSections[categoryIndex].tastes[index])
     }
     
-    func didDeselectTaste(at index: Int) {
-        if let firstIndex = selectedTastes.firstIndex(of: tastes[index]) {
+    func didDeselectTaste(at categoryIndex: Int, at index: Int) {
+        if let firstIndex = selectedTastes.firstIndex(of: tastesSections[categoryIndex].tastes[index]) {
             selectedTastes.remove(at: firstIndex)
         } else {
             print("Cannot find selected taste.")
@@ -69,7 +71,7 @@ final class DefaultTasteListViewModel: TasteListViewModel {
     }
     
     func didSaveDish() {
-        if !tastes.isEmpty {
+        if !selectedTastes.isEmpty {
             repository.save(restaurantId: restaurantId, dish: .init(id: UUID().uuidString, name: dishName, date: Date(), tastes: selectedTastes))
         }
     }

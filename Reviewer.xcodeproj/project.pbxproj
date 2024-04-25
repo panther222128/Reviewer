@@ -38,6 +38,7 @@
 		A9896F002BC8CB2300BC79E3 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9896EFF2BC8CB2300BC79E3 /* Constants.swift */; };
 		A9896F022BC8D1CB00BC79E3 /* OnOffButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9896F012BC8D1CB00BC79E3 /* OnOffButton.swift */; };
 		A9896F052BC8E6F000BC79E3 /* Dish.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9896F042BC8E6F000BC79E3 /* Dish.swift */; };
+		A9AF0CF22BDA717F0063F447 /* TasteCategoryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9AF0CF12BDA717F0063F447 /* TasteCategoryButton.swift */; };
 		A9C89D032BD24F9300E386D0 /* SwitchSettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9C89D022BD24F9300E386D0 /* SwitchSettingView.swift */; };
 		A9C89D052BD25B0D00E386D0 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9C89D042BD25B0D00E386D0 /* SettingsViewModel.swift */; };
 		A9C89D072BD25B5000E386D0 /* DefaultSettingsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9C89D062BD25B5000E386D0 /* DefaultSettingsRepository.swift */; };
@@ -93,6 +94,7 @@
 		A9896EFF2BC8CB2300BC79E3 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		A9896F012BC8D1CB00BC79E3 /* OnOffButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnOffButton.swift; sourceTree = "<group>"; };
 		A9896F042BC8E6F000BC79E3 /* Dish.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dish.swift; sourceTree = "<group>"; };
+		A9AF0CF12BDA717F0063F447 /* TasteCategoryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasteCategoryButton.swift; sourceTree = "<group>"; };
 		A9C89D022BD24F9300E386D0 /* SwitchSettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchSettingView.swift; sourceTree = "<group>"; };
 		A9C89D042BD25B0D00E386D0 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		A9C89D062BD25B5000E386D0 /* DefaultSettingsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultSettingsRepository.swift; sourceTree = "<group>"; };
@@ -283,6 +285,7 @@
 				A9CFEC492BC806F800AFE7C3 /* TasteListViewController.swift */,
 				A9CFEC4B2BC80ADD00AFE7C3 /* TasteListViewModel.swift */,
 				A9896F012BC8D1CB00BC79E3 /* OnOffButton.swift */,
+				A9AF0CF12BDA717F0063F447 /* TasteCategoryButton.swift */,
 			);
 			path = TasteListView;
 			sourceTree = "<group>";
@@ -416,6 +419,7 @@
 				A9C89D072BD25B5000E386D0 /* DefaultSettingsRepository.swift in Sources */,
 				A9E86E312BC64C0D00576877 /* RestaurantListItemViewModel.swift in Sources */,
 				A9E86E372BC665F100576877 /* StudioViewController.swift in Sources */,
+				A9AF0CF22BDA717F0063F447 /* TasteCategoryButton.swift in Sources */,
 				A93CF6E82BC2A8AF0077B0A2 /* RestaurantListViewController.swift in Sources */,
 				A97DABC52BCBBA24000867D9 /* DishEntity.swift in Sources */,
 				A9E86E342BC64D5D00576877 /* Date+FormattedString.swift in Sources */,

@@ -47,7 +47,7 @@ final class TasteListViewController: UIViewController {
         viewModel.loadTastes()
         viewModel.loadTitle()
         
-        subscribe(tastesPublisher: viewModel.tastesPublisher)
+        subscribe(tastesPublisher: viewModel.tastesSectionsPublisher)
         subscribe(restaurantNamePublisher: viewModel.restaurantNamePublisher)
     }
     
@@ -66,22 +66,28 @@ final class TasteListViewController: UIViewController {
             .store(in: &cancellables)
     }
     
-    private func subscribe(tastesPublisher: AnyPublisher<[String], Never>) {
+    private func subscribe(tastesPublisher: AnyPublisher<[TastesSection], Never>) {
         tastesPublisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] tastes in
-                for index in 0..<tastes.count {
-                    let onOffButton = OnOffButton(tasteTitle: tastes[index])
-                    let action = UIAction { _ in
-                        onOffButton.toggle()
-                        if onOffButton.isSelected {
-                            self?.viewModel.didSelectTaste(at: index)
-                        } else {
-                            self?.viewModel.didDeselectTaste(at: index)
+            .sink { [weak self] tastesSections in
+                for index in 0..<tastesSections.count {
+                    let categoryName = tastesSections[index].title
+                    let categoryButton = TasteCategoryButton(tasteCategoryName: categoryName)
+                    self?.tasteListStackView.addArrangedSubview(categoryButton)
+                    
+                    for tasteIndex in 0..<tastesSections[index].tastes.count {
+                        let onOffButton = OnOffButton(tasteTitle: tastesSections[index].tastes[tasteIndex])
+                        let action = UIAction { _ in
+                            onOffButton.toggle()
+                            if onOffButton.isSelected {
+                                self?.viewModel.didSelectTaste(at: index, at: tasteIndex)
+                            } else {
+                                self?.viewModel.didDeselectTaste(at: index, at: tasteIndex)
+                            }
                         }
+                        onOffButton.addAction(action, for: .touchUpInside)
+                        self?.tasteListStackView.addArrangedSubview(onOffButton)
                     }
-                    onOffButton.addAction(action, for: .touchUpInside)
-                    self?.tasteListStackView.addArrangedSubview(onOffButton)
                 }
             }
             .store(in: &cancellables)
