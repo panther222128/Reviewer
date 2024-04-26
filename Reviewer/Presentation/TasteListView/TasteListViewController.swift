@@ -117,17 +117,6 @@ extension TasteListViewController {
         present(alertController, animated: true, completion: nil)
     }
     
-    private func generateScrollPosition(at index: Int) -> Int {
-        var position: Int = 0
-        for i in 0..<index {
-            position += Constants.tastesSections[i].tastes.count * 80
-        }
-        if index > 1 {
-            position += (index - 1) * 80
-        }
-        return position
-    }
-    
     private func addListBarButtonItem() {
         let barButtonItem = UIBarButtonItem(image: UIImage(systemName: "list.bullet"), style: .plain, target: self, action: nil)
         
@@ -208,6 +197,17 @@ extension TasteListViewController {
         barButtonItem.menu = menuButton
         
         navigationItem.rightBarButtonItems?.append(barButtonItem)
+    }
+    
+    private func generateScrollPosition(at index: Int) -> Int {
+        var position: Int = 0
+        for i in 0..<index {
+            position += Constants.tastesSections[i].tastes.count * 80
+        }
+        if index > 1 {
+            position += (index - 1) * 80
+        }
+        return position
     }
 }
 
