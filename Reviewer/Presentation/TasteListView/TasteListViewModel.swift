@@ -11,10 +11,10 @@ import Combine
 // MARK: - Boilerplate
 protocol TasteListViewModel {
     var restaurantNamePublisher: AnyPublisher<String, Never> { get }
-    var tastesSectionsPublisher: AnyPublisher<[TastesSection], Never> { get }
+    var tasteCategoriesPublisher: AnyPublisher<[TasteCategory], Never> { get }
     
     func loadTitle()
-    func loadTastes()
+    func loadTasteCategories()
     func didSelectTaste(at categoryIndex: Int, at index: Int)
     func didDeselectTaste(at categoryIndex: Int, at index: Int)
     func didSaveDish()
@@ -28,14 +28,14 @@ final class DefaultTasteListViewModel: TasteListViewModel {
     private let restaurantNameSubject: CurrentValueSubject<String, Never>
     private let dishName: String
     
-    private var tastesSections: [TastesSection]
-    private let tastesSectionsSubject: CurrentValueSubject<[TastesSection], Never>
+    private var tasteCategories: [TasteCategory]
+    private let tasteCategoriesSubject: CurrentValueSubject<[TasteCategory], Never>
 
     var restaurantNamePublisher: AnyPublisher<String, Never> {
         return restaurantNameSubject.eraseToAnyPublisher()
     }
-    var tastesSectionsPublisher: AnyPublisher<[TastesSection], Never> {
-        return tastesSectionsSubject.eraseToAnyPublisher()
+    var tasteCategoriesPublisher: AnyPublisher<[TasteCategory], Never> {
+        return tasteCategoriesSubject.eraseToAnyPublisher()
     }
     
     private var selectedTastes: [String]
@@ -47,24 +47,24 @@ final class DefaultTasteListViewModel: TasteListViewModel {
         self.restaurantNameSubject = .init("")
         self.dishName = dishName
         self.selectedTastes = []
-        self.tastesSections = Constants.tastesSections
-        self.tastesSectionsSubject = .init([])
+        self.tasteCategories = Constants.tasteCategories
+        self.tasteCategoriesSubject = .init([])
     }
     
     func loadTitle() {
         restaurantNameSubject.send(restaurantName)
     }
     
-    func loadTastes() {
-        tastesSectionsSubject.send(self.tastesSections)
+    func loadTasteCategories() {
+        tasteCategoriesSubject.send(self.tasteCategories)
     }
     
     func didSelectTaste(at categoryIndex: Int, at index: Int) {
-        selectedTastes.append(tastesSections[categoryIndex].tastes[index])
+        selectedTastes.append(tasteCategories[categoryIndex].tastes[index])
     }
     
     func didDeselectTaste(at categoryIndex: Int, at index: Int) {
-        if let firstIndex = selectedTastes.firstIndex(of: tastesSections[categoryIndex].tastes[index]) {
+        if let firstIndex = selectedTastes.firstIndex(of: tasteCategories[categoryIndex].tastes[index]) {
             selectedTastes.remove(at: firstIndex)
         } else {
             print("Cannot find selected taste.")

@@ -45,10 +45,10 @@ final class TasteListViewController: UIViewController {
         addBarButtonItem()
         addListBarButtonItem()
         
-        viewModel.loadTastes()
+        viewModel.loadTasteCategories()
         viewModel.loadTitle()
         
-        subscribe(tastesPublisher: viewModel.tastesSectionsPublisher)
+        subscribe(tasteCategoriesPublisherPublisher: viewModel.tasteCategoriesPublisher)
         subscribe(restaurantNamePublisher: viewModel.restaurantNamePublisher)
     }
     
@@ -67,17 +67,17 @@ final class TasteListViewController: UIViewController {
             .store(in: &cancellables)
     }
     
-    private func subscribe(tastesPublisher: AnyPublisher<[TastesSection], Never>) {
-        tastesPublisher
+    private func subscribe(tasteCategoriesPublisherPublisher: AnyPublisher<[TasteCategory], Never>) {
+        tasteCategoriesPublisherPublisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] tastesSections in
-                for index in 0..<tastesSections.count {
-                    let categoryName = tastesSections[index].title
+            .sink { [weak self] tasteCategories in
+                for index in 0..<tasteCategories.count {
+                    let categoryName = tasteCategories[index].title
                     let categoryButton = TasteCategoryButton(tasteCategoryName: categoryName)
                     self?.tasteListStackView.addArrangedSubview(categoryButton)
                     
-                    for tasteIndex in 0..<tastesSections[index].tastes.count {
-                        let onOffButton = OnOffButton(tasteTitle: tastesSections[index].tastes[tasteIndex])
+                    for tasteIndex in 0..<tasteCategories[index].tastes.count {
+                        let onOffButton = OnOffButton(tasteTitle: tasteCategories[index].tastes[tasteIndex])
                         let action = UIAction { _ in
                             onOffButton.toggle()
                             if onOffButton.isSelected {
@@ -121,74 +121,74 @@ extension TasteListViewController {
         let barButtonItem = UIBarButtonItem(image: UIImage(systemName: "list.bullet"), style: .plain, target: self, action: nil)
         
         let menuButton = UIMenu(title: "카테고리", children: [
-            UIAction(title: Constants.tastesSections[0].title, handler: { _ in
+            UIAction(title: Constants.tasteCategories[0].title, handler: { _ in
                 self.containerScrollView.setContentOffset(.init(x: 0, y: -80), animated: true)
             }),
-            UIAction(title: Constants.tastesSections[1].title, handler: { _ in
+            UIAction(title: Constants.tasteCategories[1].title, handler: { _ in
                 let position = self.generateScrollPosition(at: 1)
                 self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
             }),
-            UIAction(title: Constants.tastesSections[2].title, handler: { _ in
+            UIAction(title: Constants.tasteCategories[2].title, handler: { _ in
                 let position = self.generateScrollPosition(at: 2)
                 self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
             }),
-            UIAction(title: Constants.tastesSections[3].title, handler: { _ in
+            UIAction(title: Constants.tasteCategories[3].title, handler: { _ in
                 let position = self.generateScrollPosition(at: 3)
                 self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
             }),
-            UIAction(title: Constants.tastesSections[4].title, handler: { _ in
+            UIAction(title: Constants.tasteCategories[4].title, handler: { _ in
                 let position = self.generateScrollPosition(at: 4)
                 self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
             }),
-            UIAction(title: Constants.tastesSections[5].title, handler: { _ in
+            UIAction(title: Constants.tasteCategories[5].title, handler: { _ in
                 let position = self.generateScrollPosition(at: 5)
                 self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
             }),
-            UIAction(title: Constants.tastesSections[6].title, handler: { _ in
+            UIAction(title: Constants.tasteCategories[6].title, handler: { _ in
                 let position = self.generateScrollPosition(at: 6)
                 self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
             }),
-            UIAction(title: Constants.tastesSections[7].title, handler: { _ in
+            UIAction(title: Constants.tasteCategories[7].title, handler: { _ in
                 let position = self.generateScrollPosition(at: 7)
                 self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
             }),
-            UIAction(title: Constants.tastesSections[8].title, handler: { _ in
+            UIAction(title: Constants.tasteCategories[8].title, handler: { _ in
                 let position = self.generateScrollPosition(at: 8)
                 self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
             }),
-            UIAction(title: Constants.tastesSections[9].title, handler: { _ in
+            UIAction(title: Constants.tasteCategories[9].title, handler: { _ in
                 let position = self.generateScrollPosition(at: 9)
                 self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
             }),
-            UIAction(title: Constants.tastesSections[10].title, handler: { _ in
+            UIAction(title: Constants.tasteCategories[10].title, handler: { _ in
                 let position = self.generateScrollPosition(at: 10)
                 self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
             }),
-            UIAction(title: Constants.tastesSections[11].title, handler: { _ in
+            UIAction(title: Constants.tasteCategories[11].title, handler: { _ in
                 let position = self.generateScrollPosition(at: 11)
                 self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
             }),
-            UIAction(title: Constants.tastesSections[12].title, handler: { _ in
+            UIAction(title: Constants.tasteCategories[12].title, handler: { _ in
                 let position = self.generateScrollPosition(at: 12)
                 self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
             }),
-            UIAction(title: Constants.tastesSections[13].title, handler: { _ in
+            UIAction(title: Constants.tasteCategories[13].title, handler: { _ in
                 let position = self.generateScrollPosition(at: 13)
                 self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
             }),
-            UIAction(title: Constants.tastesSections[14].title, handler: { _ in
+            UIAction(title: Constants.tasteCategories[14].title, handler: { _ in
                 let position = self.generateScrollPosition(at: 14)
                 self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
             }),
-            UIAction(title: Constants.tastesSections[15].title, handler: { _ in
+            UIAction(title: Constants.tasteCategories[15].title, handler: { _ in
                 let position = self.generateScrollPosition(at: 15)
                 self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
             }),
-            UIAction(title: Constants.tastesSections[16].title, handler: { _ in
+            UIAction(title: Constants.tasteCategories[16].title, handler: { _ in
                 let position = self.generateScrollPosition(at: 16)
                 self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
             }),
-            UIAction(title: Constants.tastesSections[17].title, handler: { _ in
+            UIAction(title: Constants.tasteCategories[17].title, handler: { _ in
                 let position = self.generateScrollPosition(at: 17)
                 self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
             })
@@ -202,7 +202,7 @@ extension TasteListViewController {
     private func generateScrollPosition(at index: Int) -> Int {
         var position: Int = 0
         for i in 0..<index {
-            position += Constants.tastesSections[i].tastes.count * 80
+            position += Constants.tasteCategories[i].tastes.count * 80
         }
         if index > 1 {
             position += (index - 1) * 80

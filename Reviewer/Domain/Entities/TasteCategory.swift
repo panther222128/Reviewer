@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct TastesSection {
+struct TasteCategory {
     let categoryIndex: Int
     let title: String
     let tastes: [String]

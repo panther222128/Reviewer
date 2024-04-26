@@ -12,7 +12,7 @@
 		A006CEB22BCCBF8C0065553F /* DishDetailListAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A006CEB12BCCBF8C0065553F /* DishDetailListAdapter.swift */; };
 		A006CEB42BCCC0730065553F /* DishDetailListItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A006CEB32BCCC0730065553F /* DishDetailListItemViewModel.swift */; };
 		A006CEB62BCCC12B0065553F /* DishDetailListItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A006CEB52BCCC12B0065553F /* DishDetailListItemCell.swift */; };
-		A01940D82BDA2F41006848E2 /* TastesSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01940D72BDA2F41006848E2 /* TastesSection.swift */; };
+		A01940D82BDA2F41006848E2 /* TasteCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01940D72BDA2F41006848E2 /* TasteCategory.swift */; };
 		A93CF6D02BC2A8120077B0A2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93CF6CF2BC2A8120077B0A2 /* AppDelegate.swift */; };
 		A93CF6D22BC2A8120077B0A2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93CF6D12BC2A8120077B0A2 /* SceneDelegate.swift */; };
 		A93CF6D92BC2A8150077B0A2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A93CF6D82BC2A8150077B0A2 /* Assets.xcassets */; };
@@ -66,7 +66,7 @@
 		A006CEB12BCCBF8C0065553F /* DishDetailListAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DishDetailListAdapter.swift; sourceTree = "<group>"; };
 		A006CEB32BCCC0730065553F /* DishDetailListItemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DishDetailListItemViewModel.swift; sourceTree = "<group>"; };
 		A006CEB52BCCC12B0065553F /* DishDetailListItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DishDetailListItemCell.swift; sourceTree = "<group>"; };
-		A01940D72BDA2F41006848E2 /* TastesSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TastesSection.swift; sourceTree = "<group>"; };
+		A01940D72BDA2F41006848E2 /* TasteCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasteCategory.swift; sourceTree = "<group>"; };
 		A93CF6CC2BC2A8120077B0A2 /* Reviewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reviewer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A93CF6CF2BC2A8120077B0A2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A93CF6D12BC2A8120077B0A2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -274,7 +274,7 @@
 			children = (
 				A9896F042BC8E6F000BC79E3 /* Dish.swift */,
 				A97DAB892BCB845B000867D9 /* Restaurant.swift */,
-				A01940D72BDA2F41006848E2 /* TastesSection.swift */,
+				A01940D72BDA2F41006848E2 /* TasteCategory.swift */,
 			);
 			path = Entities;
 			sourceTree = "<group>";
@@ -448,7 +448,7 @@
 				A9E86E432BC68ACA00576877 /* StudioUseCase.swift in Sources */,
 				A9E86E402BC6887400576877 /* PhotoCaptureProcessor.swift in Sources */,
 				A93CF6D22BC2A8120077B0A2 /* SceneDelegate.swift in Sources */,
-				A01940D82BDA2F41006848E2 /* TastesSection.swift in Sources */,
+				A01940D82BDA2F41006848E2 /* TasteCategory.swift in Sources */,
 				A97DABD02BCBFD8E000867D9 /* RestaurantDishListItemViewModel.swift in Sources */,
 				A9E86E2F2BC649BC00576877 /* RestaurantListItemCell.swift in Sources */,
 				A9E86E392BC6685700576877 /* StudioViewModel.swift in Sources */,
