@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 
+// MARK: - Boilerplate
 protocol RestaurantListViewModel: RestaurantListDataSource {
     var isDeleteImmediate: Bool { get }
     var listItemViewModelPublisher: AnyPublisher<[RestaurantListItemViewModel], Never> { get }

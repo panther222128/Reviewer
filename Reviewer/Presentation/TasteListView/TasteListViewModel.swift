@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 
+// MARK: - Boilerplate
 protocol TasteListViewModel {
     var restaurantNamePublisher: AnyPublisher<String, Never> { get }
     var tastesSectionsPublisher: AnyPublisher<[TastesSection], Never> { get }

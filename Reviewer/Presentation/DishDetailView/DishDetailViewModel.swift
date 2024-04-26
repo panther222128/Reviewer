@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 
+// MARK: - Boilerplate
 protocol DishDetailViewModel: DishDetailListDataSource {
     var tastesPublisher: AnyPublisher<[String], Never> { get }
     var dishNamePublisher: AnyPublisher<String, Never> { get }

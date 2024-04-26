@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 
+// MARK: - Boilerplate
 protocol SettingsViewModel {
     var isDeleteImmediatePublisher: AnyPublisher<Bool, Never> { get }
     

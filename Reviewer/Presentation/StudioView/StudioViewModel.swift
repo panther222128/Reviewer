@@ -9,6 +9,7 @@ import Foundation
 import AVFoundation
 import Combine
 
+// MARK: - Boilerplate
 protocol StudioViewModel {
     var restaurantNamePublisher: AnyPublisher<String, Never> { get }
     
