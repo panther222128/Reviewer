@@ -122,7 +122,7 @@ extension TasteListViewController {
         
         let menuButton = UIMenu(title: "카테고리", children: [
             UIAction(title: Constants.tastesSections[0].title, handler: { _ in
-                self.containerScrollView.scrollsToTop = true
+                self.containerScrollView.setContentOffset(.init(x: 0, y: -80), animated: true)
             }),
             UIAction(title: Constants.tastesSections[1].title, handler: { _ in
                 let position = self.generateScrollPosition(at: 1)
