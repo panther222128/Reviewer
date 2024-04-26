@@ -24,8 +24,8 @@ protocol StudioViewModel {
     func changeCapture(mode: Int)
     func didRecord()
     func didChangeZoomFactor(at number: Int)
-    func didChangeResolution(at number: Int)
-    func changeFrameRate(_ rate: Float64, width: Int32, height: Int32)
+    func didChangeResolution(rate: Float64, width: Int32, height: Int32, previewView: PreviewView)
+    func changeFrameRate(_ rate: Float64, width: Int32, height: Int32, previewView: PreviewView)
     func focus(at devicePoint: CGPoint, monitorSubjectAreaChange: Bool)
     func didLoadTasteView(with dishName: String)
 }
@@ -100,12 +100,12 @@ final class DefaultStudioViewModel: StudioViewModel {
         studio.changeZoomFactor(at: number)
     }
     
-    func didChangeResolution(at number: Int) {
-        studio.changeVideoResolution(at: number)
+    func didChangeResolution(rate: Float64, width: Int32, height: Int32, previewView: PreviewView) {
+        studio.changeFrameRate(rate, width: width, height: height, previewView: previewView)
     }
     
-    func changeFrameRate(_ rate: Float64, width: Int32, height: Int32) {
-        studio.changeFrameRate(rate, width: width, height: height)
+    func changeFrameRate(_ rate: Float64, width: Int32, height: Int32, previewView: PreviewView) {
+        studio.changeFrameRate(rate, width: width, height: height, previewView: previewView)
     }
     
     func focus(at devicePoint: CGPoint, monitorSubjectAreaChange: Bool) {

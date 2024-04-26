@@ -59,12 +59,14 @@ final class Studio: NSObject {
         previewView.session = captureSession
     }
     
+    // MARK: - If this method is called by view did load only, 'else if mode.rawValue == 1' must be removed.
     func integrateSession<T>(on previewView: PreviewView, mode: CaptureMode, preset: AVCaptureSession.Preset, delegate: T) where T: AVCapturePhotoOutputReadinessCoordinatorDelegate {
         sessionQueue.async {
             if mode.rawValue == 0 {
                 self.setSession(preset: .photo)
                 self.findCamera()
                 self.addVideoDeviceInput(on: previewView)
+                self.setDeviceModes(focus: .continuousAutoFocus, exposure: .continuousAutoExposure)
                 self.addPhotoOutput()
                 self.setReadinessCoordinatorDelegate(delegate)
                 self.configurePhotoOutput(with: .quality)
@@ -73,6 +75,7 @@ final class Studio: NSObject {
                 self.findCamera()
                 self.findMicrohone()
                 self.addVideoDeviceInput(on: previewView)
+                self.setDeviceModes(focus: .continuousAutoFocus, exposure: .continuousAutoExposure)
                 self.addMovieFileOutput()
             }
         }
@@ -107,18 +110,25 @@ final class Studio: NSObject {
                 self.movieFileOutput = nil
                 self.addPhotoOutput()
                 self.configurePhotoOutput(with: .quality)
-                
+                self.setDeviceModes(focus: .continuousAutoFocus, exposure: .continuousAutoExposure)
                 self.captureSession.commitConfiguration()
             }
         } else if mode == CaptureMode.movie.rawValue {
             sessionQueue.async {
+                self.setDeviceModes(focus: .continuousAutoFocus, exposure: .continuousAutoExposure)
                 self.addMovieFileOutput()
             }
         }
     }
     
-    func changeFrameRate(_ rate: Float64, width: Int32, height: Int32) {
+    func changeFrameRate(_ rate: Float64, width: Int32, height: Int32, previewView: PreviewView) {
         sessionQueue.async {
+            self.findCamera()
+            self.findMicrohone()
+            self.addVideoDeviceInput(on: previewView)
+            self.setDeviceModes(focus: .continuousAutoFocus, exposure: .continuousAutoExposure)
+            self.addMovieFileOutput()
+            
             if let videoCaptureDevice = self.videoCaptureDevice {
                 self.captureSession.beginConfiguration()
                 defer {
@@ -161,8 +171,10 @@ final class Studio: NSObject {
                     
                     if rate == 30 {
                         videoCaptureDevice.activeVideoMinFrameDuration = CMTime(value: 1, timescale: 30)
+                        videoCaptureDevice.activeVideoMaxFrameDuration = CMTime(value: 1, timescale: 30)
                     } else if rate == 60 {
                         videoCaptureDevice.activeVideoMinFrameDuration = CMTime(value: 1, timescale: 60)
+                        videoCaptureDevice.activeVideoMaxFrameDuration = CMTime(value: 1, timescale: 60)
                     }
                     
                     videoCaptureDevice.unlockForConfiguration()
@@ -329,6 +341,10 @@ extension Studio {
             captureSession.commitConfiguration()
         }
         
+        if let videoDeviceInput = self.videoDeviceInput {
+            captureSession.removeInput(videoDeviceInput)
+        }
+        
         do {
             if let captureDevice = videoCaptureDevice {
                 let videoDeviceInput = try AVCaptureDeviceInput(device: captureDevice)
@@ -350,6 +366,34 @@ extension Studio {
         } catch {
             captureSession.commitConfiguration()
             print("Cannot initialize video device input.")
+        }
+    }
+    
+    private func setDeviceModes(focus: AVCaptureDevice.FocusMode, exposure: AVCaptureDevice.ExposureMode) {
+        sessionQueue.async {
+            self.captureSession.beginConfiguration()
+            defer {
+                self.captureSession.commitConfiguration()
+            }
+            if let videoDeviceInput = self.videoDeviceInput {
+                let device = videoDeviceInput.device
+                let focusMode: AVCaptureDevice.FocusMode = .continuousAutoFocus
+                let exposureMode: AVCaptureDevice.ExposureMode = .continuousAutoExposure
+                do {
+                    try device.lockForConfiguration()
+                    if device.isFocusPointOfInterestSupported && device.isFocusModeSupported(focusMode) {
+                        device.focusMode = focusMode
+                    }
+                    
+                    if device.isExposurePointOfInterestSupported && device.isExposureModeSupported(exposureMode) {
+                        device.exposureMode = exposureMode
+                    }
+                    
+                    device.unlockForConfiguration()
+                } catch {
+                    print("Could not lock device for configuration.")
+                }
+            }
         }
     }
 }

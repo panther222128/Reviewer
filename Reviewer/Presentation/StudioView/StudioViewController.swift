@@ -17,6 +17,16 @@ final class StudioViewController: UIViewController {
         case configurationFailed
     }
     
+    private enum MovieResolution: Int {
+        case hd = 0
+        case hd4k = 1
+    }
+    
+    private enum MovieFrameRate: Int {
+        case thirty = 30
+        case sixty = 60
+    }
+    
     private var _supportedInterfaceOrientations: UIInterfaceOrientationMask = .all
     
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -28,6 +38,9 @@ final class StudioViewController: UIViewController {
     
     private var portraitConstraints: [NSLayoutConstraint] = []
     private var landscapeConstraints: [NSLayoutConstraint] = []
+    
+    private var movieResolution: MovieResolution = .hd
+    private var movieFrameRate: MovieFrameRate = .thirty
     
     private let captureButton: UIButton = {
         let button = UIButton()
@@ -142,34 +155,34 @@ final class StudioViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         if captureModeSegmentedControl.selectedSegmentIndex == 0 {
             viewModel.setSession(on: previewView)
             viewModel.integrateCaptureSession(on: previewView, mode: .photo, preset: .photo, delegate: self)
             viewModel.startSessionRunning()
         } else if captureModeSegmentedControl.selectedSegmentIndex == 1 {
-            if captureModeSegmentedControl.selectedSegmentIndex == 0 && frameRateSegmentedControl.selectedSegmentIndex == 0 {
+            if movieResolution == .hd && movieFrameRate == .thirty {
                 // 1080 30
                 viewModel.setSession(on: previewView)
-                viewModel.integrateCaptureSession(on: previewView, mode: .movie, preset: .hd1920x1080, delegate: self)
-                viewModel.changeFrameRate(30, width: 1920, height: 1080)
+                viewModel.changeFrameRate(30, width: 1920, height: 1080, previewView: previewView)
                 viewModel.startSessionRunning()
-            } else if captureModeSegmentedControl.selectedSegmentIndex == 0 && frameRateSegmentedControl.selectedSegmentIndex == 1 {
+            } else if movieResolution == .hd && movieFrameRate == .sixty {
                 // 1080 60
                 viewModel.setSession(on: previewView)
-                viewModel.integrateCaptureSession(on: previewView, mode: .movie, preset: .hd1920x1080, delegate: self)
-                viewModel.changeFrameRate(60, width: 1920, height: 1080)
+                viewModel.changeFrameRate(60, width: 1920, height: 1080, previewView: previewView)
                 viewModel.startSessionRunning()
-            } else if captureModeSegmentedControl.selectedSegmentIndex == 1 && frameRateSegmentedControl.selectedSegmentIndex == 0 {
+            } else if movieResolution == .hd4k && movieFrameRate == .thirty {
                 // 4k 30
                 viewModel.setSession(on: previewView)
-                viewModel.integrateCaptureSession(on: previewView, mode: .movie, preset: .hd4K3840x2160, delegate: self)
-                viewModel.changeFrameRate(30, width: 3840, height: 2160)
+                viewModel.changeFrameRate(30, width: 3840, height: 2160, previewView: previewView)
                 viewModel.startSessionRunning()
-            } else if captureModeSegmentedControl.selectedSegmentIndex == 1 && frameRateSegmentedControl.selectedSegmentIndex == 1 {
+            } else if movieResolution == .hd4k && movieFrameRate == .sixty {
                 // 4k 60
                 viewModel.setSession(on: previewView)
-                viewModel.integrateCaptureSession(on: previewView, mode: .movie, preset: .hd4K3840x2160, delegate: self)
-                viewModel.changeFrameRate(60, width: 3840, height: 2160)
+                viewModel.changeFrameRate(60, width: 3840, height: 2160, previewView: previewView)
                 viewModel.startSessionRunning()
             }
         }
@@ -225,7 +238,19 @@ final class StudioViewController: UIViewController {
     }
     
     @objc private func didSelectResolution(_ sender: UISegmentedControl) {
-        viewModel.didChangeResolution(at: sender.selectedSegmentIndex)
+        if movieFrameRate == .thirty && sender.selectedSegmentIndex == 0 {
+            movieResolution = .hd
+            viewModel.didChangeResolution(rate: 30, width: 1920, height: 1080, previewView: previewView)
+        } else if movieFrameRate == .sixty && sender.selectedSegmentIndex == 0 {
+            movieResolution = .hd
+            viewModel.didChangeResolution(rate: 60, width: 1920, height: 1080, previewView: previewView)
+        } else if movieFrameRate == .thirty && sender.selectedSegmentIndex == 1 {
+            movieResolution = .hd4k
+            viewModel.didChangeResolution(rate: 30, width: 3840, height: 2160, previewView: previewView)
+        } else if movieFrameRate == .sixty && sender.selectedSegmentIndex == 1  {
+            movieResolution = .hd4k
+            viewModel.didChangeResolution(rate: 60, width: 3840, height: 2160, previewView: previewView)
+        }
     }
     
     private func addFrameRateSegmentedControlTarget() {
@@ -233,19 +258,22 @@ final class StudioViewController: UIViewController {
     }
     
     @objc private func didSelectFrameRate(_ sender: UISegmentedControl) {
-        let resolutionSelected = movieResolutionSegmentedControl.selectedSegmentIndex
-        if resolutionSelected == 0 && sender.selectedSegmentIndex == 0 {
+        if movieResolution == .hd && sender.selectedSegmentIndex == 0 {
             // 1080 30
-            viewModel.changeFrameRate(30, width: 1920, height: 1080)
-        } else if resolutionSelected == 0 && sender.selectedSegmentIndex == 1 {
+            movieFrameRate = .thirty
+            viewModel.changeFrameRate(30, width: 1920, height: 1080, previewView: previewView)
+        } else if movieResolution == .hd && sender.selectedSegmentIndex == 1 {
             // 1080 60
-            viewModel.changeFrameRate(60, width: 1920, height: 1080)
-        } else if resolutionSelected == 1 && sender.selectedSegmentIndex == 0 {
+            movieFrameRate = .sixty
+            viewModel.changeFrameRate(60, width: 1920, height: 1080, previewView: previewView)
+        } else if movieResolution == .hd4k && sender.selectedSegmentIndex == 0 {
+            movieFrameRate = .thirty
             // 4k 30
-            viewModel.changeFrameRate(30, width: 3840, height: 2160)
-        } else if resolutionSelected == 1 && sender.selectedSegmentIndex == 1 {
+            viewModel.changeFrameRate(30, width: 3840, height: 2160, previewView: previewView)
+        } else if movieResolution == .hd4k && sender.selectedSegmentIndex == 1 {
             // 4k 60
-            viewModel.changeFrameRate(60, width: 3840, height: 2160)
+            movieFrameRate = .sixty
+            viewModel.changeFrameRate(60, width: 3840, height: 2160, previewView: previewView)
         }
     }
     
