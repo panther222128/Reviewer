@@ -13,6 +13,7 @@ final class TasteCategoryButton: UIButton {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .black
+        label.font = UIFont.boldSystemFont(ofSize: 24)
         return label
     }()
     
@@ -23,6 +24,7 @@ final class TasteCategoryButton: UIButton {
         addSubviews()
         adjustLayoutOf(tasteCategoryLabel: tasteCategoryLabel)
         heightAnchor.constraint(equalToConstant: 80).isActive = true
+        isUserInteractionEnabled = false
     }
     
     override init(frame: CGRect) {
