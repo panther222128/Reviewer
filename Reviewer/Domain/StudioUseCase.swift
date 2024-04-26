@@ -9,7 +9,6 @@ import Foundation
 import AVFoundation
 
 // MARK: - Boilerplate
-
 protocol StudioUseCase {
     func setSession(on previewView: PreviewView)
     func integrateSession<T>(on previewView: PreviewView, mode: Studio.CaptureMode, preset: AVCaptureSession.Preset, delegate: T) where T: AVCapturePhotoOutputReadinessCoordinatorDelegate
