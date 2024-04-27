@@ -16,8 +16,6 @@ class PhotoCaptureProcessor: NSObject {
     private let completionHandler: (PhotoCaptureProcessor) -> Void
     private var photoData: Data?
 
-    var location: CLLocation?
-
     init(with requestedPhotoSettings: AVCapturePhotoSettings,
          willCapturePhotoAnimation: @escaping () -> Void,
          completionHandler: @escaping (PhotoCaptureProcessor) -> Void) {
@@ -34,12 +32,7 @@ class PhotoCaptureProcessor: NSObject {
 /// This extension adopts all of the AVCapturePhotoCaptureDelegate protocol
 /// methods.
 extension PhotoCaptureProcessor: AVCapturePhotoCaptureDelegate {
-    
-    /// - Tag: WillBeginCapture
-    func photoOutput(_ output: AVCapturePhotoOutput, willBeginCaptureFor resolvedSettings: AVCaptureResolvedPhotoSettings) {
-        
-    }
-    
+
     /// - Tag: WillCapturePhoto
     func photoOutput(_ output: AVCapturePhotoOutput, willCapturePhotoFor resolvedSettings: AVCaptureResolvedPhotoSettings) {
         willCapturePhotoAnimation()
@@ -64,16 +57,7 @@ extension PhotoCaptureProcessor: AVCapturePhotoCaptureDelegate {
         
         self.photoData = deferredPhotoProxy?.fileDataRepresentation()
     }
-    
-    /// - Tag: DidFinishRecordingLive
-    func photoOutput(_ output: AVCapturePhotoOutput, didFinishRecordingLivePhotoMovieForEventualFileAt outputFileURL: URL, resolvedSettings: AVCaptureResolvedPhotoSettings) {
-    }
-    
-    /// - Tag: DidFinishProcessingLive
-    func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingLivePhotoToMovieFileAt outputFileURL: URL, duration: CMTime, photoDisplayTime: CMTime, resolvedSettings: AVCaptureResolvedPhotoSettings, error: Error?) {
-        
-    }
-    
+
     /// - Tag: DidFinishCapture
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishCaptureFor resolvedSettings: AVCaptureResolvedPhotoSettings, error: Error?) {
         if let error = error {
@@ -96,13 +80,11 @@ extension PhotoCaptureProcessor: AVCapturePhotoCaptureDelegate {
                     options.uniformTypeIdentifier = self.requestedPhotoSettings.processedFileType.map { $0.rawValue }
                     
                     var resourceType = PHAssetResourceType.photo
-                    if  (resolvedSettings.deferredPhotoProxyDimensions.width > 0) && (resolvedSettings.deferredPhotoProxyDimensions.height > 0) {
+                    if (resolvedSettings.deferredPhotoProxyDimensions.width > 0) && (resolvedSettings.deferredPhotoProxyDimensions.height > 0) {
                         resourceType = PHAssetResourceType.photoProxy
                     }
+                    
                     creationRequest.addResource(with: resourceType, data: self.photoData!, options: options)
-                    
-                    creationRequest.location = self.location
-                    
                 }, completionHandler: { _, error in
                     if let error = error {
                         print("Error occurred while saving photo to photo library: \(error)")
