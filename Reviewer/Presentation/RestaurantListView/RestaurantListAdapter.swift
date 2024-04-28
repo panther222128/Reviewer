@@ -43,7 +43,7 @@ extension RestaurantListAdapter: UITableViewDataSource {
             print("Data source must be initialized.")
             return .init()
         }
-        if let dataSource = dataSource {
+        if let dataSource {
             cell.apply(reviewListItemViewModel: dataSource.cellForRow(at: indexPath))
             return cell
         } else {
@@ -53,7 +53,7 @@ extension RestaurantListAdapter: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let dataSource = dataSource {
+        if let dataSource {
             return dataSource.numberOfRowsIn(section: section)
         } else {
             print("Data source must be initialized.")

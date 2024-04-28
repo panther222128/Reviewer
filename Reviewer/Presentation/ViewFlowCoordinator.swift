@@ -12,6 +12,8 @@ protocol ViewFlowCoordinatorDependencies {
     func makeStudioViewController(actions: StudioViewModelActions, id: String, restaurantName: String) -> StudioViewController
     func makeTasteListViewController(restaurantId: String, restaurantName: String, dishName: String) -> TasteListViewController
     
+    func makeGlossaryViewController() -> GlossaryViewController
+    
     func makeSettingsViewController() -> SettingsViewController
     
     func makeRestaurantDishListViewController(id: String, restaurantName: String, actions: RestaurantDishListViewModelActions) -> RestaurantDishListViewController
@@ -22,12 +24,14 @@ final class ViewFlowCoordinator {
     
     private var restaurantListNavigator: UINavigationController?
     private var settingsListNavigator: UINavigationController?
+    private var glossaryNavigator: UINavigationController?
     private weak var tabBarController: UITabBarController?
     private let dependencies: ViewFlowCoordinatorDependencies
     
     private weak var restaurantListViewController: RestaurantListViewController?
     private weak var studioViewController: StudioViewController?
     private weak var tasteListViewController: TasteListViewController?
+    private weak var glossaryViewController: GlossaryViewController?
     private weak var settingsViewController: SettingsViewController?
     
     private weak var restaurantDishListViewController: RestaurantDishListViewController?
@@ -47,23 +51,32 @@ final class ViewFlowCoordinator {
         
         let reviewListViewTabBarItem = UITabBarItem(title: "List", image: UIImage(systemName: "list.bullet"), tag: 0)
         
+        let glossaryViewcontroller = dependencies.makeGlossaryViewController()
+        self.glossaryViewController = glossaryViewcontroller
+        
+        let glossaryViewTabBarItem = UITabBarItem(title: "Glossary", image: UIImage(systemName: "book.closed"), tag: 1)
+        
         let settingsViewController = dependencies.makeSettingsViewController()
         self.settingsViewController = settingsViewController
         
-        let settingsListViewTabBarItem = UITabBarItem(title: "Settings", image: UIImage(systemName: "gear"), tag: 1)
+        let settingsListViewTabBarItem = UITabBarItem(title: "Settings", image: UIImage(systemName: "gear"), tag: 2)
         
         restaurantListNavigator = UINavigationController()
+        glossaryNavigator = UINavigationController()
         settingsListNavigator = UINavigationController()
         
         restaurantListNavigator?.tabBarItem = reviewListViewTabBarItem
+        glossaryNavigator?.tabBarItem = glossaryViewTabBarItem
         settingsListNavigator?.tabBarItem = settingsListViewTabBarItem
         
         guard let reviewListNavigator = restaurantListNavigator else { return }
+        guard let glossaryNavigator = glossaryNavigator else { return }
         guard let settingsListNavigator = settingsListNavigator else { return }
         
-        tabBarController?.viewControllers = [reviewListNavigator, settingsListNavigator]
+        tabBarController?.viewControllers = [reviewListNavigator, glossaryNavigator, settingsListNavigator]
         
         self.restaurantListNavigator?.pushViewController(reviewListViewController, animated: true)
+        self.glossaryNavigator?.pushViewController(glossaryViewcontroller, animated: true)
         self.settingsListNavigator?.pushViewController(settingsViewController, animated: true)
     }
     

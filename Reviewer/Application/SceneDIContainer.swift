@@ -62,6 +62,14 @@ final class SceneDIContainer: ViewFlowCoordinatorDependencies {
         return TasteListViewController.create(with: makeTasteListViewModel(restaurantId: restaurantId, restaurantName: restaurantName, dishName: dishName))
     }
     
+    func makeGlossaryViewModel() -> GlossaryViewModel {
+        return DefaultGlossaryViewModel()
+    }
+    
+    func makeGlossaryViewController() -> GlossaryViewController {
+        return GlossaryViewController.create(with: makeGlossaryViewModel())
+    }
+    
     func makeSettingsViewModel() -> SettingsViewModel {
         return DefaultSettingsViewModel(repository: makeSettingsRepository())
     }
