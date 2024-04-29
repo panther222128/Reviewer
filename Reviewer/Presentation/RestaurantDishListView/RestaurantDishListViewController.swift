@@ -110,6 +110,10 @@ extension RestaurantDishListViewController {
         let alertController = UIAlertController(title: "음식 이름", message: nil, preferredStyle: .alert)
         alertController.addTextField()
         
+        let cancelAction = UIAlertAction(title: "취소", style: .destructive, handler: nil)
+        
+        alertController.addAction(cancelAction)
+        
         let confirmAction = UIAlertAction(title: "확인", style: .default) { _ in
             if let textFields = alertController.textFields {
                 if let textField = textFields.first {
@@ -124,10 +128,6 @@ extension RestaurantDishListViewController {
             }
         }
         alertController.addAction(confirmAction)
-        
-        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
-        
-        alertController.addAction(cancelAction)
         
         self.present(alertController, animated: true, completion: nil)
     }

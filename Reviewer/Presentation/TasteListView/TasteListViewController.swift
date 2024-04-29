@@ -105,14 +105,14 @@ extension TasteListViewController {
     @objc private func didPressedAddButon(_ sender: UIBarButtonItem) {
         let alertController = UIAlertController(title: "완료", message: nil, preferredStyle: .alert)
 
+        let cancelAction = UIAlertAction(title: "취소", style: .destructive, handler: nil)
+        alertController.addAction(cancelAction)
+        
         let confirmAction = UIAlertAction(title: "저장", style: .default) { _ in
             self.viewModel.didSaveDish()
             self.navigationController?.popViewController(animated: true)
         }
         alertController.addAction(confirmAction)
-        
-        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
-        alertController.addAction(cancelAction)
         
         present(alertController, animated: true, completion: nil)
     }

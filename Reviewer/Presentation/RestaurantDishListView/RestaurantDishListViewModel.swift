@@ -34,7 +34,7 @@ final class DefaultRestaurantDishListViewModel: RestaurantDishListViewModel {
     private let repository: ReviewListRepository
     private let settingsRepository: SettingsRepository
     private let actions: RestaurantDishListViewModelActions
-    private let id: String
+    private let restaurantId: String
     private let restaurantName: String
     private let restaurantNameSubject: CurrentValueSubject<String, Never>
     private(set) var isDeleteImmediate: Bool
@@ -50,7 +50,7 @@ final class DefaultRestaurantDishListViewModel: RestaurantDishListViewModel {
     }
     
     init(repository: ReviewListRepository, settingsRepository: SettingsRepository, actions: RestaurantDishListViewModelActions, id: String, restaurantName: String) {
-        self.id = id
+        self.restaurantId = id
         self.restaurantName = restaurantName
         self.restaurantNameSubject = .init("")
         self.isDeleteImmediate = false
@@ -67,7 +67,7 @@ final class DefaultRestaurantDishListViewModel: RestaurantDishListViewModel {
     }
     
     func loadDishes() {
-        repository.fetchDishes(restaurantId: id) { [weak self] result in
+        repository.fetchDishes(restaurantId: restaurantId) { [weak self] result in
             switch result {
             case .success(let dishes):
                 if let self = self {
@@ -84,20 +84,20 @@ final class DefaultRestaurantDishListViewModel: RestaurantDishListViewModel {
     }
     
     func didSelectRow(at indexPath: IndexPath) {
-        actions.showDishDetail(id, dishes[indexPath.row].id, dishes[indexPath.row].tastes, dishes[indexPath.row].name)
+        actions.showDishDetail(restaurantId, dishes[indexPath.row].id, dishes[indexPath.row].tastes, dishes[indexPath.row].name)
     }
     
     func didDeleteDish(at indexPath: IndexPath) {
         let dishId = dishes[indexPath.row].id
-        repository.deleteDish(restaurantId: id, dishId: dishId)
+        repository.deleteDish(restaurantId: restaurantId, dishId: dishId)
     }
     
     func didLoadStudio() {
-        actions.showStudio(id, restaurantName)
+        actions.showStudio(restaurantId, restaurantName)
     }
     
     func didLoadTasteView(with dishName: String) {
-        actions.showTastes(id, restaurantName, dishName)
+        actions.showTastes(restaurantId, restaurantName, dishName)
     }
     
     func loadIsDeleteImmediate() {
