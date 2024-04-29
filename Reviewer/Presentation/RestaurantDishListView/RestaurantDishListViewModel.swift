@@ -19,12 +19,14 @@ protocol RestaurantDishListViewModel: RestaurantDishListDataSource {
     func didSelectRow(at indexPath: IndexPath)
     func didDeleteDish(at indexPath: IndexPath)
     func didLoadStudio()
+    func didLoadTasteView(with dishName: String)
     func loadIsDeleteImmediate()
 }
 
 struct RestaurantDishListViewModelActions {
     let showDishDetail: (_ restaurantId: String, _ dishId: String, _ tastes: [String], _ dishName: String) -> Void
     let showStudio: (_ restaurantId: String, _ restaurantName: String) -> Void
+    let showTastes: (_ restaurantId: String, _ restaurantName: String, _ dishName: String) -> Void
 }
 
 final class DefaultRestaurantDishListViewModel: RestaurantDishListViewModel {
@@ -92,6 +94,10 @@ final class DefaultRestaurantDishListViewModel: RestaurantDishListViewModel {
     
     func didLoadStudio() {
         actions.showStudio(id, restaurantName)
+    }
+    
+    func didLoadTasteView(with dishName: String) {
+        actions.showTastes(id, restaurantName, dishName)
     }
     
     func loadIsDeleteImmediate() {

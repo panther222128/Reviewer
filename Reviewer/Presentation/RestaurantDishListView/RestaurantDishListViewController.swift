@@ -31,6 +31,7 @@ final class RestaurantDishListViewController: UIViewController {
         addSubviews()
         
         addBarButtonItem()
+        addDishBarButtonItem()
         
         adjustLayoutOfDishListTableView(dishListTableView: dishListTableView)
         
@@ -88,12 +89,47 @@ extension RestaurantDishListViewController {
 
 extension RestaurantDishListViewController {
     private func addBarButtonItem() {
-        let barButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didPressedAddButon))
-        navigationItem.rightBarButtonItem = barButtonItem
+        let barButtonItem = UIBarButtonItem(image: UIImage(systemName: "camera"), style: .plain, target: self, action: #selector(didPressedAddButton))
+        navigationItem.rightBarButtonItems = [barButtonItem]
     }
     
-    @objc private func didPressedAddButon(_ sender: UIBarButtonItem) {
+    @objc private func didPressedAddButton(_ sender: UIBarButtonItem) {
         self.viewModel.didLoadStudio()
+    }
+    
+    private func addDishBarButtonItem() {
+        let barButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(didPressedAddDishButton))
+        navigationItem.rightBarButtonItems?.append(barButtonItem)
+    }
+    
+    @objc private func didPressedAddDishButton(_ sender: UIBarButtonItem) {
+        presentDishNameTextFieldAlert()
+    }
+    
+    private func presentDishNameTextFieldAlert() {
+        let alertController = UIAlertController(title: "음식 이름", message: nil, preferredStyle: .alert)
+        alertController.addTextField()
+        
+        let confirmAction = UIAlertAction(title: "확인", style: .default) { _ in
+            if let textFields = alertController.textFields {
+                if let textField = textFields.first {
+                    if let text = textField.text, !text.isEmpty {
+                        self.viewModel.didLoadTasteView(with: text)
+                    } else {
+                        print("Text must not be empty.")
+                    }
+                } else {
+                    print("Cannot find text field.")
+                }
+            }
+        }
+        alertController.addAction(confirmAction)
+        
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        
+        alertController.addAction(cancelAction)
+        
+        self.present(alertController, animated: true, completion: nil)
     }
 }
 

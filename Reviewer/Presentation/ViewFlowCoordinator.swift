@@ -92,8 +92,15 @@ final class ViewFlowCoordinator {
         studioViewController?.navigationController?.pushViewController(viewController, animated: true)
     }
     
+    // Test needed when this method is integrated with above method.
+    private func showTasteListViewFromDishList(restaurantId: String, restaurantName: String, dishName: String) {
+        let viewController = dependencies.makeTasteListViewController(restaurantId: restaurantId, restaurantName: restaurantName, dishName: dishName)
+        tasteListViewController = viewController
+        restaurantListNavigator?.pushViewController(viewController, animated: true)
+    }
+    
     private func showRestaurantDishListView(id: String, restaurantName: String) {
-        let viewController = dependencies.makeRestaurantDishListViewController(id: id, restaurantName: restaurantName, actions: .init(showDishDetail: showDishDetailView(restaurantId:dishId:with:dishName:), showStudio: showStudioView(id:restaurantName:)))
+        let viewController = dependencies.makeRestaurantDishListViewController(id: id, restaurantName: restaurantName, actions: .init(showDishDetail: showDishDetailView(restaurantId:dishId:with:dishName:), showStudio: showStudioView(id:restaurantName:), showTastes: showTasteListViewFromDishList(restaurantId:restaurantName:dishName:)))
         restaurantDishListViewController = viewController
         restaurantListNavigator?.pushViewController(viewController, animated: true)
     }
