@@ -75,6 +75,10 @@ extension GlossaryViewController: GlossaryListDelegate {
     func heightForRow(at indexPath: IndexPath) -> CGFloat {
         return 64
     }
+    
+    func scrollViewWillBeginDragging() {
+        glossarySearchBar.endEditing(true)
+    }
 }
 
 extension GlossaryViewController {

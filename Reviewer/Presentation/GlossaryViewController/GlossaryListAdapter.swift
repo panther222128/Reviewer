@@ -14,6 +14,7 @@ protocol GlossaryListDataSource: AnyObject {
 
 protocol GlossaryListDelegate: AnyObject {
     func heightForRow(at indexPath: IndexPath) -> CGFloat
+    func scrollViewWillBeginDragging()
 }
 
 final class GlossaryListAdapter: NSObject {
@@ -64,6 +65,14 @@ extension GlossaryListAdapter: UITableViewDelegate {
         } else {
             print("Delegate must be initialized.")
             return 0
+        }
+    }
+    
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        if let delegate {
+            delegate.scrollViewWillBeginDragging()
+        } else {
+            print("Delegate must be initialized.")
         }
     }
 }
