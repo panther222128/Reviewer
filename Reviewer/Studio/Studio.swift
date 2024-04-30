@@ -69,7 +69,7 @@ final class Studio: NSObject {
                 self.setDeviceModes(focus: .continuousAutoFocus, exposure: .continuousAutoExposure)
                 self.addPhotoOutput()
                 self.setReadinessCoordinatorDelegate(delegate)
-                self.configurePhotoOutput(with: .quality)
+                self.configurePhotoOutput(with: .balanced)
             } else if mode.rawValue == 1 {
                 self.setSession(preset: preset)
                 self.findCamera()
@@ -109,7 +109,7 @@ final class Studio: NSObject {
                 self.captureSession.sessionPreset = .photo
                 self.movieFileOutput = nil
                 self.addPhotoOutput()
-                self.configurePhotoOutput(with: .quality)
+                self.configurePhotoOutput(with: .balanced)
                 self.setDeviceModes(focus: .continuousAutoFocus, exposure: .continuousAutoExposure)
                 self.captureSession.commitConfiguration()
             }
@@ -435,7 +435,7 @@ extension Studio {
             captureSession.commitConfiguration()
         }
         
-        photoOutput.maxPhotoQualityPrioritization = .quality
+        photoOutput.maxPhotoQualityPrioritization = quality
         photoOutput.isResponsiveCaptureEnabled = photoOutput.isResponsiveCaptureSupported
         photoOutput.isFastCapturePrioritizationEnabled = photoOutput.isFastCapturePrioritizationSupported
         photoOutput.isAutoDeferredPhotoDeliveryEnabled = photoOutput.isAutoDeferredPhotoDeliverySupported

@@ -12,7 +12,6 @@ class PhotoCaptureProcessor: NSObject {
     
     private(set) var requestedPhotoSettings: AVCapturePhotoSettings
     private let willCapturePhotoAnimation: () -> Void
-    lazy var context = CIContext()
     private let completionHandler: (PhotoCaptureProcessor) -> Void
     private var photoData: Data?
 
