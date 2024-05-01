@@ -44,6 +44,11 @@ final class Studio: NSObject {
         case sixty
     }
     
+    enum SupportedResolution {
+        case hd
+        case hd4k
+    }
+    
     override init() {
         self.sessionQueue = DispatchQueue(label: "session queue")
         self.captureSession = AVCaptureSession()
@@ -116,7 +121,7 @@ final class Studio: NSObject {
         }
     }
     
-    func changeVideoQuality(frameRate: SupportedFrameRate, width: Int32, height: Int32, previewView: PreviewView) {
+    func changeVideoQuality(frameRate: SupportedFrameRate, resolution: SupportedResolution, previewView: PreviewView) {
         sessionQueue.async {
             self.findCamera()
             self.findMicrohone()
@@ -137,13 +142,27 @@ final class Studio: NSObject {
                     
                     let formats = videoCaptureDevice.formats
                     
+                    var targetWidth: Int = 1920
+                    var targetHeight: Int = 1080
+                    
+                    switch resolution {
+                    case .hd:
+                        targetWidth = 1920
+                        targetHeight = 1080
+                        
+                    case .hd4k:
+                        targetWidth = 3840
+                        targetHeight = 2160
+                        
+                    }
+                    
                     for format in formats {
                         let description = format.formatDescription
                         
                         let dimensionWidth = description.dimensions.width
                         let dimensionHeight = description.dimensions.height
                         
-                        if dimensionWidth != width || dimensionHeight != height {
+                        if dimensionWidth != targetWidth || dimensionHeight != targetHeight {
                             continue
                         }
                         
