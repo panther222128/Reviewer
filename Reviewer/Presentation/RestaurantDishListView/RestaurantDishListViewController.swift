@@ -15,8 +15,10 @@ final class RestaurantDishListViewController: UIViewController {
     private let dishListTableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.separatorInset = .init(top: 0, left: 0, bottom: 0, right: 0)
         tableView.register(RestaurantDishListItemCell.self, forCellReuseIdentifier: "ReviewDetailDishItemCellID")
+        tableView.separatorInset = .init(top: 0, left: 0, bottom: 0, right: 0)
+        tableView.showsVerticalScrollIndicator = false
+        tableView.showsHorizontalScrollIndicator = false
         return tableView
     }()
     

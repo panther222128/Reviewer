@@ -15,7 +15,7 @@ protocol StudioViewModel {
     
     func loadTitle()
     func setSession(on previewView: PreviewView)
-    func integrateCaptureSession<T>(on previewView: PreviewView, mode: Studio.CaptureMode, preset: AVCaptureSession.Preset, delegate: T) where T: AVCapturePhotoOutputReadinessCoordinatorDelegate
+    func integrateCaptureSession<T>(on previewView: PreviewView, preset: AVCaptureSession.Preset, delegate: T) where T: AVCapturePhotoOutputReadinessCoordinatorDelegate
     func capturePhoto(from previewView: PreviewView)
     func startSessionRunning()
     func stopSessionRunning()
@@ -64,8 +64,8 @@ final class DefaultStudioViewModel: StudioViewModel {
         studio.setSession(on: previewView)
     }
     
-    func integrateCaptureSession<T>(on previewView: PreviewView, mode: Studio.CaptureMode, preset: AVCaptureSession.Preset, delegate: T) where T: AVCapturePhotoOutputReadinessCoordinatorDelegate {
-        studio.integrateSession(on: previewView, mode: mode, preset: preset, delegate: delegate)
+    func integrateCaptureSession<T>(on previewView: PreviewView, preset: AVCaptureSession.Preset, delegate: T) where T: AVCapturePhotoOutputReadinessCoordinatorDelegate {
+        studio.integrateSession(on: previewView, preset: preset, delegate: delegate)
     }
     
     func capturePhoto(from previewView: PreviewView) {

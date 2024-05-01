@@ -219,10 +219,10 @@ extension TasteListViewController {
     }
     
     private func adjustLayoutOf(containerScrollView: UIScrollView) {
-        containerScrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        containerScrollView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        containerScrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        containerScrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        containerScrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
+        containerScrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        containerScrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
+        containerScrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
     }
     
     private func adjustLayoutOf(containerView: UIView) {

@@ -16,6 +16,9 @@ final class DishDetailViewController: UIViewController {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.register(DishDetailListItemCell.self, forCellReuseIdentifier: "DishDetailListItemCellID")
+        tableView.separatorInset = .init(top: 0, left: 0, bottom: 0, right: 0)
+        tableView.showsVerticalScrollIndicator = false
+        tableView.showsHorizontalScrollIndicator = false
         return tableView
     }()
     

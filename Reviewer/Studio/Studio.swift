@@ -59,25 +59,15 @@ final class Studio: NSObject {
         previewView.session = captureSession
     }
     
-    // MARK: - If this method is called by view did load only, 'else if mode.rawValue == 1' must be removed.
-    func integrateSession<T>(on previewView: PreviewView, mode: CaptureMode, preset: AVCaptureSession.Preset, delegate: T) where T: AVCapturePhotoOutputReadinessCoordinatorDelegate {
+    func integrateSession<T>(on previewView: PreviewView, preset: AVCaptureSession.Preset, delegate: T) where T: AVCapturePhotoOutputReadinessCoordinatorDelegate {
         sessionQueue.async {
-            if mode.rawValue == 0 {
-                self.setSession(preset: .photo)
-                self.findCamera()
-                self.addVideoDeviceInput(on: previewView)
-                self.setDeviceModes(focus: .continuousAutoFocus, exposure: .continuousAutoExposure)
-                self.addPhotoOutput()
-                self.setReadinessCoordinatorDelegate(delegate)
-                self.configurePhotoOutput(with: .balanced)
-            } else if mode.rawValue == 1 {
-                self.setSession(preset: preset)
-                self.findCamera()
-                self.findMicrohone()
-                self.addVideoDeviceInput(on: previewView)
-                self.setDeviceModes(focus: .continuousAutoFocus, exposure: .continuousAutoExposure)
-                self.addMovieFileOutput()
-            }
+            self.setSession(preset: preset)
+            self.findCamera()
+            self.addVideoDeviceInput(on: previewView)
+            self.setDeviceModes(focus: .continuousAutoFocus, exposure: .continuousAutoExposure)
+            self.addPhotoOutput()
+            self.setReadinessCoordinatorDelegate(delegate)
+            self.configurePhotoOutput(with: .balanced)
         }
     }
     

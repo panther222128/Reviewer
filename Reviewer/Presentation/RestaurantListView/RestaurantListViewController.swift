@@ -15,6 +15,8 @@ final class RestaurantListViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.register(RestaurantListItemCell.self, forCellReuseIdentifier: "RestaurantListItemCellID")
         tableView.separatorInset = .init(top: 0, left: 0, bottom: 0, right: 0)
+        tableView.showsVerticalScrollIndicator = false
+        tableView.showsHorizontalScrollIndicator = false
         return tableView
     }()
     
@@ -82,7 +84,7 @@ extension RestaurantListViewController {
                 if let textField = textFields.first {
                     if let text = textField.text, !text.isEmpty {
                         self.viewModel.didAddRestaurant(name: text)
-                        self.viewModel.didPressedAlertConfirmButton(with: text)
+                        self.viewModel.didConfirm(restaurantName: text)
                         self.viewModel.loadListItem()
                     } else {
                         print("Text must not be empty.")

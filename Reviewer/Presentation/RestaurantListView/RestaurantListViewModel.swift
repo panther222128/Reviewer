@@ -14,7 +14,7 @@ protocol RestaurantListViewModel: RestaurantListDataSource {
     var listItemViewModelPublisher: AnyPublisher<[RestaurantListItemViewModel], Never> { get }
     
     func loadListItem()
-    func didPressedAlertConfirmButton(with restaurantName: String)
+    func didConfirm(restaurantName: String)
     func didSelectItem(at indexPath: IndexPath)
     func didAddRestaurant(name: String)
     func didDeleteRestaurant(at indexPath: IndexPath)
@@ -70,7 +70,7 @@ final class DefaultRestaurantListViewModel: RestaurantListViewModel {
         }
     }
     
-    func didPressedAlertConfirmButton(with restaurantName: String) {
+    func didConfirm(restaurantName: String) {
         actions.showStudioView(restaurantId, restaurantName)
     }
     

@@ -161,7 +161,7 @@ final class StudioViewController: UIViewController {
         super.viewDidAppear(animated)
         if captureModeSegmentedControl.selectedSegmentIndex == 0 {
             viewModel.setSession(on: previewView)
-            viewModel.integrateCaptureSession(on: previewView, mode: .photo, preset: .photo, delegate: self)
+            viewModel.integrateCaptureSession(on: previewView, preset: .photo, delegate: self)
             viewModel.startSessionRunning()
         } else if captureModeSegmentedControl.selectedSegmentIndex == 1 {
             if movieResolution == .hd && movieFrameRate == .thirty {
