@@ -186,8 +186,6 @@ final class StudioViewController: UIViewController {
                 viewModel.startSessionRunning()
             }
         }
-        print("View did appear.")
-        viewModel.logStudioStatus()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -253,8 +251,6 @@ final class StudioViewController: UIViewController {
             movieResolution = .hd4k
             viewModel.didChangeResolution(frameRate: .sixty, width: 3840, height: 2160, previewView: previewView)
         }
-        print("Did select resolution.")
-        viewModel.logStudioStatus()
     }
     
     private func addFrameRateSegmentedControlTarget() {
@@ -279,8 +275,6 @@ final class StudioViewController: UIViewController {
             movieFrameRate = .sixty
             viewModel.didChange(frameRate: .sixty, width: 3840, height: 2160, previewView: previewView)
         }
-        print("Did select frame rate.")
-        viewModel.logStudioStatus()
     }
     
     private func addCaptureModeSegmentedControlTarget() {
@@ -294,18 +288,14 @@ final class StudioViewController: UIViewController {
             recordButton.isHidden = true
             movieResolutionSegmentedControl.isHidden = true
             frameRateSegmentedControl.isHidden = true
-            viewModel.changeCapture(mode: sender.selectedSegmentIndex)
-            print("Did select capture mode.")
-            viewModel.logStudioStatus()
+            viewModel.didChangeCapture(mode: .photo)
             
         case 1:
             captureButton.isHidden = true
             recordButton.isHidden = false
             movieResolutionSegmentedControl.isHidden = false
             frameRateSegmentedControl.isHidden = false
-            viewModel.changeCapture(mode: sender.selectedSegmentIndex)
-            print("Did select capture mode.")
-            viewModel.logStudioStatus()
+            viewModel.didChangeCapture(mode: .movie)
             
         default:
             break

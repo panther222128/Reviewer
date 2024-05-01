@@ -28,9 +28,9 @@ final class Studio: NSObject {
     private var inProgressPhotoCaptureDelegates: [Int64: PhotoCaptureProcessor]
     private var backgroundRecordingID: UIBackgroundTaskIdentifier?
     
-    enum CaptureMode: Int {
-        case photo = 0
-        case movie = 1
+    enum CaptureMode {
+        case photo
+        case movie
     }
     
     enum SupportedZoomFactor: CGFloat {
@@ -76,8 +76,8 @@ final class Studio: NSObject {
         }
     }
     
-    func changeCapture(mode: Int) {
-        if mode == CaptureMode.photo.rawValue {
+    func changeCapture(mode: CaptureMode) {
+        if mode == .photo {
             sessionQueue.async {
                 self.captureSession.beginConfiguration()
                 if let movieFileOutput = self.movieFileOutput {
@@ -108,7 +108,7 @@ final class Studio: NSObject {
                 self.setDeviceModes(focus: .continuousAutoFocus, exposure: .continuousAutoExposure)
                 self.captureSession.commitConfiguration()
             }
-        } else if mode == CaptureMode.movie.rawValue {
+        } else if mode == .movie {
             sessionQueue.async {
                 self.setDeviceModes(focus: .continuousAutoFocus, exposure: .continuousAutoExposure)
                 self.addMovieFileOutput()

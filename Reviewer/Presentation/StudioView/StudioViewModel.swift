@@ -21,7 +21,7 @@ protocol StudioViewModel {
     func stopSessionRunning()
     func suspendSessionQueue()
     func resumeSessionQueue()
-    func changeCapture(mode: Int)
+    func didChangeCapture(mode: Studio.CaptureMode)
     func didRecord()
     func didChangeZoomFactor(at number: Int)
     func didChangeResolution(frameRate: Studio.SupportedFrameRate, width: Int32, height: Int32, previewView: PreviewView)
@@ -88,7 +88,7 @@ final class DefaultStudioViewModel: StudioViewModel {
         studio.resumeSessionQueue()
     }
     
-    func changeCapture(mode: Int) {
+    func didChangeCapture(mode: Studio.CaptureMode) {
         studio.changeCapture(mode: mode)
     }
     
