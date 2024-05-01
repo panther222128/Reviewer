@@ -39,6 +39,11 @@ final class Studio: NSObject {
         case two = 2.0
     }
     
+    enum SupportedFrameRate {
+        case thirty
+        case sixty
+    }
+    
     override init() {
         self.sessionQueue = DispatchQueue(label: "session queue")
         self.captureSession = AVCaptureSession()
@@ -111,7 +116,7 @@ final class Studio: NSObject {
         }
     }
     
-    func changeFrameRate(_ rate: Float64, width: Int32, height: Int32, previewView: PreviewView) {
+    func changeVideoQuality(frameRate: SupportedFrameRate, width: Int32, height: Int32, previewView: PreviewView) {
         sessionQueue.async {
             self.findCamera()
             self.findMicrohone()
@@ -144,10 +149,21 @@ final class Studio: NSObject {
                         
                         let frameRates = format.videoSupportedFrameRateRanges
                         
-                        for range in frameRates {
-                            if range.maxFrameRate >= rate && range.minFrameRate <= rate {
-                                desiredFormat = format
-                                break
+                        switch frameRate {
+                        case .thirty:
+                            for range in frameRates {
+                                if range.maxFrameRate >= 30 && range.minFrameRate <= 30 {
+                                    desiredFormat = format
+                                    break
+                                }
+                            }
+                            
+                        case .sixty:
+                            for range in frameRates {
+                                if range.maxFrameRate >= 60 && range.minFrameRate <= 60 {
+                                    desiredFormat = format
+                                    break
+                                }
                             }
                         }
                     }
@@ -156,15 +172,17 @@ final class Studio: NSObject {
                         print("Cannot find desired format.")
                         return
                     }
-                    
                     videoCaptureDevice.activeFormat = desiredFormat
                     
-                    if rate == 30 {
+                    switch frameRate {
+                    case .thirty:
                         videoCaptureDevice.activeVideoMinFrameDuration = CMTime(value: 1, timescale: 30)
                         videoCaptureDevice.activeVideoMaxFrameDuration = CMTime(value: 1, timescale: 30)
-                    } else if rate == 60 {
+                        
+                    case .sixty:
                         videoCaptureDevice.activeVideoMinFrameDuration = CMTime(value: 1, timescale: 60)
                         videoCaptureDevice.activeVideoMaxFrameDuration = CMTime(value: 1, timescale: 60)
+                        
                     }
                     
                     videoCaptureDevice.unlockForConfiguration()

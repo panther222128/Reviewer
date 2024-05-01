@@ -167,25 +167,27 @@ final class StudioViewController: UIViewController {
             if movieResolution == .hd && movieFrameRate == .thirty {
                 // 1080 30
                 viewModel.setSession(on: previewView)
-                viewModel.changeFrameRate(30, width: 1920, height: 1080, previewView: previewView)
+                viewModel.didChange(frameRate: .thirty, width: 1920, height: 1080, previewView: previewView)
                 viewModel.startSessionRunning()
             } else if movieResolution == .hd && movieFrameRate == .sixty {
                 // 1080 60
                 viewModel.setSession(on: previewView)
-                viewModel.changeFrameRate(60, width: 1920, height: 1080, previewView: previewView)
+                viewModel.didChange(frameRate: .sixty, width: 1920, height: 1080, previewView: previewView)
                 viewModel.startSessionRunning()
             } else if movieResolution == .hd4k && movieFrameRate == .thirty {
                 // 4k 30
                 viewModel.setSession(on: previewView)
-                viewModel.changeFrameRate(30, width: 3840, height: 2160, previewView: previewView)
+                viewModel.didChange(frameRate: .thirty, width: 3840, height: 2160, previewView: previewView)
                 viewModel.startSessionRunning()
             } else if movieResolution == .hd4k && movieFrameRate == .sixty {
                 // 4k 60
                 viewModel.setSession(on: previewView)
-                viewModel.changeFrameRate(60, width: 3840, height: 2160, previewView: previewView)
+                viewModel.didChange(frameRate: .sixty, width: 3840, height: 2160, previewView: previewView)
                 viewModel.startSessionRunning()
             }
         }
+        print("View did appear.")
+        viewModel.logStudioStatus()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -240,17 +242,19 @@ final class StudioViewController: UIViewController {
     @objc private func didSelectResolution(_ sender: UISegmentedControl) {
         if movieFrameRate == .thirty && sender.selectedSegmentIndex == 0 {
             movieResolution = .hd
-            viewModel.didChangeResolution(rate: 30, width: 1920, height: 1080, previewView: previewView)
+            viewModel.didChangeResolution(frameRate: .thirty, width: 1920, height: 1080, previewView: previewView)
         } else if movieFrameRate == .sixty && sender.selectedSegmentIndex == 0 {
             movieResolution = .hd
-            viewModel.didChangeResolution(rate: 60, width: 1920, height: 1080, previewView: previewView)
+            viewModel.didChangeResolution(frameRate: .sixty, width: 1920, height: 1080, previewView: previewView)
         } else if movieFrameRate == .thirty && sender.selectedSegmentIndex == 1 {
             movieResolution = .hd4k
-            viewModel.didChangeResolution(rate: 30, width: 3840, height: 2160, previewView: previewView)
+            viewModel.didChangeResolution(frameRate: .thirty, width: 3840, height: 2160, previewView: previewView)
         } else if movieFrameRate == .sixty && sender.selectedSegmentIndex == 1  {
             movieResolution = .hd4k
-            viewModel.didChangeResolution(rate: 60, width: 3840, height: 2160, previewView: previewView)
+            viewModel.didChangeResolution(frameRate: .sixty, width: 3840, height: 2160, previewView: previewView)
         }
+        print("Did select resolution.")
+        viewModel.logStudioStatus()
     }
     
     private func addFrameRateSegmentedControlTarget() {
@@ -261,20 +265,22 @@ final class StudioViewController: UIViewController {
         if movieResolution == .hd && sender.selectedSegmentIndex == 0 {
             // 1080 30
             movieFrameRate = .thirty
-            viewModel.changeFrameRate(30, width: 1920, height: 1080, previewView: previewView)
+            viewModel.didChange(frameRate: .thirty, width: 1920, height: 1080, previewView: previewView)
         } else if movieResolution == .hd && sender.selectedSegmentIndex == 1 {
             // 1080 60
             movieFrameRate = .sixty
-            viewModel.changeFrameRate(60, width: 1920, height: 1080, previewView: previewView)
+            viewModel.didChange(frameRate: .sixty, width: 1920, height: 1080, previewView: previewView)
         } else if movieResolution == .hd4k && sender.selectedSegmentIndex == 0 {
             movieFrameRate = .thirty
             // 4k 30
-            viewModel.changeFrameRate(30, width: 3840, height: 2160, previewView: previewView)
+            viewModel.didChange(frameRate: .thirty, width: 3840, height: 2160, previewView: previewView)
         } else if movieResolution == .hd4k && sender.selectedSegmentIndex == 1 {
             // 4k 60
             movieFrameRate = .sixty
-            viewModel.changeFrameRate(60, width: 3840, height: 2160, previewView: previewView)
+            viewModel.didChange(frameRate: .sixty, width: 3840, height: 2160, previewView: previewView)
         }
+        print("Did select frame rate.")
+        viewModel.logStudioStatus()
     }
     
     private func addCaptureModeSegmentedControlTarget() {
@@ -289,6 +295,8 @@ final class StudioViewController: UIViewController {
             movieResolutionSegmentedControl.isHidden = true
             frameRateSegmentedControl.isHidden = true
             viewModel.changeCapture(mode: sender.selectedSegmentIndex)
+            print("Did select capture mode.")
+            viewModel.logStudioStatus()
             
         case 1:
             captureButton.isHidden = true
@@ -296,6 +304,8 @@ final class StudioViewController: UIViewController {
             movieResolutionSegmentedControl.isHidden = false
             frameRateSegmentedControl.isHidden = false
             viewModel.changeCapture(mode: sender.selectedSegmentIndex)
+            print("Did select capture mode.")
+            viewModel.logStudioStatus()
             
         default:
             break
