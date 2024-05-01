@@ -230,7 +230,21 @@ final class StudioViewController: UIViewController {
     }
     
     @objc private func didSelectZoomFactor(_ sender: UISegmentedControl) {
-        viewModel.didChangeZoomFactor(at: sender.selectedSegmentIndex)
+        let selected = sender.selectedSegmentIndex
+        switch selected {
+        case 0:
+            viewModel.didChange(zoomFactor: .one)
+            
+        case 1:
+            viewModel.didChange(zoomFactor: .oneAndHalf)
+            
+        case 2:
+            viewModel.didChange(zoomFactor: .two)
+            
+        default:
+            break
+            
+        }
     }
     
     private func addMovieResolutionSegmentedControlTarget() {

@@ -23,7 +23,7 @@ protocol StudioViewModel {
     func resumeSessionQueue()
     func didChangeCapture(mode: Studio.CaptureMode)
     func didRecord()
-    func didChangeZoomFactor(at number: Int)
+    func didChange(zoomFactor: Studio.SupportedZoomFactor)
     func didChangeResolution(frameRate: Studio.SupportedFrameRate, width: Int32, height: Int32, previewView: PreviewView)
     func didChange(frameRate: Studio.SupportedFrameRate, width: Int32, height: Int32, previewView: PreviewView)
     func focus(at devicePoint: CGPoint, monitorSubjectAreaChange: Bool)
@@ -96,8 +96,8 @@ final class DefaultStudioViewModel: StudioViewModel {
         studio.captureMovie()
     }
     
-    func didChangeZoomFactor(at number: Int) {
-        studio.changeZoomFactor(at: number)
+    func didChange(zoomFactor: Studio.SupportedZoomFactor) {
+        studio.change(zoomFactor: zoomFactor)
     }
     
     func didChangeResolution(frameRate: Studio.SupportedFrameRate, width: Int32, height: Int32, previewView: PreviewView) {

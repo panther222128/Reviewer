@@ -33,10 +33,10 @@ final class Studio: NSObject {
         case movie
     }
     
-    enum SupportedZoomFactor: CGFloat {
-        case one = 1
-        case oneAndHalf = 1.5
-        case two = 2.0
+    enum SupportedZoomFactor {
+        case one
+        case oneAndHalf
+        case two
     }
     
     enum SupportedFrameRate {
@@ -548,21 +548,25 @@ extension Studio {
 
 // MARK: - Additional feature
 extension Studio {
-    func changeZoomFactor(at number: Int) {
+    func change(zoomFactor: SupportedZoomFactor) {
         sessionQueue.async {
             if let videoDeviceInput = self.videoDeviceInput {
                 let device = videoDeviceInput.device
                 do {
                     try device.lockForConfiguration()
                     
-                    if number == 0 {
+                    switch zoomFactor {
+                    case .one:
                         device.videoZoomFactor = 1.0
-                    } else if number == 1 {
+                        
+                    case .oneAndHalf:
                         device.videoZoomFactor = 1.5
-                    } else if number == 2 {
+                        
+                    case .two:
                         device.videoZoomFactor = 2.0
+                        
                     }
-
+                    
                     device.unlockForConfiguration()
                 } catch {
                     print("Could not lock device for configuration.")
