@@ -151,8 +151,8 @@ final class Studio: NSObject {
                         targetHeight = 1080
                         
                     case .hd4k:
-                        targetWidth = 3840
-                        targetHeight = 2160
+                        targetWidth = 1920 * 2
+                        targetHeight = 1080 * 2
                         
                     }
                     
