@@ -21,11 +21,11 @@ protocol StudioViewModel {
     func stopSessionRunning()
     func suspendSessionQueue()
     func resumeSessionQueue()
-    func changeCapture(mode: Int)
+    func didChangeCapture(mode: Studio.CaptureMode)
     func didRecord()
-    func didChangeZoomFactor(at number: Int)
-    func didChangeResolution(rate: Float64, width: Int32, height: Int32, previewView: PreviewView)
-    func changeFrameRate(_ rate: Float64, width: Int32, height: Int32, previewView: PreviewView)
+    func didChange(zoomFactor: Studio.SupportedZoomFactor)
+    func didChangeResolution(frameRate: Studio.SupportedFrameRate, resolution: Studio.SupportedResolution, previewView: PreviewView)
+    func didChange(frameRate: Studio.SupportedFrameRate, resolution: Studio.SupportedResolution, previewView: PreviewView)
     func focus(at devicePoint: CGPoint, monitorSubjectAreaChange: Bool)
     func didLoadTasteView(with dishName: String)
 }
@@ -88,7 +88,7 @@ final class DefaultStudioViewModel: StudioViewModel {
         studio.resumeSessionQueue()
     }
     
-    func changeCapture(mode: Int) {
+    func didChangeCapture(mode: Studio.CaptureMode) {
         studio.changeCapture(mode: mode)
     }
     
@@ -96,16 +96,16 @@ final class DefaultStudioViewModel: StudioViewModel {
         studio.captureMovie()
     }
     
-    func didChangeZoomFactor(at number: Int) {
-        studio.changeZoomFactor(at: number)
+    func didChange(zoomFactor: Studio.SupportedZoomFactor) {
+        studio.change(zoomFactor: zoomFactor)
     }
     
-    func didChangeResolution(rate: Float64, width: Int32, height: Int32, previewView: PreviewView) {
-        studio.changeFrameRate(rate, width: width, height: height, previewView: previewView)
+    func didChangeResolution(frameRate: Studio.SupportedFrameRate, resolution: Studio.SupportedResolution, previewView: PreviewView) {
+        studio.changeVideoQuality(frameRate: frameRate, resolution: resolution, previewView: previewView)
     }
     
-    func changeFrameRate(_ rate: Float64, width: Int32, height: Int32, previewView: PreviewView) {
-        studio.changeFrameRate(rate, width: width, height: height, previewView: previewView)
+    func didChange(frameRate: Studio.SupportedFrameRate, resolution: Studio.SupportedResolution, previewView: PreviewView) {
+        studio.changeVideoQuality(frameRate: frameRate, resolution: resolution, previewView: previewView)
     }
     
     func focus(at devicePoint: CGPoint, monitorSubjectAreaChange: Bool) {

@@ -28,15 +28,25 @@ final class Studio: NSObject {
     private var inProgressPhotoCaptureDelegates: [Int64: PhotoCaptureProcessor]
     private var backgroundRecordingID: UIBackgroundTaskIdentifier?
     
-    enum CaptureMode: Int {
-        case photo = 0
-        case movie = 1
+    enum CaptureMode {
+        case photo
+        case movie
     }
     
-    enum SupportedZoomFactor: CGFloat {
-        case one = 1
-        case oneAndHalf = 1.5
-        case two = 2.0
+    enum SupportedZoomFactor {
+        case one
+        case oneAndHalf
+        case two
+    }
+    
+    enum SupportedFrameRate {
+        case thirty
+        case sixty
+    }
+    
+    enum SupportedResolution {
+        case hd
+        case hd4k
     }
     
     override init() {
@@ -71,8 +81,8 @@ final class Studio: NSObject {
         }
     }
     
-    func changeCapture(mode: Int) {
-        if mode == CaptureMode.photo.rawValue {
+    func changeCapture(mode: CaptureMode) {
+        if mode == .photo {
             sessionQueue.async {
                 self.captureSession.beginConfiguration()
                 if let movieFileOutput = self.movieFileOutput {
@@ -103,7 +113,7 @@ final class Studio: NSObject {
                 self.setDeviceModes(focus: .continuousAutoFocus, exposure: .continuousAutoExposure)
                 self.captureSession.commitConfiguration()
             }
-        } else if mode == CaptureMode.movie.rawValue {
+        } else if mode == .movie {
             sessionQueue.async {
                 self.setDeviceModes(focus: .continuousAutoFocus, exposure: .continuousAutoExposure)
                 self.addMovieFileOutput()
@@ -111,7 +121,7 @@ final class Studio: NSObject {
         }
     }
     
-    func changeFrameRate(_ rate: Float64, width: Int32, height: Int32, previewView: PreviewView) {
+    func changeVideoQuality(frameRate: SupportedFrameRate, resolution: SupportedResolution, previewView: PreviewView) {
         sessionQueue.async {
             self.findCamera()
             self.findMicrohone()
@@ -132,22 +142,47 @@ final class Studio: NSObject {
                     
                     let formats = videoCaptureDevice.formats
                     
+                    var targetWidth: Int = 1920
+                    var targetHeight: Int = 1080
+                    
+                    switch resolution {
+                    case .hd:
+                        targetWidth = 1920
+                        targetHeight = 1080
+                        
+                    case .hd4k:
+                        targetWidth = 1920 * 2
+                        targetHeight = 1080 * 2
+                        
+                    }
+                    
                     for format in formats {
                         let description = format.formatDescription
                         
                         let dimensionWidth = description.dimensions.width
                         let dimensionHeight = description.dimensions.height
                         
-                        if dimensionWidth != width || dimensionHeight != height {
+                        if dimensionWidth != targetWidth || dimensionHeight != targetHeight {
                             continue
                         }
                         
                         let frameRates = format.videoSupportedFrameRateRanges
                         
-                        for range in frameRates {
-                            if range.maxFrameRate >= rate && range.minFrameRate <= rate {
-                                desiredFormat = format
-                                break
+                        switch frameRate {
+                        case .thirty:
+                            for range in frameRates {
+                                if range.maxFrameRate >= 30 && range.minFrameRate <= 30 {
+                                    desiredFormat = format
+                                    break
+                                }
+                            }
+                            
+                        case .sixty:
+                            for range in frameRates {
+                                if range.maxFrameRate >= 60 && range.minFrameRate <= 60 {
+                                    desiredFormat = format
+                                    break
+                                }
                             }
                         }
                     }
@@ -156,15 +191,17 @@ final class Studio: NSObject {
                         print("Cannot find desired format.")
                         return
                     }
-                    
                     videoCaptureDevice.activeFormat = desiredFormat
                     
-                    if rate == 30 {
+                    switch frameRate {
+                    case .thirty:
                         videoCaptureDevice.activeVideoMinFrameDuration = CMTime(value: 1, timescale: 30)
                         videoCaptureDevice.activeVideoMaxFrameDuration = CMTime(value: 1, timescale: 30)
-                    } else if rate == 60 {
+                        
+                    case .sixty:
                         videoCaptureDevice.activeVideoMinFrameDuration = CMTime(value: 1, timescale: 60)
                         videoCaptureDevice.activeVideoMaxFrameDuration = CMTime(value: 1, timescale: 60)
+                        
                     }
                     
                     videoCaptureDevice.unlockForConfiguration()
@@ -530,21 +567,25 @@ extension Studio {
 
 // MARK: - Additional feature
 extension Studio {
-    func changeZoomFactor(at number: Int) {
+    func change(zoomFactor: SupportedZoomFactor) {
         sessionQueue.async {
             if let videoDeviceInput = self.videoDeviceInput {
                 let device = videoDeviceInput.device
                 do {
                     try device.lockForConfiguration()
                     
-                    if number == 0 {
+                    switch zoomFactor {
+                    case .one:
                         device.videoZoomFactor = 1.0
-                    } else if number == 1 {
+                        
+                    case .oneAndHalf:
                         device.videoZoomFactor = 1.5
-                    } else if number == 2 {
+                        
+                    case .two:
                         device.videoZoomFactor = 2.0
+                        
                     }
-
+                    
                     device.unlockForConfiguration()
                 } catch {
                     print("Could not lock device for configuration.")
