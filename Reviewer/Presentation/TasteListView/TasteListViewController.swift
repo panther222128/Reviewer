@@ -122,7 +122,8 @@ extension TasteListViewController {
         
         let menuButton = UIMenu(title: "카테고리", children: [
             UIAction(title: Constants.tasteCategories[0].title, handler: { _ in
-                self.containerScrollView.setContentOffset(.init(x: 0, y: -80), animated: true)
+                let position = self.generateScrollPosition(at: 0)
+                self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
             }),
             UIAction(title: Constants.tasteCategories[1].title, handler: { _ in
                 let position = self.generateScrollPosition(at: 1)
@@ -204,9 +205,9 @@ extension TasteListViewController {
         for i in 0..<index {
             position += Constants.tasteCategories[i].tastes.count * 80
         }
-        if index > 1 {
-            position += (index - 1) * 80
-        }
+        
+        position += index * 80
+        
         return position
     }
 }

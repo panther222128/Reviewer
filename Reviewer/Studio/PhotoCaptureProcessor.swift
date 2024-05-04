@@ -90,8 +90,7 @@ extension PhotoCaptureProcessor: AVCapturePhotoCaptureDelegate {
                     }
                     
                     self.didFinish()
-                }
-                )
+                })
             } else {
                 self.didFinish()
             }
