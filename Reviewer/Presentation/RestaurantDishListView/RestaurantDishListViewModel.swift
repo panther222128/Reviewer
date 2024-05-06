@@ -24,9 +24,9 @@ protocol RestaurantDishListViewModel: RestaurantDishListDataSource {
 }
 
 struct RestaurantDishListViewModelActions {
-    let showDishDetail: (_ restaurantId: String, _ dishId: String, _ tastes: [String], _ dishName: String) -> Void
+    let showDishDetail: (_ restaurantId: String, _ dish: Dish) -> Void
     let showStudio: (_ restaurantId: String, _ restaurantName: String) -> Void
-    let showTastes: (_ restaurantId: String, _ restaurantName: String, _ dishName: String) -> Void
+    let showTastes: (_ restaurantId: String, _ restaurantName: String, _ dishName: String, _ thumbnailImageData: Data?) -> Void
 }
 
 final class DefaultRestaurantDishListViewModel: RestaurantDishListViewModel {
@@ -84,7 +84,8 @@ final class DefaultRestaurantDishListViewModel: RestaurantDishListViewModel {
     }
     
     func didSelectRow(at indexPath: IndexPath) {
-        actions.showDishDetail(restaurantId, dishes[indexPath.row].id, dishes[indexPath.row].tastes, dishes[indexPath.row].name)
+        let dish = dishes[indexPath.row]
+        actions.showDishDetail(restaurantId, dish)
     }
     
     func didDeleteDish(at indexPath: IndexPath) {
@@ -97,7 +98,7 @@ final class DefaultRestaurantDishListViewModel: RestaurantDishListViewModel {
     }
     
     func didLoadTasteView(with dishName: String) {
-        actions.showTastes(restaurantId, restaurantName, dishName)
+        actions.showTastes(restaurantId, restaurantName, dishName, nil)
     }
     
     func loadIsDeleteImmediate() {

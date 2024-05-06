@@ -27,6 +27,7 @@ final class DefaultTasteListViewModel: TasteListViewModel {
     private let restaurantName: String
     private let restaurantNameSubject: CurrentValueSubject<String, Never>
     private let dishName: String
+    private let thumbnailImageData: Data?
     
     private var tasteCategories: [TasteCategory]
     private let tasteCategoriesSubject: CurrentValueSubject<[TasteCategory], Never>
@@ -40,12 +41,13 @@ final class DefaultTasteListViewModel: TasteListViewModel {
     
     private var selectedTastes: [String]
     
-    init(repository: ReviewListRepository, restaurantId: String, restaurantName: String, dishName: String) {
+    init(repository: ReviewListRepository, restaurantId: String, restaurantName: String, dishName: String, thumbnailImageData: Data?) {
         self.repository = repository
         self.restaurantId = restaurantId
         self.restaurantName = restaurantName
         self.restaurantNameSubject = .init("")
         self.dishName = dishName
+        self.thumbnailImageData = thumbnailImageData
         self.selectedTastes = []
         self.tasteCategories = Constants.tasteCategories
         self.tasteCategoriesSubject = .init([])
@@ -73,7 +75,7 @@ final class DefaultTasteListViewModel: TasteListViewModel {
     
     func didSaveDish() {
         if !selectedTastes.isEmpty {
-            repository.save(restaurantId: restaurantId, dish: .init(id: UUID().uuidString, name: dishName, date: Date(), tastes: selectedTastes))
+            repository.save(restaurantId: restaurantId, dish: .init(id: UUID().uuidString, name: dishName, date: Date(), tastes: selectedTastes, thumbnailImageData: thumbnailImageData))
         }
     }
     

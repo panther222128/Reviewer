@@ -27,6 +27,8 @@ final class Studio: NSObject {
     private var videoRotationAngleForHorizonLevelPreviewObservation: NSKeyValueObservation?
     private var inProgressPhotoCaptureDelegates: [Int64: PhotoCaptureProcessor]
     private var backgroundRecordingID: UIBackgroundTaskIdentifier?
+    private(set) var thumbnailData: Data?
+    private(set) var movieFileUrl: URL?
     
     enum CaptureMode {
         case photo
@@ -63,6 +65,7 @@ final class Studio: NSObject {
         self.photoOutputReadinessCoordinator = nil
         self.videoRotationAngleForHorizonLevelPreviewObservation = nil
         self.inProgressPhotoCaptureDelegates = [Int64: PhotoCaptureProcessor]()
+        self.movieFileUrl = nil
     }
     
     func setSession(on previewView: PreviewView) {
@@ -248,6 +251,8 @@ extension Studio {
                         }
                     } completionHandler: { photoCaptureProcessor in
                         self.sessionQueue.async {
+                            let photoData = photoCaptureProcessor.photoData
+                            self.thumbnailData = self.resizeImage(data: photoData)
                             self.inProgressPhotoCaptureDelegates[photoCaptureProcessor.requestedPhotoSettings.uniqueID] = nil
                         }
                     }
@@ -267,6 +272,21 @@ extension Studio {
             print("No photo settings to capture.")
             return
         }
+    }
+    
+    private func resizeImage(data: Data?) -> Data? {
+        guard let data = data else { return nil }
+        guard let image = UIImage(data: data) else { return nil }
+        
+        let newSize = CGSize(width: image.size.width / 4, height: image.size.height / 4)
+        UIGraphicsBeginImageContextWithOptions(newSize, true, 1.0)
+        image.draw(in: CGRect(origin: .zero, size: newSize))
+        let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        guard let resizedImageData = resizedImage?.jpegData(compressionQuality: 1.0) else { return nil }
+        
+        return resizedImageData
     }
     
     func captureMovie() {
@@ -291,6 +311,7 @@ extension Studio {
                         
                         let outputFileName = NSUUID().uuidString
                         let outputFilePath = (NSTemporaryDirectory() as NSString).appendingPathComponent((outputFileName as NSString).appendingPathExtension("mov")!)
+                        self.movieFileUrl = URL(fileURLWithPath: outputFilePath)
                         movieFileOutput.startRecording(to: URL(fileURLWithPath: outputFilePath), recordingDelegate: self)
                     } else {
                         movieFileOutput.stopRecording()
@@ -520,6 +541,51 @@ extension Studio {
             }
             captureSession.commitConfiguration()
             self.movieFileOutput = movieFileOutput
+        }
+    }
+    
+    func captureVideoThumbnail() {
+        if let movieFileUrl {
+            let asset = AVAsset(url: movieFileUrl)
+            let assetImageGenerator = AVAssetImageGenerator(asset: asset)
+            assetImageGenerator.appliesPreferredTrackTransform = true
+            
+            let time = CMTimeMakeWithSeconds(3.0, preferredTimescale: 60)
+            
+            do {
+                let cgImage = try assetImageGenerator.copyCGImage(at: time, actualTime: nil)
+                let uiImage = UIImage(cgImage: cgImage)
+                if uiImage.size.width == 1080 || uiImage.size.width == 1920 {
+                    let newSize = CGSize(width: uiImage.size.width / 2, height: uiImage.size.height / 2)
+                    UIGraphicsBeginImageContextWithOptions(newSize, true, 1.0)
+                    uiImage.draw(in: CGRect(origin: .zero, size: newSize))
+                    let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
+                    UIGraphicsEndImageContext()
+                    
+                    guard let resizedImageData = resizedImage?.jpegData(compressionQuality: 1.0) else {
+                        print("Cannot resize image.")
+                        return
+                    }
+                    self.thumbnailData = resizedImageData
+                } else if uiImage.size.width == 2160 || uiImage.size.width == 3840 {
+                    let newSize = CGSize(width: uiImage.size.width / 4, height: uiImage.size.height / 4)
+                    UIGraphicsBeginImageContextWithOptions(newSize, true, 1.0)
+                    uiImage.draw(in: CGRect(origin: .zero, size: newSize))
+                    let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
+                    UIGraphicsEndImageContext()
+                    
+                    guard let resizedImageData = resizedImage?.jpegData(compressionQuality: 1.0) else {
+                        print("Cannot resize image.")
+                        return
+                    }
+                    self.thumbnailData = resizedImageData
+                }
+            } catch let error {
+                print(error)
+            }
+            
+        } else {
+            return
         }
     }
     

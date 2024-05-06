@@ -14,16 +14,18 @@ final class DishEntity {
     var name: String
     var date: Date = Date()
     var tastes: [String]
+    var thumbnailImageData: Data?
     
-    init(id: String, name: String, tastes: [String]) {
+    init(id: String, name: String, tastes: [String], thumbnailImageData: Data?) {
         self.id = id
         self.name = name
         self.tastes = tastes
+        self.thumbnailImageData = thumbnailImageData
     }
 }
 
 extension DishEntity {
     func toDomain() -> Dish {
-        return .init(id: id, name: name, date: date, tastes: tastes)
+        return .init(id: id, name: name, date: date, tastes: tastes, thumbnailImageData: thumbnailImageData)
     }
 }

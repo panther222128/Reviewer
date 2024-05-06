@@ -10,14 +10,14 @@ import UIKit
 protocol ViewFlowCoordinatorDependencies {
     func makeRestaurantListViewController(actions: RestaurantListViewModelActions) -> RestaurantListViewController
     func makeStudioViewController(actions: StudioViewModelActions, id: String, restaurantName: String) -> StudioViewController
-    func makeTasteListViewController(restaurantId: String, restaurantName: String, dishName: String) -> TasteListViewController
+    func makeTasteListViewController(restaurantId: String, restaurantName: String, dishName: String, thumbnailImageData: Data?) -> TasteListViewController
     
     func makeGlossaryViewController() -> GlossaryViewController
     
     func makeSettingsViewController() -> SettingsViewController
     
     func makeRestaurantDishListViewController(id: String, restaurantName: String, actions: RestaurantDishListViewModelActions) -> RestaurantDishListViewController
-    func makeDishDetailViewController(restaurantId: String, dishId: String, tastes: [String], dishName: String) -> DishDetailViewController
+    func makeDishDetailViewController(restaurantId: String, dish: Dish) -> DishDetailViewController
 }
 
 final class ViewFlowCoordinator {
@@ -86,27 +86,27 @@ final class ViewFlowCoordinator {
         restaurantListNavigator?.pushViewController(viewController, animated: true)
     }
     
-    private func showTasteListView(restaurantId: String, restaurantName: String, dishName: String) {
-        let viewController = dependencies.makeTasteListViewController(restaurantId: restaurantId, restaurantName: restaurantName, dishName: dishName)
+    private func showTasteListView(restaurantId: String, restaurantName: String, dishName: String, thumbnailImageData: Data?) {
+        let viewController = dependencies.makeTasteListViewController(restaurantId: restaurantId, restaurantName: restaurantName, dishName: dishName, thumbnailImageData: thumbnailImageData)
         tasteListViewController = viewController
         studioViewController?.navigationController?.pushViewController(viewController, animated: true)
     }
     
     // Test needed when this method is integrated with above method.
-    private func showTasteListViewFromDishList(restaurantId: String, restaurantName: String, dishName: String) {
-        let viewController = dependencies.makeTasteListViewController(restaurantId: restaurantId, restaurantName: restaurantName, dishName: dishName)
+    private func showTasteListViewFromDishList(restaurantId: String, restaurantName: String, dishName: String, thumbnailImageData: Data?) {
+        let viewController = dependencies.makeTasteListViewController(restaurantId: restaurantId, restaurantName: restaurantName, dishName: dishName, thumbnailImageData: thumbnailImageData)
         tasteListViewController = viewController
         restaurantListNavigator?.pushViewController(viewController, animated: true)
     }
     
     private func showRestaurantDishListView(id: String, restaurantName: String) {
-        let viewController = dependencies.makeRestaurantDishListViewController(id: id, restaurantName: restaurantName, actions: .init(showDishDetail: showDishDetailView(restaurantId:dishId:with:dishName:), showStudio: showStudioView(id:restaurantName:), showTastes: showTasteListViewFromDishList(restaurantId:restaurantName:dishName:)))
+        let viewController = dependencies.makeRestaurantDishListViewController(id: id, restaurantName: restaurantName, actions: .init(showDishDetail: showDishDetailView(restaurantId:dish:), showStudio: showStudioView(id:restaurantName:), showTastes: showTasteListViewFromDishList(restaurantId:restaurantName:dishName:thumbnailImageData:)))
         restaurantDishListViewController = viewController
         restaurantListNavigator?.pushViewController(viewController, animated: true)
     }
     
-    private func showDishDetailView(restaurantId: String, dishId: String, with tastes: [String], dishName: String) {
-        let viewController = dependencies.makeDishDetailViewController(restaurantId: restaurantId, dishId: dishId, tastes: tastes, dishName: dishName)
+    private func showDishDetailView(restaurantId: String, dish: Dish) {
+        let viewController = dependencies.makeDishDetailViewController(restaurantId: restaurantId, dish: dish)
         dishDetailViewController = viewController
         restaurantDishListViewController?.navigationController?.pushViewController(viewController, animated: true)
     }
