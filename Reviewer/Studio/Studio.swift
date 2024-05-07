@@ -544,48 +544,36 @@ extension Studio {
         }
     }
     
-    func captureVideoThumbnail() {
+    private func captureVideoThumbnail() {
         if let movieFileUrl {
-            let asset = AVAsset(url: movieFileUrl)
-            let assetImageGenerator = AVAssetImageGenerator(asset: asset)
-            assetImageGenerator.appliesPreferredTrackTransform = true
-            
-            let time = CMTimeMakeWithSeconds(3.0, preferredTimescale: 60)
-            
-            do {
-                let cgImage = try assetImageGenerator.copyCGImage(at: time, actualTime: nil)
-                let uiImage = UIImage(cgImage: cgImage)
-                if uiImage.size.width == 1080 || uiImage.size.width == 1920 {
-                    let newSize = CGSize(width: uiImage.size.width / 2, height: uiImage.size.height / 2)
-                    UIGraphicsBeginImageContextWithOptions(newSize, true, 1.0)
-                    uiImage.draw(in: CGRect(origin: .zero, size: newSize))
-                    let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
-                    UIGraphicsEndImageContext()
-                    
-                    guard let resizedImageData = resizedImage?.jpegData(compressionQuality: 1.0) else {
-                        print("Cannot resize image.")
-                        return
+            let fetchResult = PHAsset.fetchAssets(with: .video, options: nil)
+            if let lastObject = fetchResult.lastObject {
+                let manager = PHImageManager.default()
+                let targetSize = CGSize(width: 1080, height: 1920)
+                let options = PHVideoRequestOptions()
+                options.version = .original
+                options.deliveryMode = .fastFormat
+                options.isNetworkAccessAllowed = true
+                
+                manager.requestAVAsset(forVideo: lastObject, options: options) { avAsset, audioMix, options in
+                    guard let avAsset = avAsset else { return }
+                    let generator = AVAssetImageGenerator(asset: avAsset)
+                    generator.appliesPreferredTrackTransform = true
+                    let time = CMTime(value: 2, timescale: 600)
+                    do {
+                        let imageReference = try generator.copyCGImage(at: time, actualTime: nil)
+                        let thumbnail = UIImage(cgImage: imageReference)
+                        let data = thumbnail.jpegData(compressionQuality: 1.0)
+                        self.thumbnailData = data
+                    } catch let error {
+                        print(error)
                     }
-                    self.thumbnailData = resizedImageData
-                } else if uiImage.size.width == 2160 || uiImage.size.width == 3840 {
-                    let newSize = CGSize(width: uiImage.size.width / 4, height: uiImage.size.height / 4)
-                    UIGraphicsBeginImageContextWithOptions(newSize, true, 1.0)
-                    uiImage.draw(in: CGRect(origin: .zero, size: newSize))
-                    let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
-                    UIGraphicsEndImageContext()
-                    
-                    guard let resizedImageData = resizedImage?.jpegData(compressionQuality: 1.0) else {
-                        print("Cannot resize image.")
-                        return
-                    }
-                    self.thumbnailData = resizedImageData
                 }
-            } catch let error {
-                print(error)
+            } else {
+                print("Cannot find last object.")
             }
-            
         } else {
-            return
+            print("Cannot find movie file url.")
         }
     }
     
@@ -744,13 +732,14 @@ extension Studio: AVCaptureFileOutputRecordingDelegate {
                 if status == .authorized {
                     PHPhotoLibrary.shared().performChanges({
                         let options = PHAssetResourceCreationOptions()
-                        options.shouldMoveFile = true
                         let creationRequest = PHAssetCreationRequest.forAsset()
+                        self.movieFileUrl = outputFileURL
                         creationRequest.addResource(with: .video, fileURL: outputFileURL, options: options)
                     }, completionHandler: { success, error in
                         if !success {
                             print("AVCam couldn't save the movie to your photo library: \(String(describing: error))")
                         }
+                        self.captureVideoThumbnail()
                         cleanup()
                     })
                 } else {

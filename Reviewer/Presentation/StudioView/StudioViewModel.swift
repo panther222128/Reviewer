@@ -113,7 +113,6 @@ final class DefaultStudioViewModel: StudioViewModel {
     }
     
     func didLoadTasteView(dishName: String) {
-        studio.captureVideoThumbnail()
         let thumbnailImageData = studio.thumbnailData
         actions.showTasteListView(restaurantId, restaurantName, dishName, thumbnailImageData)
     }
