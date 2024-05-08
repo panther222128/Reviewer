@@ -27,11 +27,11 @@ protocol StudioViewModel {
     func didChangeResolution(frameRate: Studio.SupportedFrameRate, resolution: Studio.SupportedResolution, previewView: PreviewView)
     func didChange(frameRate: Studio.SupportedFrameRate, resolution: Studio.SupportedResolution, previewView: PreviewView)
     func focus(at devicePoint: CGPoint, monitorSubjectAreaChange: Bool)
-    func didLoadTasteView(with dishName: String)
+    func didLoadTasteView(dishName: String)
 }
 
 struct StudioViewModelActions {
-    let showTasteListView: (_ restaurantId: String, _ restaurantName: String, _ dishName: String) -> Void
+    let showTasteListView: (_ restaurantId: String, _ restaurantName: String, _ dishName: String, _ thumbnailImageData: Data?) -> Void
 }
 
 final class DefaultStudioViewModel: StudioViewModel {
@@ -112,8 +112,9 @@ final class DefaultStudioViewModel: StudioViewModel {
         studio.focus(at: devicePoint, monitorSubjectAreaChange: monitorSubjectAreaChange)
     }
     
-    func didLoadTasteView(with dishName: String) {
-        actions.showTasteListView(restaurantId, restaurantName, dishName)
+    func didLoadTasteView(dishName: String) {
+        let thumbnailImageData = studio.thumbnailData
+        actions.showTasteListView(restaurantId, restaurantName, dishName, thumbnailImageData)
     }
     
 }

@@ -12,6 +12,24 @@ final class DishDetailViewController: UIViewController {
     
     private var viewModel: DishDetailViewModel!
     
+    private let scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.showsVerticalScrollIndicator = false
+        scrollView.showsHorizontalScrollIndicator = false
+        return scrollView
+    }()
+    private let containerView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    private let thumbnailImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
     private let dishDetailListTableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -19,6 +37,7 @@ final class DishDetailViewController: UIViewController {
         tableView.separatorInset = .init(top: 0, left: 0, bottom: 0, right: 0)
         tableView.showsVerticalScrollIndicator = false
         tableView.showsHorizontalScrollIndicator = false
+        tableView.isScrollEnabled = false
         return tableView
     }()
     
@@ -33,14 +52,20 @@ final class DishDetailViewController: UIViewController {
         listAdapter = .init(tableView: dishDetailListTableView, dataSource: viewModel, delegate: self)
         
         addSubviews()
+        adjustLayoutOf(scrollView: scrollView)
+        adjustLayoutOf(containerView: containerView)
+        adjustLayoutOf(thumbnailImageView: thumbnailImageView)
         adjustLayoutOf(dishDetailListTableView: dishDetailListTableView)
+        
         addBarButtonItem()
         
+        subscribe(thumbnailImageDataPublisher: viewModel.thumbnailImageDataPublisher)
         subscribe(tastesPublisher: viewModel.tastesPublisher)
         subscribe(dishNamePublisher: viewModel.dishNamePublisher)
         
         viewModel.loadTastes()
         viewModel.loadDishName()
+        viewModel.loadThumbnailImage()
     }
     
     static func create(with viewModel: DishDetailViewModel) -> DishDetailViewController {
@@ -63,6 +88,19 @@ final class DishDetailViewController: UIViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] dishName in
                 self?.title = dishName
+            }
+            .store(in: &cancellabes)
+    }
+    
+    private func subscribe(thumbnailImageDataPublisher: AnyPublisher<Data?, Never>) {
+        thumbnailImageDataPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] thumbnailImageData in
+                if let thumbnailImageData {
+                    self?.thumbnailImageView.image = UIImage(data: thumbnailImageData)
+                } else {
+                    self?.thumbnailImageView.isHidden = true
+                }
             }
             .store(in: &cancellabes)
     }
@@ -110,13 +148,66 @@ extension DishDetailViewController: DishDetailListDelegate {
 
 extension DishDetailViewController {
     private func addSubviews() {
-        view.addSubview(dishDetailListTableView)
+        view.addSubview(scrollView)
+        scrollView.addSubview(containerView)
+        containerView.addSubview(thumbnailImageView)
+        containerView.addSubview(dishDetailListTableView)
+    }
+    
+    private func adjustLayoutOf(scrollView: UIScrollView) {
+        scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
+        scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
+        scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+    }
+    
+    private func adjustLayoutOf(containerView: UIView) {
+        let frameLayout = scrollView.frameLayoutGuide
+        let contentLayout = scrollView.contentLayoutGuide
+        
+        containerView.leadingAnchor.constraint(equalTo: contentLayout.leadingAnchor).isActive = true
+        containerView.topAnchor.constraint(equalTo: contentLayout.topAnchor).isActive = true
+        containerView.trailingAnchor.constraint(equalTo: contentLayout.trailingAnchor).isActive = true
+        containerView.bottomAnchor.constraint(equalTo: contentLayout.bottomAnchor).isActive = true
+        
+        containerView.leadingAnchor.constraint(equalTo: frameLayout.leadingAnchor).isActive = true
+        containerView.trailingAnchor.constraint(equalTo: frameLayout.trailingAnchor).isActive = true
+    }
+    
+    private func adjustLayoutOf(thumbnailImageView: UIImageView) {
+        thumbnailImageView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
+        thumbnailImageView.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
+        thumbnailImageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
+        thumbnailImageView.bottomAnchor.constraint(equalTo: dishDetailListTableView.topAnchor).isActive = true
+        if let thumbnailImageData = viewModel.thumbnailImageData {
+            if let image = UIImage(data: thumbnailImageData) {
+                let width = image.size.width
+                if width == 1080 / 2 {
+                    thumbnailImageView.heightAnchor.constraint(equalTo: thumbnailImageView.widthAnchor, multiplier: 16/9).isActive = true
+                } else if width == 1920 / 2 {
+                    thumbnailImageView.heightAnchor.constraint(equalTo: thumbnailImageView.widthAnchor, multiplier: 9/16).isActive = true
+                } else if width == 4032 / 4 {
+                    thumbnailImageView.heightAnchor.constraint(equalTo: thumbnailImageView.widthAnchor, multiplier: 3/4).isActive = true
+                } else if width == 3024 / 4 {
+                    thumbnailImageView.heightAnchor.constraint(equalTo: thumbnailImageView.widthAnchor, multiplier: 4/3).isActive = true
+                }
+            } else {
+                
+            }
+        } else {
+            thumbnailImageView.heightAnchor.constraint(equalTo: thumbnailImageView.widthAnchor, multiplier: 3/4).isActive = true
+        }
     }
     
     private func adjustLayoutOf(dishDetailListTableView: UITableView) {
-        dishDetailListTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        dishDetailListTableView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        dishDetailListTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        dishDetailListTableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        dishDetailListTableView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
+        if let thumbnailImageData = viewModel.thumbnailImageData {
+            dishDetailListTableView.topAnchor.constraint(equalTo: thumbnailImageView.bottomAnchor).isActive = true
+        }  else {
+            dishDetailListTableView.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
+        }
+        dishDetailListTableView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
+        dishDetailListTableView.bottomAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.bottomAnchor).isActive = true
+        dishDetailListTableView.heightAnchor.constraint(greaterThanOrEqualToConstant: CGFloat(viewModel.tastesCount * 64)).isActive = true
     }
 }

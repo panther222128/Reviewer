@@ -475,7 +475,7 @@ extension StudioViewController {
             if let textFields = alertController.textFields {
                 if let textField = textFields.first {
                     if let text = textField.text, !text.isEmpty {
-                        self.viewModel.didLoadTasteView(with: text)
+                        self.viewModel.didLoadTasteView(dishName: text)
                     } else {
                         print("Text must not be empty.")
                     }

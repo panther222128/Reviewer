@@ -27,6 +27,8 @@ final class Studio: NSObject {
     private var videoRotationAngleForHorizonLevelPreviewObservation: NSKeyValueObservation?
     private var inProgressPhotoCaptureDelegates: [Int64: PhotoCaptureProcessor]
     private var backgroundRecordingID: UIBackgroundTaskIdentifier?
+    private(set) var thumbnailData: Data?
+    private(set) var movieFileUrl: URL?
     
     enum CaptureMode {
         case photo
@@ -63,6 +65,7 @@ final class Studio: NSObject {
         self.photoOutputReadinessCoordinator = nil
         self.videoRotationAngleForHorizonLevelPreviewObservation = nil
         self.inProgressPhotoCaptureDelegates = [Int64: PhotoCaptureProcessor]()
+        self.movieFileUrl = nil
     }
     
     func setSession(on previewView: PreviewView) {
@@ -248,6 +251,8 @@ extension Studio {
                         }
                     } completionHandler: { photoCaptureProcessor in
                         self.sessionQueue.async {
+                            let photoData = photoCaptureProcessor.photoData
+                            self.thumbnailData = self.resizeImage(data: photoData)
                             self.inProgressPhotoCaptureDelegates[photoCaptureProcessor.requestedPhotoSettings.uniqueID] = nil
                         }
                     }
@@ -267,6 +272,21 @@ extension Studio {
             print("No photo settings to capture.")
             return
         }
+    }
+    
+    private func resizeImage(data: Data?) -> Data? {
+        guard let data = data else { return nil }
+        guard let image = UIImage(data: data) else { return nil }
+        
+        let newSize = CGSize(width: image.size.width / 4, height: image.size.height / 4)
+        UIGraphicsBeginImageContextWithOptions(newSize, true, 1.0)
+        image.draw(in: CGRect(origin: .zero, size: newSize))
+        let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        guard let resizedImageData = resizedImage?.jpegData(compressionQuality: 1.0) else { return nil }
+        
+        return resizedImageData
     }
     
     func captureMovie() {
@@ -291,6 +311,7 @@ extension Studio {
                         
                         let outputFileName = NSUUID().uuidString
                         let outputFilePath = (NSTemporaryDirectory() as NSString).appendingPathComponent((outputFileName as NSString).appendingPathExtension("mov")!)
+                        self.movieFileUrl = URL(fileURLWithPath: outputFilePath)
                         movieFileOutput.startRecording(to: URL(fileURLWithPath: outputFilePath), recordingDelegate: self)
                     } else {
                         movieFileOutput.stopRecording()
@@ -523,6 +544,51 @@ extension Studio {
         }
     }
     
+    private func captureVideoThumbnail() {
+        let fetchResult = PHAsset.fetchAssets(with: .video, options: nil)
+        if let lastObject = fetchResult.lastObject {
+            let manager = PHImageManager.default()
+            
+            var targetSize = CGSize(width: 1080, height: 1920)
+            
+            let pixelWidth = lastObject.pixelWidth
+            let pixelHeight = lastObject.pixelHeight
+            
+            if pixelWidth == 1080 || pixelWidth == 1920 {
+                targetSize = CGSize(width: pixelWidth / 2, height: pixelHeight / 2)
+            } else if pixelWidth == 2160 || pixelWidth == 3840 {
+                targetSize = CGSize(width: pixelWidth / 4, height: pixelHeight / 4)
+            }
+            
+            let options = PHVideoRequestOptions()
+            options.version = .original
+            options.deliveryMode = .fastFormat
+            options.isNetworkAccessAllowed = true
+            
+            manager.requestAVAsset(forVideo: lastObject, options: options) { avAsset, audioMix, options in
+                guard let avAsset = avAsset else { return }
+                let generator = AVAssetImageGenerator(asset: avAsset)
+                generator.appliesPreferredTrackTransform = true
+                let time = CMTime(value: 3, timescale: 600)
+                do {
+                    let imageReference = try generator.copyCGImage(at: time, actualTime: nil)
+                    let thumbnail = UIImage(cgImage: imageReference)
+                    UIGraphicsBeginImageContextWithOptions(targetSize, true, 1.0)
+                    thumbnail.draw(in: CGRect(origin: .zero, size: targetSize))
+                    let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
+                    UIGraphicsEndImageContext()
+                    
+                    let data = resizedImage?.jpegData(compressionQuality: 1.0)
+                    self.thumbnailData = data
+                } catch let error {
+                    print(error)
+                }
+            }
+        } else {
+            print("Cannot find last object.")
+        }
+    }
+    
     func setReadinessCoordinatorDelegate<T>(_ viewController: T) where T: AVCapturePhotoOutputReadinessCoordinatorDelegate {
         photoOutputReadinessCoordinator?.delegate = viewController
     }
@@ -678,13 +744,14 @@ extension Studio: AVCaptureFileOutputRecordingDelegate {
                 if status == .authorized {
                     PHPhotoLibrary.shared().performChanges({
                         let options = PHAssetResourceCreationOptions()
-                        options.shouldMoveFile = true
                         let creationRequest = PHAssetCreationRequest.forAsset()
+                        self.movieFileUrl = outputFileURL
                         creationRequest.addResource(with: .video, fileURL: outputFileURL, options: options)
                     }, completionHandler: { success, error in
                         if !success {
                             print("AVCam couldn't save the movie to your photo library: \(String(describing: error))")
                         }
+                        self.captureVideoThumbnail()
                         cleanup()
                     })
                 } else {

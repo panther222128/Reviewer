@@ -12,4 +12,5 @@ struct Dish {
     let name: String
     let date: Date
     let tastes: [String]
+    let thumbnailImageData: Data?
 }

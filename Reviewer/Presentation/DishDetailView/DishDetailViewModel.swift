@@ -12,11 +12,15 @@ import Combine
 protocol DishDetailViewModel: DishDetailListDataSource {
     var tastesPublisher: AnyPublisher<[String], Never> { get }
     var dishNamePublisher: AnyPublisher<String, Never> { get }
+    var thumbnailImageDataPublisher: AnyPublisher<Data?, Never> { get }
+    var tastesCount: Int { get }
+    var thumbnailImageData: Data? { get }
     
     func loadTastes()
     func loadDishName()
     func add(taste: String)
     func didLoadTastes()
+    func loadThumbnailImage()
 }
 
 final class DefaultDishDetailViewModel: DishDetailViewModel {
@@ -28,21 +32,31 @@ final class DefaultDishDetailViewModel: DishDetailViewModel {
     private let tastesSubject: CurrentValueSubject<[String], Never>
     private let dishName: String
     private let dishNameSubject: CurrentValueSubject<String, Never>
+    private(set) var thumbnailImageData: Data?
+    private let thumbnailImageDataSubject: CurrentValueSubject<Data?, Never>
+    private(set) var tastesCount: Int
+    
     var tastesPublisher: AnyPublisher<[String], Never> {
         return tastesSubject.eraseToAnyPublisher()
     }
     var dishNamePublisher: AnyPublisher<String, Never> {
         return dishNameSubject.eraseToAnyPublisher()
     }
+    var thumbnailImageDataPublisher: AnyPublisher<Data?, Never> {
+        return thumbnailImageDataSubject.eraseToAnyPublisher()
+    }
     
-    init(repository: ReviewListRepository, restaurantId: String, dishId: String, tastes: [String], dishName: String) {
+    init(repository: ReviewListRepository, restaurantId: String, dish: Dish) {
         self.repository = repository
         self.restaurantId = restaurantId
-        self.dishId = dishId
-        self.tastes = tastes
-        self.tastesSubject = .init([])
-        self.dishName = dishName
-        self.dishNameSubject = .init("")
+        self.dishId = dish.id
+        self.tastes = dish.tastes
+        self.tastesSubject = .init(dish.tastes)
+        self.dishName = dish.name
+        self.dishNameSubject = .init(dish.name)
+        self.thumbnailImageData = dish.thumbnailImageData
+        self.thumbnailImageDataSubject = .init(dish.thumbnailImageData)
+        self.tastesCount = tastes.count
     }
     
     func loadTastes() {
@@ -51,6 +65,10 @@ final class DefaultDishDetailViewModel: DishDetailViewModel {
     
     func loadDishName() {
         dishNameSubject.send(dishName)
+    }
+    
+    func loadThumbnailImage() {
+        thumbnailImageDataSubject.send(thumbnailImageData)
     }
     
     func add(taste: String) {

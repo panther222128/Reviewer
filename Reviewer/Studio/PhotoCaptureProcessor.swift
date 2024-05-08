@@ -13,7 +13,7 @@ class PhotoCaptureProcessor: NSObject {
     private(set) var requestedPhotoSettings: AVCapturePhotoSettings
     private let willCapturePhotoAnimation: () -> Void
     private let completionHandler: (PhotoCaptureProcessor) -> Void
-    private var photoData: Data?
+    private(set) var photoData: Data?
 
     init(with requestedPhotoSettings: AVCapturePhotoSettings,
          willCapturePhotoAnimation: @escaping () -> Void,
@@ -28,8 +28,6 @@ class PhotoCaptureProcessor: NSObject {
     }
 }
 
-/// This extension adopts all of the AVCapturePhotoCaptureDelegate protocol
-/// methods.
 extension PhotoCaptureProcessor: AVCapturePhotoCaptureDelegate {
 
     /// - Tag: WillCapturePhoto

@@ -90,7 +90,7 @@ final class DefaultReviewListStorage: ReviewListStorage {
     
     func saveDish(restaurantId: String, dish: Dish) {
         if let restaurant = fetchRestaurant(restaurantId: restaurantId) {
-            restaurant.dishes.append(.init(id: dish.id, name: dish.name, tastes: dish.tastes))
+            restaurant.dishes.append(.init(id: dish.id, name: dish.name, tastes: dish.tastes, thumbnailImageData: dish.thumbnailImageData))
         } else {
             print("Cannot save dish.")
         }
