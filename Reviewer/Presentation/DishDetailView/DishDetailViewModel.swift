@@ -14,6 +14,7 @@ protocol DishDetailViewModel: DishDetailListDataSource {
     var dishNamePublisher: AnyPublisher<String, Never> { get }
     var thumbnailImageDataPublisher: AnyPublisher<Data?, Never> { get }
     var tastesCount: Int { get }
+    var thumbnailImageData: Data? { get }
     
     func loadTastes()
     func loadDishName()
@@ -31,7 +32,7 @@ final class DefaultDishDetailViewModel: DishDetailViewModel {
     private let tastesSubject: CurrentValueSubject<[String], Never>
     private let dishName: String
     private let dishNameSubject: CurrentValueSubject<String, Never>
-    private let thumbnailImageData: Data?
+    private(set) var thumbnailImageData: Data?
     private let thumbnailImageDataSubject: CurrentValueSubject<Data?, Never>
     private(set) var tastesCount: Int
     

@@ -96,11 +96,10 @@ final class DishDetailViewController: UIViewController {
         thumbnailImageDataPublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] thumbnailImageData in
-                guard let self = self else { return }
                 if let thumbnailImageData {
-                    self.thumbnailImageView.image = UIImage(data: thumbnailImageData)
+                    self?.thumbnailImageView.image = UIImage(data: thumbnailImageData)
                 } else {
-                    print("Thumbnail image is empty.")
+                    self?.thumbnailImageView.isHidden = true
                 }
             }
             .store(in: &cancellabes)
@@ -180,7 +179,24 @@ extension DishDetailViewController {
         thumbnailImageView.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
         thumbnailImageView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
         thumbnailImageView.bottomAnchor.constraint(equalTo: dishDetailListTableView.topAnchor).isActive = true
-        thumbnailImageView.heightAnchor.constraint(equalTo: thumbnailImageView.widthAnchor, multiplier: 4/3).isActive = true
+        if let thumbnailImageData = viewModel.thumbnailImageData {
+            if let image = UIImage(data: thumbnailImageData) {
+                let width = image.size.width
+                if width == 1080 / 2 {
+                    thumbnailImageView.heightAnchor.constraint(equalTo: thumbnailImageView.widthAnchor, multiplier: 16/9).isActive = true
+                } else if width == 1920 / 2 {
+                    thumbnailImageView.heightAnchor.constraint(equalTo: thumbnailImageView.widthAnchor, multiplier: 9/16).isActive = true
+                } else if width == 4032 / 4 {
+                    thumbnailImageView.heightAnchor.constraint(equalTo: thumbnailImageView.widthAnchor, multiplier: 3/4).isActive = true
+                } else if width == 3024 / 4 {
+                    thumbnailImageView.heightAnchor.constraint(equalTo: thumbnailImageView.widthAnchor, multiplier: 4/3).isActive = true
+                }
+            } else {
+                
+            }
+        } else {
+            thumbnailImageView.heightAnchor.constraint(equalTo: thumbnailImageView.widthAnchor, multiplier: 3/4).isActive = true
+        }
     }
     
     private func adjustLayoutOf(dishDetailListTableView: UITableView) {

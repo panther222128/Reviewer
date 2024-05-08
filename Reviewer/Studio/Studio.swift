@@ -545,35 +545,47 @@ extension Studio {
     }
     
     private func captureVideoThumbnail() {
-        if let movieFileUrl {
-            let fetchResult = PHAsset.fetchAssets(with: .video, options: nil)
-            if let lastObject = fetchResult.lastObject {
-                let manager = PHImageManager.default()
-                let targetSize = CGSize(width: 1080, height: 1920)
-                let options = PHVideoRequestOptions()
-                options.version = .original
-                options.deliveryMode = .fastFormat
-                options.isNetworkAccessAllowed = true
-                
-                manager.requestAVAsset(forVideo: lastObject, options: options) { avAsset, audioMix, options in
-                    guard let avAsset = avAsset else { return }
-                    let generator = AVAssetImageGenerator(asset: avAsset)
-                    generator.appliesPreferredTrackTransform = true
-                    let time = CMTime(value: 2, timescale: 600)
-                    do {
-                        let imageReference = try generator.copyCGImage(at: time, actualTime: nil)
-                        let thumbnail = UIImage(cgImage: imageReference)
-                        let data = thumbnail.jpegData(compressionQuality: 1.0)
-                        self.thumbnailData = data
-                    } catch let error {
-                        print(error)
-                    }
+        let fetchResult = PHAsset.fetchAssets(with: .video, options: nil)
+        if let lastObject = fetchResult.lastObject {
+            let manager = PHImageManager.default()
+            
+            var targetSize = CGSize(width: 1080, height: 1920)
+            
+            let pixelWidth = lastObject.pixelWidth
+            let pixelHeight = lastObject.pixelHeight
+            
+            if pixelWidth == 1080 || pixelWidth == 1920 {
+                targetSize = CGSize(width: pixelWidth / 2, height: pixelHeight / 2)
+            } else if pixelWidth == 2160 || pixelWidth == 3840 {
+                targetSize = CGSize(width: pixelWidth / 4, height: pixelHeight / 4)
+            }
+            
+            let options = PHVideoRequestOptions()
+            options.version = .original
+            options.deliveryMode = .fastFormat
+            options.isNetworkAccessAllowed = true
+            
+            manager.requestAVAsset(forVideo: lastObject, options: options) { avAsset, audioMix, options in
+                guard let avAsset = avAsset else { return }
+                let generator = AVAssetImageGenerator(asset: avAsset)
+                generator.appliesPreferredTrackTransform = true
+                let time = CMTime(value: 3, timescale: 600)
+                do {
+                    let imageReference = try generator.copyCGImage(at: time, actualTime: nil)
+                    let thumbnail = UIImage(cgImage: imageReference)
+                    UIGraphicsBeginImageContextWithOptions(targetSize, true, 1.0)
+                    thumbnail.draw(in: CGRect(origin: .zero, size: targetSize))
+                    let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
+                    UIGraphicsEndImageContext()
+                    
+                    let data = resizedImage?.jpegData(compressionQuality: 1.0)
+                    self.thumbnailData = data
+                } catch let error {
+                    print(error)
                 }
-            } else {
-                print("Cannot find last object.")
             }
         } else {
-            print("Cannot find movie file url.")
+            print("Cannot find last object.")
         }
     }
     
