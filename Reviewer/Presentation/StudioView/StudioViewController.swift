@@ -94,6 +94,13 @@ final class StudioViewController: UIViewController {
         return segmentedControl
     }()
     
+    private let recordTimerLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textColor = .white
+        return label
+    }()
+    
     private let movieResolutionSegmentedControl: UISegmentedControl = {
         let segmentedControl = UISegmentedControl()
         segmentedControl.translatesAutoresizingMaskIntoConstraints = false
@@ -133,6 +140,7 @@ final class StudioViewController: UIViewController {
         adjustLandscapeLayoutOf(captureModeSegmentedControl: captureModeSegmentedControl)
         adjustLandscapeLayoutOf(videoZoomFactorSegmentedControl: videoZoomFactorSegmentedControl)
         addActionOf(recordButton: recordButton)
+        adjustLayoutOf(recordingTimerLabel: recordTimerLabel)
         addZoomFactorSegmentedControlTarget()
         addMovieResolutionSegmentedControlTarget()
         addFrameRateSegmentedControlTarget()
@@ -140,6 +148,7 @@ final class StudioViewController: UIViewController {
         
         movieResolutionSegmentedControl.isHidden = true
         frameRateSegmentedControl.isHidden = true
+        recordTimerLabel.isHidden = true
         
         addFocusGesture()
         
@@ -147,6 +156,7 @@ final class StudioViewController: UIViewController {
         tabBarController?.tabBar.isHidden = true
         
         subscribe(restaurantNamePublisher: viewModel.restaurantNamePublisher)
+        subscribe(timeStringPublisher: viewModel.timeStringPublisher)
         
         viewModel.loadTitle()
         
@@ -221,6 +231,15 @@ final class StudioViewController: UIViewController {
             .sink { [weak self] name in
                 self?.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
                 self?.title = name
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func subscribe(timeStringPublisher: AnyPublisher<String, Never>) {
+        timeStringPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] time in
+                self?.recordTimerLabel.text = time
             }
             .store(in: &cancellables)
     }
@@ -302,6 +321,7 @@ final class StudioViewController: UIViewController {
             recordButton.isHidden = true
             movieResolutionSegmentedControl.isHidden = true
             frameRateSegmentedControl.isHidden = true
+            recordTimerLabel.isHidden = true
             viewModel.didChangeCapture(mode: .photo)
             
         case 1:
@@ -309,6 +329,7 @@ final class StudioViewController: UIViewController {
             recordButton.isHidden = false
             movieResolutionSegmentedControl.isHidden = false
             frameRateSegmentedControl.isHidden = false
+            recordTimerLabel.isHidden = false
             viewModel.didChangeCapture(mode: .movie)
             
         default:
@@ -362,6 +383,7 @@ extension StudioViewController {
         view.addSubview(movieResolutionSegmentedControl)
         view.addSubview(videoZoomFactorSegmentedControl)
         view.addSubview(captureModeSegmentedControl)
+        view.addSubview(recordTimerLabel)
     }
     
     private func adjustLayoutOf(previewView: PreviewView) {
@@ -421,6 +443,11 @@ extension StudioViewController {
         movieResolutionSegmentedControl.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
     }
     
+    private func adjustLayoutOf(recordingTimerLabel: UILabel) {
+        recordTimerLabel.bottomAnchor.constraint(equalTo: videoZoomFactorSegmentedControl.topAnchor, constant: -15).isActive = true
+        recordingTimerLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+    }
+    
     private func addActionOf(captureButton: UIButton) {
         let action = UIAction { action in
             self.viewModel.capturePhoto(from: self.previewView)
@@ -450,6 +477,7 @@ extension StudioViewController {
                 self.movieResolutionSegmentedControl.isHidden = true
                 self.frameRateSegmentedControl.isHidden = true
                 self.captureModeSegmentedControl.isHidden = true
+                self.viewModel.runTimer()
             } else {
                 self.isRecord.toggle()
                 recordButton.toggle()
@@ -458,6 +486,7 @@ extension StudioViewController {
                 self.movieResolutionSegmentedControl.isHidden = false
                 self.frameRateSegmentedControl.isHidden = false
                 self.captureModeSegmentedControl.isHidden = false
+                self.viewModel.cancelTimer()
             }
         }
         recordButton.addAction(action, for: .touchUpInside)
@@ -467,7 +496,9 @@ extension StudioViewController {
         let alertController = UIAlertController(title: "음식 이름", message: nil, preferredStyle: .alert)
         alertController.addTextField()
         
-        let cancelAction = UIAlertAction(title: "취소", style: .destructive, handler: nil)
+        let cancelAction = UIAlertAction(title: "취소", style: .destructive) { _ in
+            self.viewModel.resetTimer()
+        }
         
         alertController.addAction(cancelAction)
         
@@ -476,6 +507,7 @@ extension StudioViewController {
                 if let textField = textFields.first {
                     if let text = textField.text, !text.isEmpty {
                         self.viewModel.didLoadTasteView(dishName: text)
+                        self.viewModel.resetTimer()
                     } else {
                         print("Text must not be empty.")
                     }
