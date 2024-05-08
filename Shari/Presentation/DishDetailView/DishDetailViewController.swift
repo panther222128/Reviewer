@@ -67,6 +67,10 @@ final class DishDetailViewController: UIViewController {
         viewModel.loadTastes()
         viewModel.loadDishName()
         viewModel.loadThumbnailImage()
+        
+        if let navigationController {
+            navigationController.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
+        }
     }
     
     static func create(with viewModel: DishDetailViewModel) -> DishDetailViewController {
