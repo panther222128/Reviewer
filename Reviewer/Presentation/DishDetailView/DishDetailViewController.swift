@@ -201,7 +201,11 @@ extension DishDetailViewController {
     
     private func adjustLayoutOf(dishDetailListTableView: UITableView) {
         dishDetailListTableView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
-        dishDetailListTableView.topAnchor.constraint(equalTo: thumbnailImageView.bottomAnchor).isActive = true
+        if let thumbnailImageData = viewModel.thumbnailImageData {
+            dishDetailListTableView.topAnchor.constraint(equalTo: thumbnailImageView.bottomAnchor).isActive = true
+        }  else {
+            dishDetailListTableView.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
+        }
         dishDetailListTableView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
         dishDetailListTableView.bottomAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.bottomAnchor).isActive = true
         dishDetailListTableView.heightAnchor.constraint(greaterThanOrEqualToConstant: CGFloat(viewModel.tastesCount * 64)).isActive = true
