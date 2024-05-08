@@ -66,7 +66,7 @@ final class StudioViewController: UIViewController {
     private let captureModeSegmentedControl: UISegmentedControl = {
         let segmentedControl = UISegmentedControl()
         segmentedControl.translatesAutoresizingMaskIntoConstraints = false
-        let symbolConfiguration = UIImage.SymbolConfiguration(pointSize: 36, weight: .light, scale: .default)
+        let symbolConfiguration = UIImage.SymbolConfiguration(pointSize: 24, weight: .light, scale: .default)
         let cameraImage = UIImage(systemName: "camera", withConfiguration: symbolConfiguration)
         let movieClapperImage = UIImage(systemName: "movieclapper", withConfiguration: symbolConfiguration)
         segmentedControl.insertSegment(with: cameraImage, at: 0, animated: true)
