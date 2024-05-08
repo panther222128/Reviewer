@@ -12,6 +12,7 @@ import Combine
 // MARK: - Boilerplate
 protocol StudioViewModel {
     var restaurantNamePublisher: AnyPublisher<String, Never> { get }
+    var timeStringPublisher: AnyPublisher<String, Never> { get }
     
     func loadTitle()
     func setSession(on previewView: PreviewView)
@@ -28,6 +29,9 @@ protocol StudioViewModel {
     func didChange(frameRate: Studio.SupportedFrameRate, resolution: Studio.SupportedResolution, previewView: PreviewView)
     func focus(at devicePoint: CGPoint, monitorSubjectAreaChange: Bool)
     func didLoadTasteView(dishName: String)
+    func runTimer()
+    func cancelTimer()
+    func resetTimer()
 }
 
 struct StudioViewModelActions {
@@ -42,9 +46,16 @@ final class DefaultStudioViewModel: StudioViewModel {
     private let restaurantId: String
     private let restaurantName: String
     private let restaurantNameSubject: CurrentValueSubject<String, Never>
+    private var timeString: String
+    private let timeStringSubject: CurrentValueSubject<String, Never>
+    private var date: Date
+    private var timer: AnyCancellable
     
     var restaurantNamePublisher: AnyPublisher<String, Never> {
         return restaurantNameSubject.eraseToAnyPublisher()
+    }
+    var timeStringPublisher: AnyPublisher<String, Never> {
+        return timeStringSubject.eraseToAnyPublisher()
     }
     
     init(studio: Studio, useCase: StudioUseCase, actions: StudioViewModelActions, id: String, restaurantName: String) {
@@ -54,6 +65,10 @@ final class DefaultStudioViewModel: StudioViewModel {
         self.restaurantId = id
         self.restaurantName = restaurantName
         self.restaurantNameSubject = .init("")
+        self.date = Date()
+        self.timeString = "00:00:00"
+        self.timeStringSubject = .init("00:00:00")
+        self.timer = .init({ })
     }
     
     func loadTitle() {
@@ -110,6 +125,37 @@ final class DefaultStudioViewModel: StudioViewModel {
     
     func focus(at devicePoint: CGPoint, monitorSubjectAreaChange: Bool) {
         studio.focus(at: devicePoint, monitorSubjectAreaChange: monitorSubjectAreaChange)
+    }
+    
+    func runTimer() {
+        date = Date()
+        timer = Timer.publish(every: 1, on: .main, in: .common)
+            .autoconnect()
+            .sink(receiveValue: { [weak self] _ in
+                guard let self = self else { return }
+                
+                let currentDate = Date()
+                
+                let date = self.date
+                let elapsedTime = currentDate.timeIntervalSince(date)
+                
+                let hours = Int(elapsedTime) / 3600
+                let minutes = Int(elapsedTime) / 60 % 60
+                let seconds = Int(elapsedTime) % 60
+                
+                let timeString = String(format: "%02d:%02d:%02d", hours, minutes, seconds)
+                
+                self.timeStringSubject.send(timeString)
+            })
+    }
+    
+    func cancelTimer() {
+        timer.cancel()
+    }
+    
+    func resetTimer() {
+        timeString = "00:00:00"
+        timeStringSubject.send(timeString)
     }
     
     func didLoadTasteView(dishName: String) {
