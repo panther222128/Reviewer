@@ -45,7 +45,7 @@ final class StudioViewController: UIViewController {
     private let captureButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        let symbolConfiguration = UIImage.SymbolConfiguration(pointSize: 64, weight: .bold, scale: .default)
+        let symbolConfiguration = UIImage.SymbolConfiguration(pointSize: 64, weight: .light, scale: .default)
         let shutterImage = UIImage(systemName: "camera.shutter.button", withConfiguration: symbolConfiguration)
         button.setImage(shutterImage, for: .normal)
         return button
@@ -66,7 +66,7 @@ final class StudioViewController: UIViewController {
     private let captureModeSegmentedControl: UISegmentedControl = {
         let segmentedControl = UISegmentedControl()
         segmentedControl.translatesAutoresizingMaskIntoConstraints = false
-        let symbolConfiguration = UIImage.SymbolConfiguration(pointSize: 36, weight: .bold, scale: .default)
+        let symbolConfiguration = UIImage.SymbolConfiguration(pointSize: 36, weight: .light, scale: .default)
         let cameraImage = UIImage(systemName: "camera", withConfiguration: symbolConfiguration)
         let movieClapperImage = UIImage(systemName: "movieclapper", withConfiguration: symbolConfiguration)
         segmentedControl.insertSegment(with: cameraImage, at: 0, animated: true)

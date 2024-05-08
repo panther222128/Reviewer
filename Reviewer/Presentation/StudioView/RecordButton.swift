@@ -11,7 +11,7 @@ final class RecordButton: UIButton {
     
     override var isSelected: Bool {
         didSet {
-            let symbolConfiguration = UIImage.SymbolConfiguration(pointSize: 64, weight: .bold, scale: .default)
+            let symbolConfiguration = UIImage.SymbolConfiguration(pointSize: 64, weight: .light, scale: .default)
             selectImageView.image = isSelected ? UIImage(systemName: "record.circle.fill", withConfiguration: symbolConfiguration) : UIImage(systemName: "record.circle", withConfiguration: symbolConfiguration)
         }
     }
@@ -28,7 +28,7 @@ final class RecordButton: UIButton {
         addSubviews()
         adjustLayoutOf(selectImageView: selectImageView)
         heightAnchor.constraint(equalToConstant: 80).isActive = true
-        let symbolConfiguration = UIImage.SymbolConfiguration(pointSize: 64, weight: .bold, scale: .default)
+        let symbolConfiguration = UIImage.SymbolConfiguration(pointSize: 64, weight: .light, scale: .default)
         selectImageView.image = UIImage(systemName: "record.circle", withConfiguration: symbolConfiguration)
     }
     
