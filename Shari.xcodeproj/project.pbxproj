@@ -72,7 +72,7 @@
 		A006CEB32BCCC0730065553F /* DishDetailListItemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DishDetailListItemViewModel.swift; sourceTree = "<group>"; };
 		A006CEB52BCCC12B0065553F /* DishDetailListItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DishDetailListItemCell.swift; sourceTree = "<group>"; };
 		A01940D72BDA2F41006848E2 /* TasteCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasteCategory.swift; sourceTree = "<group>"; };
-		A93CF6CC2BC2A8120077B0A2 /* Reviewer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Reviewer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A93CF6CC2BC2A8120077B0A2 /* Shari.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Shari.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A93CF6CF2BC2A8120077B0A2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A93CF6D12BC2A8120077B0A2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		A93CF6D82BC2A8150077B0A2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -152,7 +152,7 @@
 		A93CF6C32BC2A8120077B0A2 = {
 			isa = PBXGroup;
 			children = (
-				A93CF6CE2BC2A8120077B0A2 /* Reviewer */,
+				A93CF6CE2BC2A8120077B0A2 /* Shari */,
 				A93CF6CD2BC2A8120077B0A2 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -160,12 +160,12 @@
 		A93CF6CD2BC2A8120077B0A2 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A93CF6CC2BC2A8120077B0A2 /* Reviewer.app */,
+				A93CF6CC2BC2A8120077B0A2 /* Shari.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		A93CF6CE2BC2A8120077B0A2 /* Reviewer */ = {
+		A93CF6CE2BC2A8120077B0A2 /* Shari */ = {
 			isa = PBXGroup;
 			children = (
 				A97DAB8B2BCB84A7000867D9 /* Data */,
@@ -177,7 +177,7 @@
 				A93CF6E42BC2A8510077B0A2 /* Presentation */,
 				A93CF6E32BC2A82C0077B0A2 /* Application */,
 			);
-			path = Reviewer;
+			path = Shari;
 			sourceTree = "<group>";
 		};
 		A93CF6E32BC2A82C0077B0A2 /* Application */ = {
@@ -364,9 +364,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A93CF6CB2BC2A8120077B0A2 /* Reviewer */ = {
+		A93CF6CB2BC2A8120077B0A2 /* Shari */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A93CF6E02BC2A8150077B0A2 /* Build configuration list for PBXNativeTarget "Reviewer" */;
+			buildConfigurationList = A93CF6E02BC2A8150077B0A2 /* Build configuration list for PBXNativeTarget "Shari" */;
 			buildPhases = (
 				A93CF6C82BC2A8120077B0A2 /* Sources */,
 				A93CF6C92BC2A8120077B0A2 /* Frameworks */,
@@ -376,9 +376,9 @@
 			);
 			dependencies = (
 			);
-			name = Reviewer;
+			name = Shari;
 			productName = Reviewer;
-			productReference = A93CF6CC2BC2A8120077B0A2 /* Reviewer.app */;
+			productReference = A93CF6CC2BC2A8120077B0A2 /* Shari.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -396,7 +396,7 @@
 					};
 				};
 			};
-			buildConfigurationList = A93CF6C72BC2A8120077B0A2 /* Build configuration list for PBXProject "Reviewer" */;
+			buildConfigurationList = A93CF6C72BC2A8120077B0A2 /* Build configuration list for PBXProject "Shari" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -409,7 +409,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A93CF6CB2BC2A8120077B0A2 /* Reviewer */,
+				A93CF6CB2BC2A8120077B0A2 /* Shari */,
 			);
 		};
 /* End PBXProject section */
@@ -630,7 +630,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3ZJJVW89MW;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Reviewer/Resources/Info.plist;
+				INFOPLIST_FILE = Shari/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = "";
@@ -642,7 +642,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.horus222128.Reviewer;
+				PRODUCT_BUNDLE_IDENTIFIER = com.horus222128.Shari;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -663,7 +663,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3ZJJVW89MW;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Reviewer/Resources/Info.plist;
+				INFOPLIST_FILE = Shari/Resources/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = "";
@@ -675,7 +675,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.horus222128.Reviewer;
+				PRODUCT_BUNDLE_IDENTIFIER = com.horus222128.Shari;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -690,7 +690,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		A93CF6C72BC2A8120077B0A2 /* Build configuration list for PBXProject "Reviewer" */ = {
+		A93CF6C72BC2A8120077B0A2 /* Build configuration list for PBXProject "Shari" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A93CF6DE2BC2A8150077B0A2 /* Debug */,
@@ -699,7 +699,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A93CF6E02BC2A8150077B0A2 /* Build configuration list for PBXNativeTarget "Reviewer" */ = {
+		A93CF6E02BC2A8150077B0A2 /* Build configuration list for PBXNativeTarget "Shari" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A93CF6E12BC2A8150077B0A2 /* Debug */,

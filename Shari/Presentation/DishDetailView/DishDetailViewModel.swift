@@ -13,8 +13,8 @@ protocol DishDetailViewModel: DishDetailListDataSource {
     var tastesPublisher: AnyPublisher<[String], Never> { get }
     var dishNamePublisher: AnyPublisher<String, Never> { get }
     var thumbnailImageDataPublisher: AnyPublisher<Data?, Never> { get }
-    var tastesCount: Int { get }
     var thumbnailImageData: Data? { get }
+    var tastesCountPublisher: AnyPublisher<Int, Never> { get }
     
     func loadTastes()
     func loadDishName()
@@ -34,7 +34,8 @@ final class DefaultDishDetailViewModel: DishDetailViewModel {
     private let dishNameSubject: CurrentValueSubject<String, Never>
     private(set) var thumbnailImageData: Data?
     private let thumbnailImageDataSubject: CurrentValueSubject<Data?, Never>
-    private(set) var tastesCount: Int
+    private var tastesCount: Int
+    private let tastesCountSubject: CurrentValueSubject<Int, Never>
     
     var tastesPublisher: AnyPublisher<[String], Never> {
         return tastesSubject.eraseToAnyPublisher()
@@ -44,6 +45,9 @@ final class DefaultDishDetailViewModel: DishDetailViewModel {
     }
     var thumbnailImageDataPublisher: AnyPublisher<Data?, Never> {
         return thumbnailImageDataSubject.eraseToAnyPublisher()
+    }
+    var tastesCountPublisher: AnyPublisher<Int, Never> {
+        return tastesCountSubject.eraseToAnyPublisher()
     }
     
     init(repository: ReviewListRepository, restaurantId: String, dish: Dish) {
@@ -56,7 +60,8 @@ final class DefaultDishDetailViewModel: DishDetailViewModel {
         self.dishNameSubject = .init(dish.name)
         self.thumbnailImageData = dish.thumbnailImageData
         self.thumbnailImageDataSubject = .init(dish.thumbnailImageData)
-        self.tastesCount = tastes.count
+        self.tastesCount = dish.tastes.count
+        self.tastesCountSubject = .init(dish.tastes.count)
     }
     
     func loadTastes() {
@@ -80,6 +85,7 @@ final class DefaultDishDetailViewModel: DishDetailViewModel {
             switch result {
             case .success(let tastes):
                 self.tastes = tastes
+                self.tastesCountSubject.send(self.tastes.count)
                 self.tastesSubject.send(self.tastes)
             case .failure(let error):
                 print(error)

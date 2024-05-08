@@ -62,6 +62,7 @@ final class DishDetailViewController: UIViewController {
         subscribe(thumbnailImageDataPublisher: viewModel.thumbnailImageDataPublisher)
         subscribe(tastesPublisher: viewModel.tastesPublisher)
         subscribe(dishNamePublisher: viewModel.dishNamePublisher)
+        subscribe(tastesCountPublisher: viewModel.tastesCountPublisher)
         
         viewModel.loadTastes()
         viewModel.loadDishName()
@@ -101,6 +102,15 @@ final class DishDetailViewController: UIViewController {
                 } else {
                     self?.thumbnailImageView.isHidden = true
                 }
+            }
+            .store(in: &cancellabes)
+    }
+    
+    private func subscribe(tastesCountPublisher: AnyPublisher<Int, Never>) {
+        tastesCountPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] count in
+                self?.dishDetailListTableView.heightAnchor.constraint(greaterThanOrEqualToConstant: CGFloat(count * 64)).isActive = true
             }
             .store(in: &cancellabes)
     }
@@ -208,6 +218,5 @@ extension DishDetailViewController {
         }
         dishDetailListTableView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
         dishDetailListTableView.bottomAnchor.constraint(equalTo: containerView.safeAreaLayoutGuide.bottomAnchor).isActive = true
-        dishDetailListTableView.heightAnchor.constraint(greaterThanOrEqualToConstant: CGFloat(viewModel.tastesCount * 64)).isActive = true
     }
 }
