@@ -49,17 +49,17 @@ final class ViewFlowCoordinator {
         let reviewListViewController = dependencies.makeRestaurantListViewController(actions: .init(showStudioView: showStudioView(id:restaurantName:), showRestaurantDishListView: showRestaurantDishListView(id:restaurantName:)))
         self.restaurantListViewController = reviewListViewController
         
-        let reviewListViewTabBarItem = UITabBarItem(title: "List", image: UIImage(systemName: "list.bullet"), tag: 0)
+        let reviewListViewTabBarItem = UITabBarItem(title: String(localized: "Tab Item Omakase"), image: UIImage(systemName: "list.bullet"), tag: 0)
         
         let glossaryViewcontroller = dependencies.makeGlossaryViewController()
         self.glossaryViewController = glossaryViewcontroller
         
-        let glossaryViewTabBarItem = UITabBarItem(title: "Glossary", image: UIImage(systemName: "book.closed"), tag: 1)
+        let glossaryViewTabBarItem = UITabBarItem(title: String(localized: "Tab Item Glossary"), image: UIImage(systemName: "book.closed"), tag: 1)
         
         let settingsViewController = dependencies.makeSettingsViewController()
         self.settingsViewController = settingsViewController
         
-        let settingsListViewTabBarItem = UITabBarItem(title: "Settings", image: UIImage(systemName: "gear"), tag: 2)
+        let settingsListViewTabBarItem = UITabBarItem(title: String(localized: "Tab Item Settings"), image: UIImage(systemName: "gear"), tag: 2)
         
         restaurantListNavigator = UINavigationController()
         glossaryNavigator = UINavigationController()
