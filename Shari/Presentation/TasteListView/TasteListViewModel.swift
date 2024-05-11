@@ -10,7 +10,7 @@ import Combine
 
 // MARK: - Boilerplate
 protocol TasteListViewModel {
-    var restaurantNamePublisher: AnyPublisher<String, Never> { get }
+    var dishNamePublisher: AnyPublisher<String, Never> { get }
     var tasteCategoriesPublisher: AnyPublisher<[TasteCategory], Never> { get }
     
     func loadTitle()
@@ -25,15 +25,15 @@ final class DefaultTasteListViewModel: TasteListViewModel {
     private let repository: ReviewListRepository
     private let restaurantId: String
     private let restaurantName: String
-    private let restaurantNameSubject: CurrentValueSubject<String, Never>
     private let dishName: String
+    private let dishNameSubject: CurrentValueSubject<String, Never>
     private let thumbnailImageData: Data?
     
     private var tasteCategories: [TasteCategory]
     private let tasteCategoriesSubject: CurrentValueSubject<[TasteCategory], Never>
 
-    var restaurantNamePublisher: AnyPublisher<String, Never> {
-        return restaurantNameSubject.eraseToAnyPublisher()
+    var dishNamePublisher: AnyPublisher<String, Never> {
+        return dishNameSubject.eraseToAnyPublisher()
     }
     var tasteCategoriesPublisher: AnyPublisher<[TasteCategory], Never> {
         return tasteCategoriesSubject.eraseToAnyPublisher()
@@ -45,8 +45,8 @@ final class DefaultTasteListViewModel: TasteListViewModel {
         self.repository = repository
         self.restaurantId = restaurantId
         self.restaurantName = restaurantName
-        self.restaurantNameSubject = .init("")
         self.dishName = dishName
+        self.dishNameSubject = .init(self.dishName)
         self.thumbnailImageData = thumbnailImageData
         self.selectedTastes = []
         self.tasteCategories = Constants.tasteCategories
@@ -54,7 +54,7 @@ final class DefaultTasteListViewModel: TasteListViewModel {
     }
     
     func loadTitle() {
-        restaurantNameSubject.send(restaurantName)
+        dishNameSubject.send(self.dishName)
     }
     
     func loadTasteCategories() {

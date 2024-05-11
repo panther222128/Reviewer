@@ -49,7 +49,11 @@ final class TasteListViewController: UIViewController {
         viewModel.loadTitle()
         
         subscribe(tasteCategoriesPublisherPublisher: viewModel.tasteCategoriesPublisher)
-        subscribe(restaurantNamePublisher: viewModel.restaurantNamePublisher)
+        subscribe(dishNamePublisher: viewModel.dishNamePublisher)
+        
+        if let navigationController {
+            navigationController.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
+        }
     }
     
     static func create(with viewModel: TasteListViewModel) -> TasteListViewController {
@@ -58,8 +62,8 @@ final class TasteListViewController: UIViewController {
         return viewController
     }
     
-    private func subscribe(restaurantNamePublisher: AnyPublisher<String, Never>) {
-        restaurantNamePublisher
+    private func subscribe(dishNamePublisher: AnyPublisher<String, Never>) {
+        dishNamePublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] name in
                 self?.title = name

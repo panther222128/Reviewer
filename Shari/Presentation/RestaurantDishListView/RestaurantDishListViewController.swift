@@ -41,6 +41,10 @@ final class RestaurantDishListViewController: UIViewController {
         
         subscribe(reviewDetailListPublisher: viewModel.listItemsPublisher)
         subscribe(restaurantNamePublisher: viewModel.restaurantNamePublisher)
+        
+        if let navigationController {
+            navigationController.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {

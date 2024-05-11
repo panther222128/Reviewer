@@ -40,6 +40,10 @@ final class RestaurantListViewController: UIViewController {
         subscribe(listItemViewModels: viewModel.listItemViewModelPublisher)
         
         viewModel.loadListItem()
+        
+        if let navigationController {
+            navigationController.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
