@@ -19,6 +19,8 @@ protocol RestaurantListViewModel: RestaurantListDataSource {
     func didAddRestaurant(name: String)
     func didDeleteRestaurant(at indexPath: IndexPath)
     func loadIsDeleteImmediate()
+    func createFile(at indexPath: IndexPath, fileExtension: SupportedFileExtension)
+    func removeFile(at indexPath: IndexPath, fileExtension: SupportedFileExtension)
 }
 
 struct RestaurantListViewModelActions {
@@ -101,6 +103,27 @@ final class DefaultRestaurantListViewModel: RestaurantListViewModel {
                 
             }
         }
+    }
+    
+    func createFile(at indexPath: IndexPath, fileExtension: SupportedFileExtension) {
+        let restaurant = restaurants[indexPath.row]
+        let dishes = restaurant.dishes
+        
+        var contents = """
+        ## \(restaurant.name)
+        """
+        
+        for i in dishes {
+            contents.append("\n")
+            contents.append("\n")
+            contents.append("\(i.name): \(i.tastes)")
+        }
+        
+        repository.createFile(contents: contents, fileName: restaurant.name, fileExtension: fileExtension)
+    }
+    
+    func removeFile(at indexPath: IndexPath, fileExtension: SupportedFileExtension) {
+        repository.removeFile(fileName: restaurants[indexPath.row].name, fileExtension: fileExtension)
     }
     
 }

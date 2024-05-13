@@ -8,11 +8,13 @@
 import Foundation
 
 final class DefaultReviewListRepository: ReviewListRepository {
-    
+
     private let storage: ReviewListStorage
+    private let fileGenerator: FileGenerator
     
-    init(storage: ReviewListStorage) {
+    init(storage: ReviewListStorage, fileGenerator: FileGenerator) {
         self.storage = storage
+        self.fileGenerator = fileGenerator
     }
     
     func saveRestaurant(restairamtId: String, name: String) {
@@ -45,6 +47,14 @@ final class DefaultReviewListRepository: ReviewListRepository {
     
     func fetchTastes(restaurantId: String, dishId: String, completion: @escaping (Result<[String], Error>) -> Void) {
         storage.fetchTastes(restaurantId: restaurantId, dishId: dishId, completion: completion)
+    }
+    
+    func createFile(contents: String, fileName: String, fileExtension: SupportedFileExtension) {
+        fileGenerator.createFile(contents: contents, fileName: fileName, fileExtension: fileExtension)
+    }
+    
+    func removeFile(fileName: String, fileExtension: SupportedFileExtension) {
+        fileGenerator.removeFile(fileName: fileName, fileExtension: fileExtension)
     }
     
 }

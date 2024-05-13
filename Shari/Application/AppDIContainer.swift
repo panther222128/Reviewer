@@ -11,8 +11,13 @@ final class AppDIContainer {
     
     lazy var appConfiguration = AppConfiguration()
     
+    lazy var fileGenerator: FileGenerator = {
+        let fileGenerator: FileGenerator = DefaultFileGenerator()
+        return fileGenerator
+    }()
+    
     func makeSceneDIContainer() -> SceneDIContainer {
-        let dependencies: SceneDIContainer.Dependencies = .init()
+        let dependencies: SceneDIContainer.Dependencies = .init(fileGenerator: fileGenerator)
         return SceneDIContainer(dependencies: dependencies)
     }
     

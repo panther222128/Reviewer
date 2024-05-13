@@ -16,6 +16,7 @@ protocol RestaurantListDelegate: AnyObject {
     func heightForRowAt() -> CGFloat
     func didSelectItem(at indexPath: IndexPath)
     func didTrailingSwipeForRow(at indexPath: IndexPath, tableView: UITableView) -> UISwipeActionsConfiguration
+    func didLoadContextMenu(at indexPath: IndexPath) -> UIContextMenuConfiguration?
 }
 
 final class RestaurantListAdapter: NSObject {
@@ -83,6 +84,15 @@ extension RestaurantListAdapter: UITableViewDelegate {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         if let delegate {
             return delegate.didTrailingSwipeForRow(at: indexPath, tableView: tableView)
+        } else {
+            print("Cannot find delegate.")
+            return nil
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        if let delegate {
+            return delegate.didLoadContextMenu(at: indexPath)
         } else {
             print("Cannot find delegate.")
             return nil

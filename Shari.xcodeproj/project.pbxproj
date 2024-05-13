@@ -24,6 +24,7 @@
 		A93CF6F02BC2A94C0077B0A2 /* SceneDIContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93CF6EF2BC2A94C0077B0A2 /* SceneDIContainer.swift */; };
 		A93CF6F22BC2A96E0077B0A2 /* ViewFlowCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93CF6F12BC2A96E0077B0A2 /* ViewFlowCoordinator.swift */; };
 		A93CF6F42BC2AA030077B0A2 /* AppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93CF6F32BC2AA030077B0A2 /* AppConfiguration.swift */; };
+		A96C08DD2BF229EE00E83A44 /* FileGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A96C08DC2BF229EE00E83A44 /* FileGenerator.swift */; };
 		A971F2422BDD238B00ABC8C8 /* GlossaryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A971F2412BDD238B00ABC8C8 /* GlossaryViewController.swift */; };
 		A971F2442BDD23C800ABC8C8 /* GlossaryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A971F2432BDD23C800ABC8C8 /* GlossaryViewModel.swift */; };
 		A971F2462BDD31B100ABC8C8 /* GlossaryListAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A971F2452BDD31B100ABC8C8 /* GlossaryListAdapter.swift */; };
@@ -87,6 +88,7 @@
 		A93CF6EF2BC2A94C0077B0A2 /* SceneDIContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDIContainer.swift; sourceTree = "<group>"; };
 		A93CF6F12BC2A96E0077B0A2 /* ViewFlowCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewFlowCoordinator.swift; sourceTree = "<group>"; };
 		A93CF6F32BC2AA030077B0A2 /* AppConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfiguration.swift; sourceTree = "<group>"; };
+		A96C08DC2BF229EE00E83A44 /* FileGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileGenerator.swift; sourceTree = "<group>"; };
 		A971F2412BDD238B00ABC8C8 /* GlossaryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlossaryViewController.swift; sourceTree = "<group>"; };
 		A971F2432BDD23C800ABC8C8 /* GlossaryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlossaryViewModel.swift; sourceTree = "<group>"; };
 		A971F2452BDD31B100ABC8C8 /* GlossaryListAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlossaryListAdapter.swift; sourceTree = "<group>"; };
@@ -173,6 +175,7 @@
 		A93CF6CE2BC2A8120077B0A2 /* Shari */ = {
 			isa = PBXGroup;
 			children = (
+				A96C08DB2BF2292200E83A44 /* Infrastructure */,
 				A97DAB8B2BCB84A7000867D9 /* Data */,
 				A9896EFF2BC8CB2300BC79E3 /* Constants.swift */,
 				A9E86E412BC68ABF00576877 /* Domain */,
@@ -235,6 +238,14 @@
 				A9E86E302BC64C0D00576877 /* RestaurantListItemViewModel.swift */,
 			);
 			path = RestaurantListView;
+			sourceTree = "<group>";
+		};
+		A96C08DB2BF2292200E83A44 /* Infrastructure */ = {
+			isa = PBXGroup;
+			children = (
+				A96C08DC2BF229EE00E83A44 /* FileGenerator.swift */,
+			);
+			path = Infrastructure;
 			sourceTree = "<group>";
 		};
 		A971F2402BDD237B00ABC8C8 /* GlossaryViewController */ = {
@@ -457,6 +468,7 @@
 				A97DABC52BCBBA24000867D9 /* DishEntity.swift in Sources */,
 				A9E86E342BC64D5D00576877 /* Date+FormattedString.swift in Sources */,
 				A9A672442BDDD1D50008AC9F /* GlossaryListItemViewModel.swift in Sources */,
+				A96C08DD2BF229EE00E83A44 /* FileGenerator.swift in Sources */,
 				A9896F002BC8CB2300BC79E3 /* Constants.swift in Sources */,
 				A9E86E3E2BC6737700576877 /* Studio.swift in Sources */,
 				A9C89D052BD25B0D00E386D0 /* SettingsViewModel.swift in Sources */,

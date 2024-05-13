@@ -142,6 +142,16 @@ extension RestaurantListViewController: RestaurantListDelegate {
         
         present(alert, animated: true)
     }
+    
+    func didLoadContextMenu(at indexPath: IndexPath) -> UIContextMenuConfiguration? {
+        let shareAction = UIAction(title: "공유하기") { _ in
+            let activityViewController = UIActivityViewController(activityItems: [], applicationActivities: nil)
+            self.present(activityViewController, animated: true)
+        }
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { suggestedActions in
+            return UIMenu(children: [shareAction])
+        })
+    }
 }
 
 extension RestaurantListViewController {

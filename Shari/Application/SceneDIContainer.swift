@@ -10,7 +10,7 @@ import UIKit
 final class SceneDIContainer: ViewFlowCoordinatorDependencies {
     
     struct Dependencies {
-        
+        let fileGenerator: FileGenerator
     }
     
     private let dependencies: Dependencies
@@ -27,7 +27,7 @@ final class SceneDIContainer: ViewFlowCoordinatorDependencies {
     }
     
     func makeReviewListRepository() -> ReviewListRepository {
-        return DefaultReviewListRepository(storage: reviewListStorage)
+        return DefaultReviewListRepository(storage: reviewListStorage, fileGenerator: dependencies.fileGenerator)
     }
     
     func makeSettingsRepository() -> SettingsRepository {
