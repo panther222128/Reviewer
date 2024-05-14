@@ -142,6 +142,34 @@ extension RestaurantListViewController: RestaurantListDelegate {
         
         present(alert, animated: true)
     }
+    
+    func didLoadContextMenu(at indexPath: IndexPath) -> UIContextMenuConfiguration? {
+        let shareAction = UIAction(title: "공유하기") { _ in
+            if let documentsUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
+                self.viewModel.createFile(at: indexPath, url: documentsUrl, fileExtension: .markdown)
+                if let fileUrl = self.viewModel.fileUrl {
+                    let activityViewController = UIActivityViewController(activityItems: [fileUrl], applicationActivities: nil)
+                    activityViewController.excludedActivityTypes = [.addToHomeScreen, .addToReadingList, .assignToContact, .collaborationCopyLink, .collaborationInviteWithLink, .copyToPasteboard, .mail, .markupAsPDF, .message, .openInIBooks, .postToFacebook, .postToFlickr, .postToTencentWeibo, .postToTwitter, .postToVimeo, .postToWeibo, .print, .saveToCameraRoll, .sharePlay]
+                    activityViewController.completionWithItemsHandler = { activityType, completed, returedItems, error in
+                        if completed {
+                            print("Completed.")
+                            self.viewModel.removeFile()
+                        } else {
+                            print("File sharing failed.")
+                        }
+                    }
+                    self.present(activityViewController, animated: true)
+                } else {
+                    print("Cannot find file url.")
+                }
+            } else {
+                
+            }
+        }
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { suggestedActions in
+            return UIMenu(children: [shareAction])
+        })
+    }
 }
 
 extension RestaurantListViewController {

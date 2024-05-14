@@ -8,9 +8,15 @@
 import Foundation
 import Combine
 
+enum SupportedFileExtension: String {
+    case markdown = ".md"
+    case csv = ".csv"
+}
+
 // MARK: - Boilerplate
 protocol RestaurantListViewModel: RestaurantListDataSource {
     var isDeleteImmediate: Bool { get }
+    var fileUrl: URL? { get }
     var listItemViewModelPublisher: AnyPublisher<[RestaurantListItemViewModel], Never> { get }
     
     func loadListItem()
@@ -19,6 +25,8 @@ protocol RestaurantListViewModel: RestaurantListDataSource {
     func didAddRestaurant(name: String)
     func didDeleteRestaurant(at indexPath: IndexPath)
     func loadIsDeleteImmediate()
+    func createFile(at indexPath: IndexPath, url: URL, fileExtension: SupportedFileExtension)
+    func removeFile()
 }
 
 struct RestaurantListViewModelActions {
@@ -34,6 +42,7 @@ final class DefaultRestaurantListViewModel: RestaurantListViewModel {
     private var restaurants: [Restaurant]
     private var restaurantId: String
     private(set) var isDeleteImmediate: Bool
+    private(set) var fileUrl: URL?
     private var listItemViewModels: [RestaurantListItemViewModel]
     private var listItemViewModelSubject: CurrentValueSubject<[RestaurantListItemViewModel], Never>
     var listItemViewModelPublisher: AnyPublisher<[RestaurantListItemViewModel], Never> {
@@ -46,6 +55,7 @@ final class DefaultRestaurantListViewModel: RestaurantListViewModel {
         self.actions = actions
         self.restaurants = []
         self.restaurantId = ""
+        self.fileUrl = nil
         self.isDeleteImmediate = false
         self.listItemViewModels = []
         self.listItemViewModelSubject = .init([])
@@ -100,6 +110,35 @@ final class DefaultRestaurantListViewModel: RestaurantListViewModel {
                 return
                 
             }
+        }
+    }
+    
+    func createFile(at indexPath: IndexPath, url: URL, fileExtension: SupportedFileExtension) {
+        let restaurant = restaurants[indexPath.row]
+        let dishes = restaurant.dishes
+        
+        var contents = """
+        ## \(restaurant.name)
+        """
+        
+        for i in dishes {
+            contents.append("\n")
+            contents.append("\n")
+            contents.append("\(i.name): \(i.tastes)")
+        }
+        fileUrl = url.appendingPathComponent(restaurant.date.formatYearMonthDateWithoutPoint() + restaurant.name + fileExtension.rawValue)
+        if let fileUrl {
+            repository.createFile(contents: contents, url: fileUrl)
+        } else {
+            print("Cannot file file url.")
+        }
+    }
+    
+    func removeFile() {
+        if let fileUrl {
+            repository.removeFile(url: fileUrl)
+        } else {
+            print("Cannot file file url.")
         }
     }
     
