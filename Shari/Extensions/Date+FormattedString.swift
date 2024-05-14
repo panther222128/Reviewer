@@ -14,4 +14,11 @@ extension Date {
         formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
         return formatter.string(from: self)
     }
+    
+    func formatYearMonthDateWithoutPoint() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyyMMdd"
+        formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
+        return formatter.string(from: self)
+    }
 }

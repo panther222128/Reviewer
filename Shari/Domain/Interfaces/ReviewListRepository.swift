@@ -16,6 +16,6 @@ protocol ReviewListRepository {
     func save(restaurantId: String, dish: Dish)
     func fetchDishes(restaurantId id: String, completion: @escaping (Result<[Dish], Error>) -> Void)
     func fetchTastes(restaurantId: String, dishId: String, completion: @escaping (Result<[String], Error>) -> Void)
-    func createFile(contents: String, fileName: String, fileExtension: SupportedFileExtension)
-    func removeFile(fileName: String, fileExtension: SupportedFileExtension)
+    func createFile(contents: String, url: URL)
+    func removeFile(url: URL)
 }

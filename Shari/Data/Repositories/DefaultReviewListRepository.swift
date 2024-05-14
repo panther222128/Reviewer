@@ -49,12 +49,12 @@ final class DefaultReviewListRepository: ReviewListRepository {
         storage.fetchTastes(restaurantId: restaurantId, dishId: dishId, completion: completion)
     }
     
-    func createFile(contents: String, fileName: String, fileExtension: SupportedFileExtension) {
-        fileGenerator.createFile(contents: contents, fileName: fileName, fileExtension: fileExtension)
+    func createFile(contents: String, url: URL) {
+        fileGenerator.createFile(contents: contents, url: url)
     }
     
-    func removeFile(fileName: String, fileExtension: SupportedFileExtension) {
-        fileGenerator.removeFile(fileName: fileName, fileExtension: fileExtension)
+    func removeFile(url: URL) {
+        fileGenerator.removeFile(url: url)
     }
     
 }
