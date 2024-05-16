@@ -159,7 +159,7 @@ extension RestaurantListViewController: RestaurantListDelegate {
                     activityViewController.completionWithItemsHandler = { activityType, completed, returedItems, error in
                         if completed {
                             print("Completed.")
-                            self.viewModel.removeFile()
+                            self.viewModel.removeFiles()
                         } else {
                             print("File sharing failed.")
                         }
