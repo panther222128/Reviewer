@@ -17,6 +17,7 @@ enum SupportedFileExtension: String {
 protocol RestaurantListViewModel: RestaurantListDataSource {
     var isDeleteImmediate: Bool { get }
     var fileUrl: URL? { get }
+    var createdUrls: [URL] { get }
     var listItemViewModelPublisher: AnyPublisher<[RestaurantListItemViewModel], Never> { get }
     
     func loadListItem()
@@ -26,7 +27,7 @@ protocol RestaurantListViewModel: RestaurantListDataSource {
     func didDeleteRestaurant(at indexPath: IndexPath)
     func loadIsDeleteImmediate()
     func createFile(at indexPath: IndexPath, url: URL, fileExtension: SupportedFileExtension)
-    func removeFile()
+    func removeFiles()
 }
 
 struct RestaurantListViewModelActions {
@@ -43,6 +44,7 @@ final class DefaultRestaurantListViewModel: RestaurantListViewModel {
     private var restaurantId: String
     private(set) var isDeleteImmediate: Bool
     private(set) var fileUrl: URL?
+    private(set) var createdUrls: [URL]
     private var listItemViewModels: [RestaurantListItemViewModel]
     private var listItemViewModelSubject: CurrentValueSubject<[RestaurantListItemViewModel], Never>
     var listItemViewModelPublisher: AnyPublisher<[RestaurantListItemViewModel], Never> {
@@ -56,6 +58,7 @@ final class DefaultRestaurantListViewModel: RestaurantListViewModel {
         self.restaurants = []
         self.restaurantId = ""
         self.fileUrl = nil
+        self.createdUrls = []
         self.isDeleteImmediate = false
         self.listItemViewModels = []
         self.listItemViewModelSubject = .init([])
@@ -128,18 +131,15 @@ final class DefaultRestaurantListViewModel: RestaurantListViewModel {
         }
         fileUrl = url.appendingPathComponent(restaurant.date.formatYearMonthDateWithoutPoint() + restaurant.name + fileExtension.rawValue)
         if let fileUrl {
+            createdUrls.append(fileUrl)
             repository.createFile(contents: contents, url: fileUrl)
         } else {
-            print("Cannot file file url.")
+            print("Cannot find file url.")
         }
     }
     
-    func removeFile() {
-        if let fileUrl {
-            repository.removeFile(url: fileUrl)
-        } else {
-            print("Cannot file file url.")
-        }
+    func removeFiles() {
+        createdUrls.forEach { repository.removeFile(url: $0) }
     }
     
 }

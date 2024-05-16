@@ -53,6 +53,12 @@ final class RestaurantListViewController: UIViewController {
         viewModel.loadIsDeleteImmediate()
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        viewModel.removeFiles()
+    }
+    
     static func create(with viewModel: RestaurantListViewModel) -> RestaurantListViewController {
         let viewController = RestaurantListViewController()
         viewController.viewModel = viewModel
@@ -163,7 +169,7 @@ extension RestaurantListViewController: RestaurantListDelegate {
                     print("Cannot find file url.")
                 }
             } else {
-                
+                print("Documents url error.")
             }
         }
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil, actionProvider: { suggestedActions in
