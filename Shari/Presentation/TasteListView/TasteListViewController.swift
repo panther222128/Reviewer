@@ -124,80 +124,17 @@ extension TasteListViewController {
     private func addListBarButtonItem() {
         let barButtonItem = UIBarButtonItem(image: UIImage(systemName: "list.bullet"), style: .plain, target: self, action: nil)
         
-        let menuButton = UIMenu(title: "카테고리", children: [
-            UIAction(title: Constants.tasteCategories[0].title, handler: { _ in
-                let position = self.generateScrollPosition(at: 0)
-                self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
-            }),
-            UIAction(title: Constants.tasteCategories[1].title, handler: { _ in
-                let position = self.generateScrollPosition(at: 1)
-                self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
-            }),
-            UIAction(title: Constants.tasteCategories[2].title, handler: { _ in
-                let position = self.generateScrollPosition(at: 2)
-                self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
-            }),
-            UIAction(title: Constants.tasteCategories[3].title, handler: { _ in
-                let position = self.generateScrollPosition(at: 3)
-                self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
-            }),
-            UIAction(title: Constants.tasteCategories[4].title, handler: { _ in
-                let position = self.generateScrollPosition(at: 4)
-                self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
-            }),
-            UIAction(title: Constants.tasteCategories[5].title, handler: { _ in
-                let position = self.generateScrollPosition(at: 5)
-                self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
-            }),
-            UIAction(title: Constants.tasteCategories[6].title, handler: { _ in
-                let position = self.generateScrollPosition(at: 6)
-                self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
-            }),
-            UIAction(title: Constants.tasteCategories[7].title, handler: { _ in
-                let position = self.generateScrollPosition(at: 7)
-                self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
-            }),
-            UIAction(title: Constants.tasteCategories[8].title, handler: { _ in
-                let position = self.generateScrollPosition(at: 8)
-                self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
-            }),
-            UIAction(title: Constants.tasteCategories[9].title, handler: { _ in
-                let position = self.generateScrollPosition(at: 9)
-                self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
-            }),
-            UIAction(title: Constants.tasteCategories[10].title, handler: { _ in
-                let position = self.generateScrollPosition(at: 10)
-                self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
-            }),
-            UIAction(title: Constants.tasteCategories[11].title, handler: { _ in
-                let position = self.generateScrollPosition(at: 11)
-                self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
-            }),
-            UIAction(title: Constants.tasteCategories[12].title, handler: { _ in
-                let position = self.generateScrollPosition(at: 12)
-                self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
-            }),
-            UIAction(title: Constants.tasteCategories[13].title, handler: { _ in
-                let position = self.generateScrollPosition(at: 13)
-                self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
-            }),
-            UIAction(title: Constants.tasteCategories[14].title, handler: { _ in
-                let position = self.generateScrollPosition(at: 14)
-                self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
-            }),
-            UIAction(title: Constants.tasteCategories[15].title, handler: { _ in
-                let position = self.generateScrollPosition(at: 15)
-                self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
-            }),
-            UIAction(title: Constants.tasteCategories[16].title, handler: { _ in
-                let position = self.generateScrollPosition(at: 16)
-                self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
-            }),
-            UIAction(title: Constants.tasteCategories[17].title, handler: { _ in
-                let position = self.generateScrollPosition(at: 17)
-                self.containerScrollView.setContentOffset(.init(x: 0, y: position), animated: true)
+        var actions: [UIAction] = []
+        
+        for i in 0..<Constants.tasteCategories.count {
+            let action = UIAction(title: Constants.tasteCategories[i].title, handler: { _ in
+                let position = self.generateScrollPosition(at: i)
+                self.containerScrollView.setContentOffset(.init(x: i, y: position), animated: true)
             })
-        ])
+            actions.append(action)
+        }
+        
+        let menuButton = UIMenu(title: "카테고리", children: actions)
         
         barButtonItem.menu = menuButton
         
