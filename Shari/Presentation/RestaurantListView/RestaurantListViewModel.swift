@@ -20,7 +20,7 @@ protocol RestaurantListViewModel: RestaurantListDataSource {
     var createdUrls: [URL] { get }
     var listItemViewModelPublisher: AnyPublisher<[RestaurantListItemViewModel], Never> { get }
     
-    func loadListItem()
+    func loadListItem() async throws
     func didConfirm(restaurantName: String)
     func didSelectItem(at indexPath: IndexPath)
     func didAddRestaurant(name: String)
@@ -64,23 +64,11 @@ final class DefaultRestaurantListViewModel: RestaurantListViewModel {
         self.listItemViewModelSubject = .init([])
     }
     
-    func loadListItem() {
-        repository.fetchRestaurants { [weak self] result in
-            switch result {
-            case .success(let restaurants):
-                if let self = self {
-                    self.restaurants = restaurants.sorted(by: { $0.date < $1.date } )
-                    self.listItemViewModels = self.restaurants.map { .init(restaurantName: $0.name, date: $0.date) }
-                    self.listItemViewModelSubject.send(self.listItemViewModels)
-                } else {
-                    print("Cannot find view model.")
-                }
-                
-            case .failure(let error):
-                print(error)
-                
-            }
-        }
+    func loadListItem() async throws {
+        let restaurants = try await repository.fetchRestaurants()
+        self.restaurants = restaurants.sorted(by: { $0.date < $1.date } )
+        self.listItemViewModels = self.restaurants.map { .init(restaurantName: $0.name, date: $0.date) }
+        self.listItemViewModelSubject.send(self.listItemViewModels)
     }
     
     func didConfirm(restaurantName: String) {

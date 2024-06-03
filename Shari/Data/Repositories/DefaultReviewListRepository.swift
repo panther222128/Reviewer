@@ -25,19 +25,10 @@ final class DefaultReviewListRepository: ReviewListRepository {
         storage.addTaste(restaurantId: restaurantId, dishId: dishId, taste: taste)
     }
     
-    func fetchRestaurants(completion: @escaping (Result<[Restaurant], Error>) -> Void) {
-        storage.fetchRestaurants { result in
-            switch result {
-            case .success(let entity):
-                let domain = entity.map { $0.toDomain() }
-                completion(.success(domain))
-                
-            case .failure(let error):
-                completion(.failure(error))
-                
-            }
-            
-        }
+    func fetchRestaurants() async throws -> [Restaurant] {
+        let data = try await storage.fetchRestaurants()
+        let domain = data.map { $0.toDomain() }
+        return domain
     }
     
     func deleteRestaurant(restaurantId: String) {
@@ -52,23 +43,15 @@ final class DefaultReviewListRepository: ReviewListRepository {
         storage.saveDish(restaurantId: restaurantId, dish: dish)
     }
     
-    func fetchDishes(restaurantId: String, completion: @escaping (Result<[Dish], Error>) -> Void) {
-        storage.fetchDishes(restaurantId: restaurantId) { result in
-            switch result {
-            case .success(let entity):
-                let domain = entity.map { $0.toDomain() }
-                completion(.success(domain))
-                
-            case .failure(let error):
-                completion(.failure(error))
-                
-            }
-            
-        }
+    func fetchDishes(restaurantId: String) async throws -> [Dish] {
+        let data = try await storage.fetchDishes(restaurantId: restaurantId)
+        let domain = data.map { $0.toDomain() }
+        return domain
     }
     
-    func fetchTastes(restaurantId: String, dishId: String, completion: @escaping (Result<[String], Error>) -> Void) {
-        storage.fetchTastes(restaurantId: restaurantId, dishId: dishId, completion: completion)
+    func fetchTastes(restaurantId: String, dishId: String) async throws -> [String] {
+        let data = try await storage.fetchTastes(restaurantId: restaurantId, dishId: dishId)
+        return data
     }
     
     func createFile(contents: String, url: URL) {

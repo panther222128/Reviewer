@@ -19,7 +19,7 @@ protocol DishDetailViewModel: DishDetailListDataSource {
     func loadTastes()
     func loadDishName()
     func add(taste: String)
-    func didLoadTastes()
+    func didLoadTastes() async throws
     func loadThumbnailImage()
 }
 
@@ -80,18 +80,11 @@ final class DefaultDishDetailViewModel: DishDetailViewModel {
         repository.addTaste(restaurantId: restaurantId, dishId: dishId, taste: taste)
     }
     
-    func didLoadTastes() {
-        repository.fetchTastes(restaurantId: restaurantId, dishId: dishId) { result in
-            switch result {
-            case .success(let tastes):
-                self.tastes = tastes
-                self.tastesCountSubject.send(self.tastes.count)
-                self.tastesSubject.send(self.tastes)
-            case .failure(let error):
-                print(error)
-                
-            }
-        }
+    func didLoadTastes() async throws {
+        let tastes = try await repository.fetchTastes(restaurantId: restaurantId, dishId: dishId)
+        self.tastes = tastes
+        self.tastesCountSubject.send(self.tastes.count)
+        self.tastesSubject.send(self.tastes)
     }
     
 }

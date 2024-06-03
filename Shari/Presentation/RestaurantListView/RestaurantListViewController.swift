@@ -39,7 +39,9 @@ final class RestaurantListViewController: UIViewController {
         
         subscribe(listItemViewModels: viewModel.listItemViewModelPublisher)
         
-        viewModel.loadListItem()
+        Task {
+            try await viewModel.loadListItem()
+        }
         
         if let navigationController {
             navigationController.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
@@ -95,7 +97,9 @@ extension RestaurantListViewController {
                     if let text = textField.text, !text.isEmpty {
                         self.viewModel.didAddRestaurant(name: text)
                         self.viewModel.didConfirm(restaurantName: text)
-                        self.viewModel.loadListItem()
+                        Task {
+                            try await self.viewModel.loadListItem()
+                        }
                     } else {
                         print("Text must not be empty.")
                     }
@@ -123,7 +127,9 @@ extension RestaurantListViewController: RestaurantListDelegate {
         let deleteAction = UIContextualAction(style: .destructive, title: "삭제") { action, view, completion in
             if self.viewModel.isDeleteImmediate {
                 self.viewModel.didDeleteRestaurant(at: indexPath)
-                self.viewModel.loadListItem()
+                Task {
+                    try await self.viewModel.loadListItem()
+                }
             } else {
                 self.presentDeleteAlert(at: indexPath)
             }
@@ -141,7 +147,9 @@ extension RestaurantListViewController: RestaurantListDelegate {
         let cancelAction = UIAlertAction(title: "취소", style: .cancel)
         let deleteAction = UIAlertAction(title: "삭제", style: .destructive) { _ in
             self.viewModel.didDeleteRestaurant(at: indexPath)
-            self.viewModel.loadListItem()
+            Task {
+                try await self.viewModel.loadListItem()
+            }
         }
         alert.addAction(cancelAction)
         alert.addAction(deleteAction)

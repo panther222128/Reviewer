@@ -50,7 +50,9 @@ final class RestaurantDishListViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         viewModel.loadTitle()
-        viewModel.loadDishes()
+        Task {
+            try await viewModel.loadDishes()
+        }
         viewModel.loadIsDeleteImmediate()
     }
     
@@ -152,7 +154,9 @@ extension RestaurantDishListViewController: RestaurantDishListDelegate {
         let deleteAction = UIContextualAction(style: .destructive, title: "삭제") { action, view, completion in
             if self.viewModel.isDeleteImmediate {
                 self.viewModel.didDeleteDish(at: indexPath)
-                self.viewModel.loadDishes()
+                Task {
+                    try await self.viewModel.loadDishes()
+                }
             } else {
                 self.presentDeleteAlert(at: indexPath)
             }
@@ -170,7 +174,9 @@ extension RestaurantDishListViewController: RestaurantDishListDelegate {
         let cancelAction = UIAlertAction(title: "취소", style: .cancel)
         let deleteAction = UIAlertAction(title: "삭제", style: .destructive) { _ in
             self.viewModel.didDeleteDish(at: indexPath)
-            self.viewModel.loadDishes()
+            Task {
+                try await self.viewModel.loadDishes()
+            }
         }
         alert.addAction(cancelAction)
         alert.addAction(deleteAction)

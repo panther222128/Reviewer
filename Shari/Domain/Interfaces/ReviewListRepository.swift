@@ -10,12 +10,12 @@ import Foundation
 protocol ReviewListRepository {
     func saveRestaurant(restairamtId: String, name: String)
     func addTaste(restaurantId: String, dishId: String, taste: String)
-    func fetchRestaurants(completion: @escaping (Result<[Restaurant], Error>) -> Void)
+    func fetchRestaurants() async throws -> [Restaurant]
     func deleteRestaurant(restaurantId: String)
     func deleteDish(restaurantId: String, dishId: String)
     func save(restaurantId: String, dish: Dish)
-    func fetchDishes(restaurantId id: String, completion: @escaping (Result<[Dish], Error>) -> Void)
-    func fetchTastes(restaurantId: String, dishId: String, completion: @escaping (Result<[String], Error>) -> Void)
+    func fetchDishes(restaurantId id: String) async throws -> [Dish]
+    func fetchTastes(restaurantId: String, dishId: String) async throws -> [String]
     func createFile(contents: String, url: URL)
     func removeFile(url: URL)
 }

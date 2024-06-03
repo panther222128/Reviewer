@@ -139,7 +139,9 @@ extension DishDetailViewController {
                 if let textField = textFields.first {
                     if let text = textField.text, !text.isEmpty {
                         self.viewModel.add(taste: text)
-                        self.viewModel.didLoadTastes()
+                        Task {
+                            try await self.viewModel.didLoadTastes()
+                        }
                     } else {
                         print("Text must not be empty.")
                     }

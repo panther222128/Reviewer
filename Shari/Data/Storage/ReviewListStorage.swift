@@ -11,16 +11,18 @@ import SwiftData
 enum ReviewListStorageError: Error {
     case cannotFindRestaurants
     case cannotFindRestaurant
+    case cannotFindContext
+    case cannotFindDish
 }
 
 protocol ReviewListStorage {
     func saveRestaurant(restaurantId: String, name: String)
-    func fetchRestaurants(completion: @escaping (Result<[RestaurantEntity], Error>) -> Void)
+    func fetchRestaurants() async throws -> [RestaurantEntity]
     func deleteRestaurant(restaurantId: String)
     func deleteDish(restaurantId: String, dishId: String)
     func saveDish(restaurantId: String, dish: Dish)
-    func fetchDishes(restaurantId: String, completion: @escaping (Result<[DishEntity], Error>) -> Void)
-    func fetchTastes(restaurantId: String, dishId: String, completion: @escaping (Result<[String], Error>) -> Void)
+    func fetchDishes(restaurantId: String) async throws -> [DishEntity]
+    func fetchTastes(restaurantId: String, dishId: String) async throws -> [String]
     func addTaste(restaurantId: String, dishId: String, taste: String)
 }
 
@@ -51,15 +53,17 @@ final class DefaultReviewListStorage: ReviewListStorage {
         }
     }
     
-    func fetchRestaurants(completion: @escaping (Result<[RestaurantEntity], Error>) -> Void) {
+    func fetchRestaurants() async throws -> [RestaurantEntity] {
         let descriptor = FetchDescriptor<RestaurantEntity>(sortBy: [SortDescriptor<RestaurantEntity>(\.date)])
         if let context {
             do {
                 let data = try context.fetch(descriptor)
-                completion(.success(data))
+                return data
             } catch {
-                completion(.failure(error))
+                throw ReviewListStorageError.cannotFindRestaurants
             }
+        } else {
+            throw ReviewListStorageError.cannotFindContext
         }
     }
     
@@ -104,27 +108,26 @@ final class DefaultReviewListStorage: ReviewListStorage {
         }
     }
     
-    func fetchDishes(restaurantId: String, completion: @escaping (Result<[DishEntity], Error>) -> Void) {
+    func fetchDishes(restaurantId: String) async throws -> [DishEntity] {
         if let restaurant = fetchRestaurant(restaurantId: restaurantId) {
             let dishes = restaurant.dishes
-            completion(.success(dishes))
+            return dishes
         } else {
-            print("Cannot find restaurant.")
-            completion(.failure(ReviewListStorageError.cannotFindRestaurants))
+            throw ReviewListStorageError.cannotFindRestaurant
         }
     }
     
-    func fetchTastes(restaurantId: String, dishId: String, completion: @escaping (Result<[String], Error>) -> Void) {
+    func fetchTastes(restaurantId: String, dishId: String) async throws -> [String] {
         if let restaurant = fetchRestaurant(restaurantId: restaurantId) {
             let dishes = restaurant.dishes
             let filteredDishes = dishes.filter { $0.id == dishId }
             if let first = filteredDishes.first {
-                completion(.success(first.tastes))
+                return first.tastes
             } else {
-                completion(.failure(ReviewListStorageError.cannotFindRestaurant))
+                throw ReviewListStorageError.cannotFindDish
             }
         } else {
-            completion(.failure(ReviewListStorageError.cannotFindRestaurants))
+            throw ReviewListStorageError.cannotFindRestaurant
         }
     }
     

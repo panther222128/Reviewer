@@ -15,7 +15,7 @@ protocol RestaurantDishListViewModel: RestaurantDishListDataSource {
     var restaurantNamePublisher: AnyPublisher<String, Never> { get }
     
     func loadTitle()
-    func loadDishes()
+    func loadDishes() async throws
     func didSelectRow(at indexPath: IndexPath)
     func didDeleteDish(at indexPath: IndexPath)
     func didLoadStudio()
@@ -66,21 +66,11 @@ final class DefaultRestaurantDishListViewModel: RestaurantDishListViewModel {
         restaurantNameSubject.send(restaurantName)
     }
     
-    func loadDishes() {
-        repository.fetchDishes(restaurantId: restaurantId) { [weak self] result in
-            switch result {
-            case .success(let dishes):
-                if let self = self {
-                    self.dishes = dishes.sorted(by: { $0.date < $1.date } )
-                    self.listItems = self.dishes.map { .init(name: $0.name) }
-                    self.listItemsSubject.send(self.listItems)
-                } else {
-                    print("View model is empty.")
-                }
-            case .failure(let error):
-                print(error)
-            }
-        }
+    func loadDishes() async throws {
+        let dishes = try await repository.fetchDishes(restaurantId: restaurantId)
+        self.dishes = dishes.sorted(by: { $0.date < $1.date } )
+        self.listItems = self.dishes.map { .init(name: $0.name) }
+        self.listItemsSubject.send(self.listItems)
     }
     
     func didSelectRow(at indexPath: IndexPath) {
