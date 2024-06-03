@@ -15,11 +15,11 @@ enum ReviewListStorageError: Error {
 
 protocol ReviewListStorage {
     func saveRestaurant(restaurantId: String, name: String)
-    func fetchRestaurants(completion: @escaping (Result<[Restaurant], Error>) -> Void)
+    func fetchRestaurants(completion: @escaping (Result<[RestaurantEntity], Error>) -> Void)
     func deleteRestaurant(restaurantId: String)
     func deleteDish(restaurantId: String, dishId: String)
     func saveDish(restaurantId: String, dish: Dish)
-    func fetchDishes(restaurantId: String, completion: @escaping (Result<[Dish], Error>) -> Void)
+    func fetchDishes(restaurantId: String, completion: @escaping (Result<[DishEntity], Error>) -> Void)
     func fetchTastes(restaurantId: String, dishId: String, completion: @escaping (Result<[String], Error>) -> Void)
     func addTaste(restaurantId: String, dishId: String, taste: String)
 }
@@ -51,13 +51,12 @@ final class DefaultReviewListStorage: ReviewListStorage {
         }
     }
     
-    func fetchRestaurants(completion: @escaping (Result<[Restaurant], Error>) -> Void) {
+    func fetchRestaurants(completion: @escaping (Result<[RestaurantEntity], Error>) -> Void) {
         let descriptor = FetchDescriptor<RestaurantEntity>(sortBy: [SortDescriptor<RestaurantEntity>(\.date)])
         if let context {
             do {
                 let data = try context.fetch(descriptor)
-                let domain = data.map { $0.toDomain() }
-                completion(.success(domain))
+                completion(.success(data))
             } catch {
                 completion(.failure(error))
             }
@@ -105,11 +104,10 @@ final class DefaultReviewListStorage: ReviewListStorage {
         }
     }
     
-    func fetchDishes(restaurantId: String, completion: @escaping (Result<[Dish], Error>) -> Void) {
+    func fetchDishes(restaurantId: String, completion: @escaping (Result<[DishEntity], Error>) -> Void) {
         if let restaurant = fetchRestaurant(restaurantId: restaurantId) {
             let dishes = restaurant.dishes
-            let domain = dishes.map { $0.toDomain() }
-            completion(.success(domain))
+            completion(.success(dishes))
         } else {
             print("Cannot find restaurant.")
             completion(.failure(ReviewListStorageError.cannotFindRestaurants))

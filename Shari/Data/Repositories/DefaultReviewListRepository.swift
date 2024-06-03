@@ -26,7 +26,18 @@ final class DefaultReviewListRepository: ReviewListRepository {
     }
     
     func fetchRestaurants(completion: @escaping (Result<[Restaurant], Error>) -> Void) {
-        storage.fetchRestaurants(completion: completion)
+        storage.fetchRestaurants { result in
+            switch result {
+            case .success(let entity):
+                let domain = entity.map { $0.toDomain() }
+                completion(.success(domain))
+                
+            case .failure(let error):
+                completion(.failure(error))
+                
+            }
+            
+        }
     }
     
     func deleteRestaurant(restaurantId: String) {
@@ -42,7 +53,18 @@ final class DefaultReviewListRepository: ReviewListRepository {
     }
     
     func fetchDishes(restaurantId: String, completion: @escaping (Result<[Dish], Error>) -> Void) {
-        storage.fetchDishes(restaurantId: restaurantId, completion: completion)
+        storage.fetchDishes(restaurantId: restaurantId) { result in
+            switch result {
+            case .success(let entity):
+                let domain = entity.map { $0.toDomain() }
+                completion(.success(domain))
+                
+            case .failure(let error):
+                completion(.failure(error))
+                
+            }
+            
+        }
     }
     
     func fetchTastes(restaurantId: String, dishId: String, completion: @escaping (Result<[String], Error>) -> Void) {
