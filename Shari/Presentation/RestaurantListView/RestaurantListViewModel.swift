@@ -82,7 +82,7 @@ final class DefaultRestaurantListViewModel: RestaurantListViewModel {
     func didAddRestaurant(name: String) {
         let id = UUID().uuidString
         restaurantId = id
-        repository.saveRestaurant(restairamtId: id, name: name)
+        repository.saveRestaurant(restaurantId: id, name: name)
     }
     
     func didDeleteRestaurant(at indexPath: IndexPath) {

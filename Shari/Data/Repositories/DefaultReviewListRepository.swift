@@ -17,8 +17,8 @@ final class DefaultReviewListRepository: ReviewListRepository {
         self.fileGenerator = fileGenerator
     }
     
-    func saveRestaurant(restairamtId: String, name: String) {
-        storage.saveRestaurant(restaurantId: restairamtId, name: name)
+    func saveRestaurant(restaurantId: String, name: String) {
+        storage.saveRestaurant(restaurantId: restaurantId, name: name)
     }
     
     func addTaste(restaurantId: String, dishId: String, taste: String) {
