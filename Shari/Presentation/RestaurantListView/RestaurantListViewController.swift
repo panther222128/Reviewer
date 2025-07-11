@@ -120,7 +120,7 @@ extension RestaurantListViewController: RestaurantListDelegate {
     }
     
     func didSelectItem(at indexPath: IndexPath) {
-        viewModel.didSelectItem(at: indexPath)
+        viewModel.didSelectRestaurant(at: indexPath)
     }
     
     func didTrailingSwipeForRow(at indexPath: IndexPath, tableView: UITableView) -> UISwipeActionsConfiguration {

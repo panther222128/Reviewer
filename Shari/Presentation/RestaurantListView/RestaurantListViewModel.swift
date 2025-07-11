@@ -22,7 +22,7 @@ protocol RestaurantListViewModel: RestaurantListDataSource {
     
     func loadListItem() async throws
     func didConfirm(restaurantName: String)
-    func didSelectItem(at indexPath: IndexPath)
+    func didSelectRestaurant(at indexPath: IndexPath)
     func didAddRestaurant(name: String)
     func didDeleteRestaurant(at indexPath: IndexPath)
     func loadIsDeleteImmediate()
@@ -75,7 +75,7 @@ final class DefaultRestaurantListViewModel: RestaurantListViewModel {
         actions.showStudioView(restaurantId, restaurantName)
     }
     
-    func didSelectItem(at indexPath: IndexPath) {
+    func didSelectRestaurant(at indexPath: IndexPath) {
         actions.showRestaurantDishListView(restaurants[indexPath.row].id, restaurants[indexPath.row].name)
     }
     

@@ -51,6 +51,22 @@
           }
         }
       }
+    },
+    "Tab Item Tips" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tips"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "정보"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

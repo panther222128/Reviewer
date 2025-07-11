@@ -39,6 +39,14 @@
 		A97DABD02BCBFD8E000867D9 /* RestaurantDishListItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97DABCF2BCBFD8E000867D9 /* RestaurantDishListItemViewModel.swift */; };
 		A97DABD22BCBFF15000867D9 /* RestaurantDishListAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97DABD12BCBFF15000867D9 /* RestaurantDishListAdapter.swift */; };
 		A97DABD42BCC0026000867D9 /* RestaurantDishListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97DABD32BCC0026000867D9 /* RestaurantDishListViewModel.swift */; };
+		A98465452C26A7BB0065E901 /* InformationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98465442C26A7BB0065E901 /* InformationViewController.swift */; };
+		A98465472C26B35E0065E901 /* InformationListAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98465462C26B35E0065E901 /* InformationListAdapter.swift */; };
+		A98465492C26B6470065E901 /* InformationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98465482C26B6470065E901 /* InformationViewModel.swift */; };
+		A984654B2C26B7C00065E901 /* InformationListItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A984654A2C26B7C00065E901 /* InformationListItemViewModel.swift */; };
+		A984654D2C26B9CD0065E901 /* InformationListItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A984654C2C26B9CD0065E901 /* InformationListItemCell.swift */; };
+		A984654F2C26D1260065E901 /* Information.swift in Sources */ = {isa = PBXBuildFile; fileRef = A984654E2C26D1260065E901 /* Information.swift */; };
+		A98465522C26D17B0065E901 /* InformationDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98465512C26D17B0065E901 /* InformationDetailViewController.swift */; };
+		A98465542C26D8390065E901 /* InformationDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98465532C26D8390065E901 /* InformationDetailViewModel.swift */; };
 		A9896F002BC8CB2300BC79E3 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9896EFF2BC8CB2300BC79E3 /* Constants.swift */; };
 		A9896F022BC8D1CB00BC79E3 /* OnOffButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9896F012BC8D1CB00BC79E3 /* OnOffButton.swift */; };
 		A9896F052BC8E6F000BC79E3 /* Dish.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9896F042BC8E6F000BC79E3 /* Dish.swift */; };
@@ -103,6 +111,14 @@
 		A97DABCF2BCBFD8E000867D9 /* RestaurantDishListItemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantDishListItemViewModel.swift; sourceTree = "<group>"; };
 		A97DABD12BCBFF15000867D9 /* RestaurantDishListAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantDishListAdapter.swift; sourceTree = "<group>"; };
 		A97DABD32BCC0026000867D9 /* RestaurantDishListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestaurantDishListViewModel.swift; sourceTree = "<group>"; };
+		A98465442C26A7BB0065E901 /* InformationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InformationViewController.swift; sourceTree = "<group>"; };
+		A98465462C26B35E0065E901 /* InformationListAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InformationListAdapter.swift; sourceTree = "<group>"; };
+		A98465482C26B6470065E901 /* InformationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InformationViewModel.swift; sourceTree = "<group>"; };
+		A984654A2C26B7C00065E901 /* InformationListItemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InformationListItemViewModel.swift; sourceTree = "<group>"; };
+		A984654C2C26B9CD0065E901 /* InformationListItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InformationListItemCell.swift; sourceTree = "<group>"; };
+		A984654E2C26D1260065E901 /* Information.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Information.swift; sourceTree = "<group>"; };
+		A98465512C26D17B0065E901 /* InformationDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InformationDetailViewController.swift; sourceTree = "<group>"; };
+		A98465532C26D8390065E901 /* InformationDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InformationDetailViewModel.swift; sourceTree = "<group>"; };
 		A9896EFF2BC8CB2300BC79E3 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		A9896F012BC8D1CB00BC79E3 /* OnOffButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnOffButton.swift; sourceTree = "<group>"; };
 		A9896F042BC8E6F000BC79E3 /* Dish.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dish.swift; sourceTree = "<group>"; };
@@ -207,8 +223,10 @@
 			isa = PBXGroup;
 			children = (
 				A93CF6F12BC2A96E0077B0A2 /* ViewFlowCoordinator.swift */,
-				A971F2402BDD237B00ABC8C8 /* GlossaryViewController */,
-				A9CFEC4D2BC80FC100AFE7C3 /* SettingsViewController */,
+				A98465432C26A7930065E901 /* InformationView */,
+				A98465502C26D1650065E901 /* InformationDetailView */,
+				A971F2402BDD237B00ABC8C8 /* GlossaryView */,
+				A9CFEC4D2BC80FC100AFE7C3 /* SettingsView */,
 				A93CF6E62BC2A87D0077B0A2 /* RestaurantListView */,
 				A9E86E352BC665C800576877 /* StudioView */,
 				A9CFEC482BC806D800AFE7C3 /* TasteListView */,
@@ -248,7 +266,7 @@
 			path = Infrastructure;
 			sourceTree = "<group>";
 		};
-		A971F2402BDD237B00ABC8C8 /* GlossaryViewController */ = {
+		A971F2402BDD237B00ABC8C8 /* GlossaryView */ = {
 			isa = PBXGroup;
 			children = (
 				A971F2412BDD238B00ABC8C8 /* GlossaryViewController.swift */,
@@ -257,7 +275,7 @@
 				A9A672432BDDD1D50008AC9F /* GlossaryListItemViewModel.swift */,
 				A9A672452BDDD4920008AC9F /* GlossaryListItemCell.swift */,
 			);
-			path = GlossaryViewController;
+			path = GlossaryView;
 			sourceTree = "<group>";
 		};
 		A97DAB8B2BCB84A7000867D9 /* Data */ = {
@@ -310,12 +328,34 @@
 			path = RestaurantDishListView;
 			sourceTree = "<group>";
 		};
+		A98465432C26A7930065E901 /* InformationView */ = {
+			isa = PBXGroup;
+			children = (
+				A98465442C26A7BB0065E901 /* InformationViewController.swift */,
+				A98465462C26B35E0065E901 /* InformationListAdapter.swift */,
+				A98465482C26B6470065E901 /* InformationViewModel.swift */,
+				A984654A2C26B7C00065E901 /* InformationListItemViewModel.swift */,
+				A984654C2C26B9CD0065E901 /* InformationListItemCell.swift */,
+			);
+			path = InformationView;
+			sourceTree = "<group>";
+		};
+		A98465502C26D1650065E901 /* InformationDetailView */ = {
+			isa = PBXGroup;
+			children = (
+				A98465512C26D17B0065E901 /* InformationDetailViewController.swift */,
+				A98465532C26D8390065E901 /* InformationDetailViewModel.swift */,
+			);
+			path = InformationDetailView;
+			sourceTree = "<group>";
+		};
 		A9896F032BC8E6D200BC79E3 /* Entities */ = {
 			isa = PBXGroup;
 			children = (
 				A9896F042BC8E6F000BC79E3 /* Dish.swift */,
 				A97DAB892BCB845B000867D9 /* Restaurant.swift */,
 				A01940D72BDA2F41006848E2 /* TasteCategory.swift */,
+				A984654E2C26D1260065E901 /* Information.swift */,
 			);
 			path = Entities;
 			sourceTree = "<group>";
@@ -331,14 +371,14 @@
 			path = TasteListView;
 			sourceTree = "<group>";
 		};
-		A9CFEC4D2BC80FC100AFE7C3 /* SettingsViewController */ = {
+		A9CFEC4D2BC80FC100AFE7C3 /* SettingsView */ = {
 			isa = PBXGroup;
 			children = (
 				A9CFEC4E2BC80FCE00AFE7C3 /* SettingsViewController.swift */,
 				A9C89D022BD24F9300E386D0 /* SwitchSettingView.swift */,
 				A9C89D042BD25B0D00E386D0 /* SettingsViewModel.swift */,
 			);
-			path = SettingsViewController;
+			path = SettingsView;
 			sourceTree = "<group>";
 		};
 		A9E86E322BC64D4700576877 /* Extensions */ = {
@@ -453,19 +493,25 @@
 			buildActionMask = 2147483647;
 			files = (
 				A97DAB8A2BCB845B000867D9 /* Restaurant.swift in Sources */,
+				A984654B2C26B7C00065E901 /* InformationListItemViewModel.swift in Sources */,
 				A9896F022BC8D1CB00BC79E3 /* OnOffButton.swift in Sources */,
+				A98465452C26A7BB0065E901 /* InformationViewController.swift in Sources */,
 				A006CEB42BCCC0730065553F /* DishDetailListItemViewModel.swift in Sources */,
 				A9896F052BC8E6F000BC79E3 /* Dish.swift in Sources */,
 				A93CF6F42BC2AA030077B0A2 /* AppConfiguration.swift in Sources */,
+				A98465542C26D8390065E901 /* InformationDetailViewModel.swift in Sources */,
 				A97DAB922BCB84F9000867D9 /* ReviewListRepository.swift in Sources */,
+				A98465522C26D17B0065E901 /* InformationDetailViewController.swift in Sources */,
 				A9CFEC4F2BC80FCE00AFE7C3 /* SettingsViewController.swift in Sources */,
 				A97DAB962BCB85A1000867D9 /* ReviewListStorage.swift in Sources */,
 				A9C89D072BD25B5000E386D0 /* DefaultSettingsRepository.swift in Sources */,
 				A9E86E312BC64C0D00576877 /* RestaurantListItemViewModel.swift in Sources */,
 				A9E86E372BC665F100576877 /* StudioViewController.swift in Sources */,
+				A984654D2C26B9CD0065E901 /* InformationListItemCell.swift in Sources */,
 				A9AF0CF22BDA717F0063F447 /* TasteCategoryButton.swift in Sources */,
 				A93CF6E82BC2A8AF0077B0A2 /* RestaurantListViewController.swift in Sources */,
 				A97DABC52BCBBA24000867D9 /* DishEntity.swift in Sources */,
+				A98465492C26B6470065E901 /* InformationViewModel.swift in Sources */,
 				A9E86E342BC64D5D00576877 /* Date+FormattedString.swift in Sources */,
 				A9A672442BDDD1D50008AC9F /* GlossaryListItemViewModel.swift in Sources */,
 				A96C08DD2BF229EE00E83A44 /* FileGenerator.swift in Sources */,
@@ -481,6 +527,7 @@
 				A9C89D092BD25B5A00E386D0 /* SettingsStorage.swift in Sources */,
 				A9C89D032BD24F9300E386D0 /* SwitchSettingView.swift in Sources */,
 				A97DABD22BCBFF15000867D9 /* RestaurantDishListAdapter.swift in Sources */,
+				A98465472C26B35E0065E901 /* InformationListAdapter.swift in Sources */,
 				A93CF6F22BC2A96E0077B0A2 /* ViewFlowCoordinator.swift in Sources */,
 				A9E86E3C2BC672BF00576877 /* PreviewView.swift in Sources */,
 				A9A672462BDDD4920008AC9F /* GlossaryListItemCell.swift in Sources */,
@@ -501,6 +548,7 @@
 				A9E86E392BC6685700576877 /* StudioViewModel.swift in Sources */,
 				A97DABCC2BCBFC25000867D9 /* RestaurantDishListViewController.swift in Sources */,
 				A9CFEC4C2BC80ADD00AFE7C3 /* TasteListViewModel.swift in Sources */,
+				A984654F2C26D1260065E901 /* Information.swift in Sources */,
 				A971F2462BDD31B100ABC8C8 /* GlossaryListAdapter.swift in Sources */,
 				A97DABCE2BCBFCBF000867D9 /* RestaurantDishListItemCell.swift in Sources */,
 				A97DABD42BCC0026000867D9 /* RestaurantDishListViewModel.swift in Sources */,

@@ -42,6 +42,14 @@ final class SceneDIContainer: ViewFlowCoordinatorDependencies {
         return RestaurantListViewController.create(with: makeRestaurantListViewModel(actions: actions))
     }
     
+    func makeInformationViewModel(actions: InformationViewModelActions) -> InformationViewModel {
+        return DefaultInformationViewModel(actions: actions)
+    }
+    
+    func makeInformationViewController(actions: InformationViewModelActions) -> InformationViewController {
+        return InformationViewController.create(with: makeInformationViewModel(actions: actions))
+    }
+    
     func makeStudioUseCase() -> StudioUseCase  {
         return DefaultStudioUseCase(studio: Studio())
     }
@@ -92,6 +100,14 @@ final class SceneDIContainer: ViewFlowCoordinatorDependencies {
     
     func makeDishDetailViewController(restaurantId: String, dish: Dish) -> DishDetailViewController {
         return DishDetailViewController.create(with: makeDishDetailViewModel(restaurantId: restaurantId, dish: dish))
+    }
+    
+    private func makeInformationDetailViewModel(information: Information) -> InformationDetailViewModel {
+        return InformationDetailViewModel(information: information)
+    }
+    
+    func makeInformationDetailViewController(information: Information) -> InformationDetailViewController {
+        return InformationDetailViewController.create(with: makeInformationDetailViewModel(information: information))
     }
     
 }

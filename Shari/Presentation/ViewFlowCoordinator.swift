@@ -14,16 +14,20 @@ protocol ViewFlowCoordinatorDependencies {
     
     func makeGlossaryViewController() -> GlossaryViewController
     
+    func makeInformationViewController(actions: InformationViewModelActions) -> InformationViewController
+    
     func makeSettingsViewController() -> SettingsViewController
     
     func makeRestaurantDishListViewController(id: String, restaurantName: String, actions: RestaurantDishListViewModelActions) -> RestaurantDishListViewController
     func makeDishDetailViewController(restaurantId: String, dish: Dish) -> DishDetailViewController
+    func makeInformationDetailViewController(information: Information) -> InformationDetailViewController
 }
 
 final class ViewFlowCoordinator {
     
     private var restaurantListNavigator: UINavigationController?
     private var settingsListNavigator: UINavigationController?
+    private var informationNavigator: UINavigationController?
     private var glossaryNavigator: UINavigationController?
     private weak var tabBarController: UITabBarController?
     private let dependencies: ViewFlowCoordinatorDependencies
@@ -32,7 +36,9 @@ final class ViewFlowCoordinator {
     private weak var studioViewController: StudioViewController?
     private weak var tasteListViewController: TasteListViewController?
     private weak var glossaryViewController: GlossaryViewController?
+    private weak var informationViewController: InformationViewController?
     private weak var settingsViewController: SettingsViewController?
+    private weak var informationDetailViewController: InformationDetailViewController?
     
     private weak var restaurantDishListViewController: RestaurantDishListViewController?
     private weak var dishDetailViewController: DishDetailViewController?
@@ -56,27 +62,37 @@ final class ViewFlowCoordinator {
         
         let glossaryViewTabBarItem = UITabBarItem(title: String(localized: "Tab Item Glossary"), image: UIImage(systemName: "book.closed"), tag: 1)
         
+        
+        let tipsViewController = dependencies.makeInformationViewController(actions: .init(showInformationDetailView: showInformationDetailView(information:)))
+        self.informationViewController = tipsViewController
+        
+        let tipsViewTabBarItem = UITabBarItem(title: String(localized: "Tab Item Tips"), image: UIImage(systemName: "info.circle"), tag: 2)
+        
         let settingsViewController = dependencies.makeSettingsViewController()
         self.settingsViewController = settingsViewController
         
-        let settingsListViewTabBarItem = UITabBarItem(title: String(localized: "Tab Item Settings"), image: UIImage(systemName: "gear"), tag: 2)
+        let settingsListViewTabBarItem = UITabBarItem(title: String(localized: "Tab Item Settings"), image: UIImage(systemName: "gear"), tag: 3)
         
         restaurantListNavigator = UINavigationController()
         glossaryNavigator = UINavigationController()
+        informationNavigator = UINavigationController()
         settingsListNavigator = UINavigationController()
         
         restaurantListNavigator?.tabBarItem = reviewListViewTabBarItem
         glossaryNavigator?.tabBarItem = glossaryViewTabBarItem
+        informationNavigator?.tabBarItem = tipsViewTabBarItem
         settingsListNavigator?.tabBarItem = settingsListViewTabBarItem
         
         guard let reviewListNavigator = restaurantListNavigator else { return }
         guard let glossaryNavigator = glossaryNavigator else { return }
+        guard let tipsNavigator = informationNavigator else { return }
         guard let settingsListNavigator = settingsListNavigator else { return }
         
-        tabBarController?.viewControllers = [reviewListNavigator, glossaryNavigator, settingsListNavigator]
+        tabBarController?.viewControllers = [reviewListNavigator, glossaryNavigator, tipsNavigator, settingsListNavigator]
         
         self.restaurantListNavigator?.pushViewController(reviewListViewController, animated: true)
         self.glossaryNavigator?.pushViewController(glossaryViewcontroller, animated: true)
+        self.informationNavigator?.pushViewController(tipsViewController, animated: true)
         self.settingsListNavigator?.pushViewController(settingsViewController, animated: true)
     }
     
@@ -109,6 +125,12 @@ final class ViewFlowCoordinator {
         let viewController = dependencies.makeDishDetailViewController(restaurantId: restaurantId, dish: dish)
         dishDetailViewController = viewController
         restaurantDishListViewController?.navigationController?.pushViewController(viewController, animated: true)
+    }
+    
+    private func showInformationDetailView(information: Information) {
+        let viewController = dependencies.makeInformationDetailViewController(information: information)
+        informationDetailViewController = viewController
+        informationNavigator?.pushViewController(viewController, animated: true)
     }
     
 }
