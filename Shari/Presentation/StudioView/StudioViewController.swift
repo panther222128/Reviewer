@@ -458,7 +458,7 @@ extension StudioViewController {
     
     private func addActionOf(recordButton: RecordButton) {
         if let window = self.view.window, let windowScene = window.windowScene {
-            switch windowScene.interfaceOrientation {
+            switch windowScene.effectiveGeometry.interfaceOrientation {
             case .portrait: self.supportedInterfaceOrientations = .portrait
             case .landscapeLeft: self.supportedInterfaceOrientations = .landscapeLeft
             case .landscapeRight: self.supportedInterfaceOrientations = .landscapeRight

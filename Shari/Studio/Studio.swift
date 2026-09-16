@@ -571,15 +571,18 @@ extension Studio {
                 generator.appliesPreferredTrackTransform = true
                 let time = CMTime(value: 3, timescale: 600)
                 do {
-                    let imageReference = try generator.copyCGImage(at: time, actualTime: nil)
-                    let thumbnail = UIImage(cgImage: imageReference)
-                    UIGraphicsBeginImageContextWithOptions(targetSize, true, 1.0)
-                    thumbnail.draw(in: CGRect(origin: .zero, size: targetSize))
-                    let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
-                    UIGraphicsEndImageContext()
+                    let imageReference: Void = generator.generateCGImageAsynchronously(for: time) { cgImage, cmTime, error in
+                        guard let cgImage else { return }
+                        let thumbnail = UIImage(cgImage: cgImage)
+                        UIGraphicsBeginImageContextWithOptions(targetSize, true, 1.0)
+                        thumbnail.draw(in: CGRect(origin: .zero, size: targetSize))
+                        let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
+                        UIGraphicsEndImageContext()
+                        
+                        let data = resizedImage?.jpegData(compressionQuality: 1.0)
+                        self.thumbnailData = data
+                    }
                     
-                    let data = resizedImage?.jpegData(compressionQuality: 1.0)
-                    self.thumbnailData = data
                 } catch let error {
                     print(error)
                 }

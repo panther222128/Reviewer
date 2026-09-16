@@ -17,7 +17,7 @@ final class AppFlowCoordinator {
         self.appDIContainer = appDIContainer
     }
     
-    func start() {
+    @MainActor func start() {
         let sceneDIContainer = appDIContainer.makeSceneDIContainer()
         let flow = sceneDIContainer.makeViewFlowCoordinator(tabBarController: tabBarController)
         flow.start()
