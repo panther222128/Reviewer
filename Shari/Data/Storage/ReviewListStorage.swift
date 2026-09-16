@@ -26,7 +26,8 @@ protocol ReviewListStorage {
     func addTaste(restaurantId: String, dishId: String, taste: String)
 }
 
-final class DefaultReviewListStorage: ReviewListStorage {
+@MainActor
+final class DefaultReviewListStorage: @MainActor ReviewListStorage {
     
     private var container: ModelContainer?
     private var context: ModelContext?

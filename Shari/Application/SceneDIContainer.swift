@@ -7,7 +7,8 @@
 
 import UIKit
 
-final class SceneDIContainer: ViewFlowCoordinatorDependencies {
+@MainActor
+final class SceneDIContainer: @MainActor ViewFlowCoordinatorDependencies {
     
     struct Dependencies {
         let fileGenerator: FileGenerator
@@ -50,7 +51,7 @@ final class SceneDIContainer: ViewFlowCoordinatorDependencies {
         return InformationViewController.create(with: makeInformationViewModel(actions: actions))
     }
     
-    func makeStudioUseCase() -> StudioUseCase  {
+    func makeStudioUseCase() -> StudioUseCase {
         return DefaultStudioUseCase(studio: Studio())
     }
     
@@ -109,5 +110,4 @@ final class SceneDIContainer: ViewFlowCoordinatorDependencies {
     func makeInformationDetailViewController(information: Information) -> InformationDetailViewController {
         return InformationDetailViewController.create(with: makeInformationDetailViewModel(information: information))
     }
-    
 }
