@@ -16,7 +16,7 @@ final class AppDIContainer {
         return fileGenerator
     }()
     
-    func makeSceneDIContainer() -> SceneDIContainer {
+    @MainActor func makeSceneDIContainer() -> SceneDIContainer {
         let dependencies: SceneDIContainer.Dependencies = .init(fileGenerator: fileGenerator)
         return SceneDIContainer(dependencies: dependencies)
     }
